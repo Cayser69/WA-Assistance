@@ -24,11 +24,15 @@ export const AudienciaTab = {
                         <h3><span class="material-icons-outlined">check_box</span> Acciones de Selección</h3>
                         <p class="text-muted" style="font-size: 0.8rem; margin-bottom: 15px;">Seleccionados para campaña: <b id="count-selected">0</b></p>
                         <div style="display: flex; flex-direction: column; gap: 10px;">
-                            <button id="btn-select-all" class="btn" style="background: rgba(255,255,255,0.05); font-size: 0.85rem;">SELECCIONAR TODO (PAG)</button>
-                            <button id="btn-select-none" class="btn" style="background: rgba(255,255,255,0.05); font-size: 0.85rem;">LIMPIAR SELECCIÓN</button>
+                            <button id="btn-select-all" class="btn" style="background: rgba(255,255,255,0.08); color: #fff; border: 1px solid rgba(255,255,255,0.1); font-size: 0.8rem; font-weight: 600;">
+                                <span class="material-icons-outlined" style="font-size: 1rem; vertical-align: middle;">done_all</span> SELECCIONAR PÁGINA
+                            </button>
+                            <button id="btn-select-none" class="btn" style="background: rgba(255,255,255,0.08); color: #fff; border: 1px solid rgba(255,255,255,0.1); font-size: 0.8rem; font-weight: 600;">
+                                <span class="material-icons-outlined" style="font-size: 1rem; vertical-align: middle;">deselect</span> LIMPIAR SELECCIÓN
+                            </button>
                         </div>
                         <hr style="border: 0.5px solid var(--glass-border); margin: 20px 0;">
-                        <button id="btn-go-to-message" class="btn btn-primary full-width" style="background: var(--primary); border: none;">
+                        <button id="btn-go-to-message" class="btn btn-primary full-width" style="padding: 12px !important;">
                             <span class="material-icons-outlined">send</span> CONTINUAR A REDACCIÓN
                         </button>
                     </div>

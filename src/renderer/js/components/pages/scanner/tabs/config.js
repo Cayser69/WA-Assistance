@@ -41,7 +41,7 @@ export const ConfigTab = {
         if (!btnStart) return;
 
         // --- Chequeo de Persistencia ---
-        const savedTask = await window.api.invoke('wa:check-persistence', 'scanner_active');
+        const savedTask = await window.api.checkPersistence('scanner_active');
         if (savedTask && persistenceBanner) {
             persistenceBanner.style.display = 'block';
             const lastNum = document.getElementById('persist-last-number');
@@ -51,14 +51,14 @@ export const ConfigTab = {
                 if (appState.waStatus !== 'connect') return alert('Debes conectar WhatsApp primero.');
                 
                 // Iniciar con el startIndex guardado
-                await window.api.invoke('wa:startScanner', savedTask.config, savedTask.currentIndex);
+                await window.api.startScanner(savedTask.config, savedTask.currentIndex);
                 alert('Escaneo reanudado con éxito.');
                 persistenceBanner.style.display = 'none';
             };
 
             document.getElementById('btn-discard-scanner').onclick = async () => {
                 if (confirm('¿Seguro que quieres descartar esta tarea guardada?')) {
-                    await window.api.invoke('wa:clear-persistence', 'scanner_active');
+                    await window.api.clearPersistence('scanner_active');
                     persistenceBanner.style.display = 'none';
                 }
             };

@@ -33,6 +33,23 @@ export const ConsoleComponent = {
         const resizer = document.getElementById('console-resizer');
         const header = document.getElementById('console-header');
         const toggleBtn = document.getElementById('btn-toggle-console');
+        const clearBtn = document.getElementById('btn-clear-console');
+        
+        // Lógica: Limpieza manual de consola y memoria array
+        if (clearBtn) {
+            clearBtn.onclick = async (e) => {
+                e.stopPropagation(); // Evitar que la consola se expanda/cierre
+                
+                const consoleEl = document.getElementById('global-console');
+                if (consoleEl) consoleEl.innerHTML = '';
+                
+                // Vacía la memoria local importando el helper dinámicamente si es necesario
+                try {
+                    const { AppState } = await import('../../../core/state.js');
+                    AppState.clearLogs();
+                } catch (err) { console.error('No se pudo limpiar AppState RAM:', err); }
+            };
+        }
 
         let isResizing = false;
 
@@ -77,18 +94,27 @@ export const ConsoleComponent = {
     },
 
     /**
-     * Añade un nuevo log a la consola.
+     * Añade un nuevo log a la consola. Limitado a un máximo para proteger renderizado.
      */
     appendLog: (log) => {
         const consoleEl = document.getElementById('global-console');
         if (!consoleEl) return;
 
+        // Limite drástico: Solo mantiene vivos los 500 mensajes más recientes
+        const MAX_LOGS = 500;
+        
         const time = log.time || new Date().toLocaleTimeString();
         const p = document.createElement('p');
         p.className = `log-${log.type || 'info'}`;
         p.textContent = `[${time}] ${log.text}`;
         
         consoleEl.appendChild(p);
+
+        // Control de Límite de Buffer - Elimina del HTML el nodo superior (más antiguo)
+        if (consoleEl.children.length > MAX_LOGS) {
+            consoleEl.removeChild(consoleEl.firstChild);
+        }
+
         consoleEl.scrollTop = consoleEl.scrollHeight;
     }
 };

@@ -34,9 +34,14 @@ export const UIEvents = {
             if (AppState.waStatus === 'disconnect') {
                 AppState.pushLog({ text: 'Nuevo código QR generado.', type: 'info' });
             }
-            // Refrescar si estamos en Conexiones
+            // Refrescar si estamos en Conexiones sin reconstruir el DOM (Lag Fix)
             if (AppState.currentView === 'conexiones') {
-                Router.navigate('conexiones'); // Re-init para actualizar el QR en el DOM
+                const qrContainer = document.getElementById('qr-container');
+                if (qrContainer && AppState.waStatus === 'disconnect') {
+                    const img = qrContainer.querySelector('img.qr-image');
+                    if (img) img.src = qr;
+                    else qrContainer.innerHTML = `<img src="${qr}" alt="QR" class="qr-image animate-fade-in">`;
+                }
             }
         });
 

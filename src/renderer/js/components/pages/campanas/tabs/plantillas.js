@@ -1,4 +1,4 @@
-import { WhatsAppBubble } from '../../../components/wa-bubble/index.js';
+import { WhatsAppBubble } from '../../../layout/wa-bubble/index.js';
 
 export const PlantillasTab = {
     render: () => `
@@ -31,15 +31,8 @@ export const PlantillasTab = {
                             <span class="material-icons-outlined" style="font-size: 1rem; vertical-align: middle;">visibility</span> Vista Previa
                         </h4>
                         
-                        <div class="whatsapp-preview-container">
-                            <div class="wa-bubble-wrapper">
-                                <div class="wa-bubble" id="wa-preview-bubble">
-                                    <div id="wa-msg-container">
-                                        Escribe algo a la derecha...
-                                    </div>
-                                    <span class="wa-time">12:00 <span class="material-icons-outlined wa-check">done_all</span></span>
-                                </div>
-                            </div>
+                        <div class="whatsapp-preview-container" id="wa-preview-root">
+                            <!-- Inyectado dinámicamente -->
                         </div>
                         
                         <div style="margin-top: 20px; padding: 10px; border-top: 1px solid var(--glass-border); text-align:center;">
@@ -105,7 +98,7 @@ export const PlantillasTab = {
         const imgFull = document.getElementById('img-preview-full');
         const imgPlaceholder = document.getElementById('img-preview-placeholder');
         const btnRemoveImg = document.getElementById('btn-remove-image');
-        const waMsgContainer = document.getElementById('wa-msg-container');
+        const waPreviewRoot = document.getElementById('wa-preview-root');
         const btnSave = document.getElementById('btn-save-template');
         const btnNew = document.getElementById('btn-new-template');
 
@@ -116,7 +109,7 @@ export const PlantillasTab = {
             const imagePath = imagePathInput.value;
             
             // Usamos el componente centralizado
-            waMsgContainer.innerHTML = WhatsAppBubble.render(text, imagePath);
+            waPreviewRoot.innerHTML = WhatsAppBubble.render(text, imagePath);
         };
 
         contentInput.addEventListener('input', updatePreview);

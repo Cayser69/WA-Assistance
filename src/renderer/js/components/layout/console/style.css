@@ -72,3 +72,8 @@
 .minimized .console-content {
     display: none;
 }
+
+#btn-clear-console:hover {
+    color: #ef4444 !important;
+    transform: scale(1.1);
+}

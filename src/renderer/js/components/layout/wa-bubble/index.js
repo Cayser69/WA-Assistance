@@ -1,4 +1,4 @@
-import { TemplateLoader } from '../../core/loader.js';
+import { TemplateLoader } from '../../../core/loader.js';
 
 /**
  * Componente: WhatsAppBubble - Lógica de Renderizado ✨💬
@@ -27,20 +27,26 @@ export const WhatsAppBubble = {
         
         // 1. Procesar Imagen
         let imageHtml = '';
-        if (imagePath) {
+        if (imagePath && imagePath.trim() !== '') {
             const fullPath = `file://${window.api.getAppPath()}/${imagePath}`;
             imageHtml = `<img src="${fullPath}" class="wa-bubble-image">`;
         }
 
-        // 2. Procesar Markdown del Texto
-        const msgHtml = text ? text
-            .replace(/\*(.*?)\*/g, '<b>$1</b>')
-            .replace(/_(.*?)_/g, '<i>$1</i>')
-            .replace(/~(.*?)~/g, '<strike>$1</strike>')
-            .replace(/\n/g, '<br>') 
-            : 'Escribe algo...';
+        // 2. Procesar Texto (con placeholder si está vacío)
+        let msgHtml = '';
+        const cleanText = text ? text.trim() : '';
 
-        // 3. Inyectar en el Template
+        if (!cleanText && !imageHtml) {
+            msgHtml = '<span style="opacity: 0.5; font-style: italic;">Escribe tu mensaje para previsualizar...</span>';
+        } else {
+            msgHtml = cleanText
+                .replace(/\*(.*?)\*/g, '<b>$1</b>')
+                .replace(/_(.*?)_/g, '<i>$1</i>')
+                .replace(/~(.*?)~/g, '<strike>$1</strike>')
+                .replace(/\n/g, '<br>');
+        }
+
+        // 3. Inyectar en el Template base
         return WhatsAppBubble.template
             .replace('{{image}}', imageHtml)
             .replace('{{text}}', msgHtml)

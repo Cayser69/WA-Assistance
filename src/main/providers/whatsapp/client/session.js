@@ -7,6 +7,8 @@ import { promisify } from 'util';
 
 const execAsync = promisify(exec);
 
+const debugLog = (...args) => { if (process.env.DEBUG === 'true') console.log(...args); };
+
 /**
  * Gestor de Sesiones de WhatsApp (Subcomponente de Cliente)
  * Responsabilidad: Limpieza de bloqueos, reparación de carpetas y creación del cliente.
@@ -22,20 +24,26 @@ export class SessionManager {
         console.log('WhatsApp Session: Ejecutando purga quirúrgica de procesos...');
         const commands = [
             // 1. Matar procesos específicos de esta sesión por CommandLine (PowerShell CimInstance)
-            `powershell "Get-CimInstance Win32_Process -Filter \\"Name = 'chrome.exe' AND CommandLine LIKE '%session-sales-assistant%\\'" | %{ Stop-Process $_.ProcessId -Force }"`,
-            // 2. Matar cualquier proceso Chrome sin ventana (típico de Puppeteer colgado)
+            `powershell "Get-CimInstance Win32_Process -Filter \\"Name LIKE '%chrome%' AND CommandLine LIKE '%session-sales-assistant%'\\" | %{ Stop-Process $_.ProcessId -Force }"`,
+            // 2. Matar cualquier proceso Chrome/Chromium sin ventana (típico de Puppeteer colgado)
             `taskkill /F /IM chrome.exe /FI "WINDOWTITLE eq about:blank" /T`,
+            `taskkill /F /IM chromium.exe /FI "WINDOWTITLE eq about:blank" /T`,
             // 3. Matar procesos huérfanos de Electron que puedan estar bloqueando
             `taskkill /F /IM electron.exe /FI "STATUS eq not responding" /T`
         ];
 
         for (const cmd of commands) {
             try {
-                await execAsync(cmd);
+                debugLog(`[Zombie-Killer] 🔪 Ejecutando: ${cmd}`);
+                const { stdout, stderr } = await execAsync(cmd);
+                if (stdout) debugLog(`[Zombie-Killer] 📝 Salida: ${stdout.trim()}`);
+                if (stderr) console.warn(`[Zombie-Killer] ⚠️ Error STDERR: ${stderr}`);
             } catch (err) {
                 // Silenciamos si no encuentra procesos
+                debugLog(`[Zombie-Killer] ℹ️ Sin procesos encontrados para este comando.`);
             }
         }
+        console.log('[Zombie-Killer] ✅ Fin de la purga de procesos.');
     }
 
     /**
@@ -87,7 +95,7 @@ export class SessionManager {
             if (fs.existsSync(folderPath)) {
                 try {
                     fs.rmSync(folderPath, { recursive: true, force: true });
-                    console.log(`WhatsApp Session: Purga de caché exitosa en ${folder}`);
+                    debugLog(`WhatsApp Session: Purga de caché exitosa en ${folder}`);
                 } catch (e) {
                     // Silenciar si no se puede borrar (posiblemente en uso parcial)
                 }
@@ -128,16 +136,20 @@ export class SessionManager {
 
             for (const file of filesToClean) {
                 const filePath = path.join(sessionPath, file);
-                if (!fs.existsSync(filePath)) continue;
+                if (!fs.existsSync(filePath)) {
+                    debugLog(`[Repair-Loop] 🔍 No existe (Limpiado): ${file}`);
+                    continue;
+                }
                 
                 filesFound++;
                 try {
+                    debugLog(`[Repair-Loop] 🗑️ Intentando borrar: ${filePath}`);
                     // Usar rmSync recursivo por si 'lockfile' se comporta como directorio (raro pero ocurre)
                     fs.rmSync(filePath, { recursive: true, force: true });
-                    console.log(`WhatsApp Session: Eliminado ${file} (Intento ${attempt})`);
+                    debugLog(`[Repair-Loop] ✅ Eliminado ${file} (Intento ${attempt})`);
                     filesDeleted++;
                 } catch (err) {
-                    console.warn(`WhatsApp Session: Reintento ${attempt} fallido para ${file}.`);
+                    console.warn(`[Repair-Loop] ❌ FALLÓ borrar ${file}. Razón: ${err.message}`);
                 }
             }
 
@@ -147,7 +159,7 @@ export class SessionManager {
             }
 
             console.log(`WhatsApp Session: Archivos aún bloqueados. Reintentando liberación (Intento ${attempt}/5)...`);
-            await new Promise(r => setTimeout(r, 1500));
+            await new Promise(r => setTimeout(r, 2000));
         }
 
         if (!allCleaned) {

@@ -1,8 +1,9 @@
 import { TemplateLoader } from '../../../core/loader.js';
 import { MensajeTab } from './tabs/mensaje.js';
 import { PlantillasTab } from './tabs/plantillas.js';
-import { MultimediaTab } from './tabs/multimedia.js';
 import { AudienciaTab } from './tabs/audiencia.js';
+
+const DummyTab = { render: () => '<div class="p-20">Pestaña Aislada (Test)</div>', init: () => {} };
 
 /**
  * Componente: Campanas - Centro de Estrategia Industrial 📊📈🚀
@@ -26,8 +27,8 @@ export const Campanas = {
 
         try {
             // 1. Cargar estructura base y estilos modulares
-            const html = await TemplateLoader.loadHTML('campanas');
-            await TemplateLoader.loadCSS('campanas');
+            const html = await TemplateLoader.loadHTML('pages/campanas');
+            await TemplateLoader.loadCSS('pages/campanas');
 
             const container = document.getElementById('view-campanas-container');
             if (!container) return;
@@ -42,7 +43,6 @@ export const Campanas = {
             const tabs = {
                 'mensaje': MensajeTab,
                 'plantillas': PlantillasTab,
-                'multimedia': MultimediaTab,
                 'audiencia': AudienciaTab
             };
 
@@ -57,7 +57,6 @@ export const Campanas = {
             const titles = { 
                 'mensaje': 'Lanzar Envío Masivo', 
                 'plantillas': 'Biblioteca de Plantillas', 
-                'multimedia': 'Gestión de Multimedia', 
                 'audiencia': 'Selección de Leads' 
             };
             const titleEl = document.getElementById('view-title');
@@ -72,7 +71,7 @@ export const Campanas = {
                     const select = document.getElementById('select-templates');
                     if (select) {
                         select.innerHTML = '<option value="">Cargar Plantilla...</option>' + 
-                            templates.map(t => `<option value="${t.id}" data-content="${encodeURIComponent(t.contenido)}">${t.nombre}</option>`).join('');
+                            templates.map(t => `<option value="${t.id}" data-content="${encodeURIComponent(t.contenido)}" data-image="${t.image_path || ''}">${t.nombre}</option>`).join('');
                     }
                     return templates;
                 }

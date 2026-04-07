@@ -26,11 +26,15 @@ contextBridge.exposeInMainWorld('api', {
     onCampaignStatus: (callback) => ipcRenderer.on('wa:campaign-status', (event, status) => callback(status)),
 
     // Scanner
-    startScanner: (data) => ipcRenderer.invoke('wa:startScanner', data),
+    startScanner: (data, startIndex) => ipcRenderer.invoke('wa:startScanner', data, startIndex),
     stopScanner: () => ipcRenderer.invoke('wa:stopScanner'),
     getScannerStatus: () => ipcRenderer.invoke('wa:getScannerStatus'),
     onScannerUpdate: (callback) => ipcRenderer.on('scanner:status', (event, status) => callback(status)),
     startRepair: () => ipcRenderer.invoke('wa:startRepair'),
+
+    // Tareas Persistentes
+    checkPersistence: (key) => ipcRenderer.invoke('wa:check-persistence', key),
+    clearPersistence: (key) => ipcRenderer.invoke('wa:clear-persistence', key),
 
     // Inteligencia Artificial
     setAIConfig: (config) => ipcRenderer.invoke('ai:config', config),

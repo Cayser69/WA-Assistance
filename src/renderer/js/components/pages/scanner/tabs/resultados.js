@@ -53,8 +53,18 @@ export const ResultadosTab = {
         if (!tbody) return;
 
         try {
+            // Helper para formatear números de forma humana: 34 600 11 22 33
+            const formatPhone = (phone) => {
+                if (!phone) return '';
+                const clean = phone.replace(/\D/g, '');
+                if (clean.length === 11) {
+                    return `${clean.slice(0, 2)} ${clean.slice(2, 5)} ${clean.slice(5, 7)} ${clean.slice(7, 9)} ${clean.slice(9, 11)}`;
+                }
+                return clean.replace(/(\d{3})(?=\d)/g, '$1 ');
+            };
+
             // Obtener los leads no contactados (que suelen ser los resultados del scanner)
-            const leads = await window.api.getLeads('pending', 50, 0, '');
+            const leads = await window.api.getLeads('pendiente', 50, 0, '');
             
             if (leads.length === 0) {
                 tbody.innerHTML = `<tr><td colspan="4" style="text-align: center; padding: 40px; color: var(--text-muted);">No hay leads pendientes todavía.</td></tr>`;
@@ -64,7 +74,7 @@ export const ResultadosTab = {
             tbody.innerHTML = leads.map(lead => `
                 <tr>
                     <td><strong>${lead.nombre || '<i>Desconocido</i>'}</strong></td>
-                    <td>${lead.telefono}</td>
+                    <td>${formatPhone(lead.telefono)}</td>
                     <td><span class="status-badge connect">VÁLIDO</span></td>
                     <td class="text-muted" style="font-size: 0.8rem;">${lead.created_at ? new Date(lead.created_at).toLocaleString() : 'Recién añadido'}</td>
                 </tr>

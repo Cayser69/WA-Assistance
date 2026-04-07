@@ -5,8 +5,9 @@
   "main": "src/main/index.js",
   "type": "module",
   "scripts": {
-    "start": "nodemon",
-    "test-db": "node test-db.js"
+    "start": "chcp 65001 > nul && nodemon",
+    "start:debug": "set DEBUG=true&& chcp 65001 > nul && nodemon",
+    "test-db": "chcp 65001 > nul && node test-db.js"
   },
   "nodemonConfig": {
     "ignore": [".wwebjs_auth/*", "src/renderer/*"],

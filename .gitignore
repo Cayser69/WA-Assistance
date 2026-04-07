@@ -29,8 +29,17 @@ node_modules/
 # Project-specific ignores
 .app_data/
 .wwebjs_cache/
+.wwebjs_auth/
 database.sqlite
 whatsapp_session/
+*.sqlite-journal
+*.sqlite-wal
+*.sqlite-shm
+
+# Electron/Puppeteer locks
+SingletonLock
+lockfile
+DevToolsActivePort
 
 # OS generated files
 .DS_Store

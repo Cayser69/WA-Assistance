@@ -10,26 +10,23 @@ export const TemplateLoader = {
      * Intenta buscar en subcarpetas (pages, layout, shared) si no está en la raíz.
      */
     async loadHTML(componentName, fileName = 'template.html') {
+        const cacheKey = `html-${componentName}-${fileName}`;
+        if (this.cache[cacheKey]) return this.cache[cacheKey];
+
         const subfolders = ['', 'pages/', 'layout/', 'shared/'];
         
         for (const sub of subfolders) {
             const relativePath = `src/renderer/js/components/${sub}${componentName}/${fileName}`;
-            if (this.cache[relativePath]) return this.cache[relativePath];
 
             try {
                 const html = await window.api.readTemplate(relativePath);
                 if (html) {
-                    this.cache[relativePath] = html;
-                    console.log(`[Loader] ✅ Cargado: ${relativePath}`);
+                    this.cache[cacheKey] = html; // Cacheamos usando el nombre raíz para saltarnos el for en el futuro
                     return html;
                 }
-            } catch (err) {
-                // Si llegamos aquí y es la última subcarpeta, avisar
-                if (sub === 'shared/') console.warn(`[Loader] ⚠️ No se encontró en ${sub}`);
-            }
+            } catch (err) { }
         }
 
-        console.error(`[Loader] ❌ No se pudo encontrar HTML para ${componentName}`);
         return `<div class="error-load">Error cargando componente ${componentName}</div>`;
     },
 
@@ -37,8 +34,14 @@ export const TemplateLoader = {
      * Inyecta dinámicamente un archivo CSS en el head si no existe ya.
      */
     async loadCSS(componentName) {
+        const cacheKey = `css-${componentName}`;
+        if (this.cache[cacheKey]) return;
+
         const id = `style-${componentName}`;
-        if (document.getElementById(id)) return;
+        if (document.getElementById(id)) {
+            this.cache[cacheKey] = true;
+            return;
+        }
 
         const subfolders = ['', 'pages/', 'layout/', 'shared/'];
         for (const sub of subfolders) {
@@ -51,10 +54,13 @@ export const TemplateLoader = {
                     style.id = id;
                     style.textContent = css;
                     document.head.appendChild(style);
-                    console.log(`[Loader] 🎨 Estilo cargado: ${relativePath}`);
+                    this.cache[cacheKey] = true; // Cacheamos usando el nombre raíz
                     return; 
                 }
             } catch (err) { }
         }
+        
+        // Si no se encontró ningún CSS para este componente, marcamos en caché igual para no volver a intentar en el futuro.
+        this.cache[cacheKey] = true;
     }
 };

@@ -1,4 +1,5 @@
-import { ipcMain, dialog } from 'electron';
+import electron from 'electron';
+const { ipcMain, dialog } = electron;
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -124,14 +125,13 @@ export function registerIPCHandlers(mainWindow) {
         
         try {
             if (!fs.existsSync(fullPath)) {
-                console.error(`[Lector-Main] ❌ NO EXISTE: ${fullPath}`);
-                throw new Error(`Archivo no encontrado: ${fullPath}`);
+                return null;
             }
             const content = fs.readFileSync(fullPath, 'utf8');
             return content;
         } catch (err) {
             console.error(`[Lector-Main] ❌ ERROR: ${fullPath}`, err.message);
-            throw err;
+            return null;
         }
     });
 

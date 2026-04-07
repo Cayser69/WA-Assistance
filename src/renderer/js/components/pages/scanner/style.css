@@ -2,7 +2,7 @@
     display: flex;
     flex-direction: column;
     gap: 25px;
-    max-width: 900px;
+    max-width: 1200px; /* Ensanchado para PC */
     margin: 0 auto;
 }
 

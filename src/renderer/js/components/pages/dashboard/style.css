@@ -1,7 +1,7 @@
 /* Dashboard HUB (Landing de Inicio) */
 
 .hub-container {
-    padding: 20px;
+    padding: 60px 20px; /* Más espacio arriba para centrar visualmente */
     display: flex;
     flex-direction: column;
     gap: 40px;
@@ -17,8 +17,8 @@
 }
 
 .hub-card {
-    background: var(--card-bg);
-    border: 1px solid var(--glass-border);
+    background: var(--bg-card);
+    border: 1px solid var(--border);
     border-radius: 20px;
     padding: 30px;
     text-align: center;

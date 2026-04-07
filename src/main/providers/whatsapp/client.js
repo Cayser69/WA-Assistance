@@ -25,6 +25,10 @@ class WhatsAppClient {
         // Sub-gestores
         this.messaging = null;
         this.events = null;
+
+        // Estados de Control
+        this.initializing = false;
+        this.initialized = false;
     }
 
     /**
@@ -38,6 +42,12 @@ class WhatsAppClient {
      * Inicializa el cliente de WhatsApp y sus subcomponentes.
      */
     async init(mainWindow) {
+        if (this.initializing || this.initialized) {
+            console.log('WhatsApp: Ya hay una inicialización activa o completada. Ignorando.');
+            return;
+        }
+
+        this.initializing = true;
         this.mainWindow = mainWindow;
 
         // Centralizamos la sesión en una ruta LOCAL estática y limpia 📂✨
@@ -48,18 +58,23 @@ class WhatsAppClient {
 
         // 1. Verificación y Reparación de Sesión (Solo si existe carpeta)
         if (fs.existsSync(sessionPath)) {
-            console.log('WhatsApp: Detectada sesión previa. Lanzando verificador de bloqueos...');
+            console.log(`[WA-Init] 🛠️ Sesión previa detectada en ${sessionPath}. Reparando...`);
             await SessionManager.repair(authPath);
+            console.log('[WA-Init] ✅ Reparación de archivos de sesión completada.');
             if (this.mainWindow) {
                 this.mainWindow.webContents.send('wa:log', { 
-                    text: 'Verificando sesión protegida...', 
+                    text: 'Verificando sesión protegida (Hecho)...', 
                     type: 'info' 
                 });
             }
+        } else {
+            console.log(`[WA-Init] 📁 No se detectó sesión previa en ${sessionPath}.`);
         }
 
         // 2. Definición del Cliente (Delegado al SessionManager)
+        console.log('[WA-Init] 🏗️ Creando instancia del cliente (WA-JS)...');
         this.client = SessionManager.create(authPath);
+        console.log('[WA-Init] ✅ Instancia creada. Configurando subcomponentes...');
 
         // 3. Inicializar Subcomponentes
         this.messaging = new MessagingManager(this.client, this.mainWindow);
@@ -72,9 +87,16 @@ class WhatsAppClient {
         
         // 5. Lanzar Inicialización con Gestión de Errores
         try {
+            console.log('[WA-Init] 🚀 LLAMANDO A client.initialize()...');
             await this.client.initialize();
+            console.log('[WA-Init] 🎉 CLIENTE INICIALIZADO CON ÉXITO!');
+            this.initialized = true;
         } catch (err) {
+            console.error('[WA-Init] 🔥 FALLÓ client.initialize():', err.message);
             await this.handleInitError(err, authPath);
+        } finally {
+            console.log('[WA-Init] 🏁 Final del proceso de inicialización (Correcto o Fallido).');
+            this.initializing = false;
         }
     }
 

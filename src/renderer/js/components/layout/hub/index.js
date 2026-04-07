@@ -41,8 +41,14 @@ export const Hub = {
         const hubItem = document.getElementById('hub-campaign-status');
         const hubText = document.getElementById('hub-campaign-text');
         if (hubItem && hubText) {
-            hubItem.className = 'hub-item campaign-item ' + (isActive ? 'active-process' : 'disconnect');
-            hubText.textContent = isActive ? status : 'Inactiva';
+            if (!isActive) {
+                hubItem.className = 'hub-item campaign-item disconnect';
+                hubText.textContent = 'Inactiva';
+            } else {
+                const isPaused = typeof status === 'string' && status.includes('PAUSADO');
+                hubItem.className = 'hub-item campaign-item ' + (isPaused ? 'authenticated' : 'active-process');
+                hubText.textContent = status;
+            }
         }
     },
 

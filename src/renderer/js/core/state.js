@@ -22,6 +22,13 @@ export const AppState = {
     },
 
     /**
+     * Limpia el registro local de memoria para evitar saturación de la UI
+     */
+    clearLogs: () => {
+        AppState.logs = [];
+    },
+
+    /**
      * Formatea un número de teléfono para legibilidad (ej: +34 664 33 69 39)
      */
     formatPhoneNumber: (num) => {

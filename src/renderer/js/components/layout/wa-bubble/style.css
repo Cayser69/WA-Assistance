@@ -19,63 +19,68 @@
 .wa-bubble-wrapper {
     display: flex;
     justify-content: flex-end;
-    margin-bottom: 10px;
+    padding: 10px 20px;
     width: 100%;
 }
 
 .wa-bubble {
-    background-color: #005c4b; /* Verde WhatsApp Oscuro */
-    color: #e9edef;
-    padding: 8px 12px 8px 12px;
-    border-radius: 8px 0px 8px 8px;
+    background: #d9fdd3;
+    padding: 8px 12px 28px;
+    border-radius: 8px 0 8px 8px;
+    box-shadow: 0 1px 0.5px rgba(0,0,0,0.13);
     max-width: 85%;
+    width: fit-content; /* Crítico: Ajustar al contenido */
+    min-width: 80px;
     position: relative;
+    color: #111;
     font-size: 14.2px;
     line-height: 1.6;
-    box-shadow: 0 1px 0.5px rgba(0,0,0,0.13);
-    white-space: pre-wrap;
     word-wrap: break-word;
-    display: flex;
-    flex-direction: column;
+}
+
+/* Rabito de la burbuja estilo WhatsApp */
+.wa-bubble::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: -8px;
+    width: 12px;
+    height: 19px;
+    background: #d9fdd3;
+    clip-path: polygon(0 0, 0% 100%, 100% 0);
 }
 
 .wa-bubble-image {
     width: calc(100% + 24px);
     margin: -8px -12px 8px -12px;
     border-radius: 8px 0 0 0;
-    max-height: 200px;
+    max-height: 300px;
     object-fit: cover;
     display: block;
 }
 
-/* El "rabito" de la burbuja */
-.wa-bubble::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    right: -10px;
-    width: 0;
-    height: 0;
-    border-left: 12px solid #005c4b;
-    border-bottom: 12px solid transparent;
+.wa-msg-text {
+    white-space: pre-wrap;
+    margin-bottom: 4px;
 }
 
 .wa-time {
-    display: block;
+    position: absolute;
+    bottom: 4px;
+    right: 7px;
     font-size: 11px;
-    color: rgba(255,255,255,0.4);
-    text-align: right;
-    margin-top: 4px;
+    color: rgba(0, 0, 0, 0.45);
+    display: flex;
+    align-items: center;
+    gap: 3px;
 }
 
 .wa-check {
+    font-size: 16px !important;
     color: #53bdeb;
-    margin-left: 3px;
-    font-size: 16px;
-    vertical-align: bottom;
 }
 
 /* Markdown Support */
-.wa-bubble b, .wa-bubble strong { font-weight: 700; color: #fff; }
+.wa-bubble b, .wa-bubble strong { font-weight: 700; color: #000; }
 .wa-bubble i, .wa-bubble em { font-style: italic; opacity: 0.9; }
 .wa-bubble strike { text-decoration: line-through; opacity: 0.6; }

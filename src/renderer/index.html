@@ -24,6 +24,25 @@
         window.onunhandledrejection = event => {
             console.error('[Promesa Fallida]', event.reason);
         };
+        // DIAGNÓSTICO DE CHOQUE 💉✨
+        window.addEventListener('DOMContentLoaded', () => {
+            const status = document.getElementById('boot-status');
+            if (status) {
+                status.innerText = "HTML y JS Síncrono: OK. Verificando acceso a archivos...";
+                console.log('--- [DIAGNÓSTICO HTML] --- 🟢 Ventana lista.');
+                
+                fetch('js/index.js')
+                    .then(r => {
+                        console.log(`--- [DIAGNÓSTICO FETCH] --- 📡 Estado archivo js/index.js: ${r.status} (${r.ok ? 'OK' : 'FALLÓ'})`);
+                        if (r.ok) status.innerText = "Acceso a JS: OK. Intentando cargar módulos...";
+                        else status.innerText = `❌ Error de Acceso JS: ${r.status}`;
+                    })
+                    .catch(e => {
+                        console.error('--- [DIAGNÓSTICO FETCH] --- 🕵️ Fallo total al leer js/index.js:', e);
+                        status.innerText = "❌ Fallo crítico de acceso a archivos (CORS/URL)";
+                    });
+            }
+        });
     </script>
 </head>
 <body class="dark-mode">
@@ -60,7 +79,7 @@
     </div>
 
     <!-- Punto de Entrada de la Aplicación (Esm Estático) -->
-    <script type="module" src="./js/index.js"></script>
+    <script type="module" src="./js/index.js" onerror="console.error('--- [ERROR SCRIPT MODULE] --- 🔥 No se pudo cargar js/index.js como módulo')"></script>
     <script>
         // Capturar fallos específicos de carga de módulos 🛡️
         window.addEventListener('error', (e) => {
