@@ -3,6 +3,8 @@ const { MessageMedia } = pkg;
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import electron from 'electron';
+const { app } = electron;
 
 // --- Importación de Subcomponentes (Estructura Plana) ---
 import { SessionManager } from './client/session.js';
@@ -50,8 +52,8 @@ class WhatsAppClient {
         this.initializing = true;
         this.mainWindow = mainWindow;
 
-        // Centralizamos la sesión en una ruta LOCAL estática y limpia 📂✨
-        const authPath = path.join(process.cwd(), '.app_data', 'whatsapp_session');
+        // Centralizamos la sesión en la carpeta de datos del usuario 📂✨
+        const authPath = path.join(app.getPath('userData'), 'whatsapp_session');
         const sessionPath = path.join(authPath, 'session-sales-assistant');
         
         console.log(`[WhatsApp] 📂 Sesión centralizada: ${authPath}`);
@@ -184,7 +186,7 @@ class WhatsAppClient {
             });
         }
 
-        const authPath = path.join(process.cwd(), '.wwebjs_auth');
+        const authPath = path.join(app.getPath('userData'), 'whatsapp_session');
 
         try {
             // Delegar toda la desconexión y borrado al gestor de sesión

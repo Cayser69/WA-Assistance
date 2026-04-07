@@ -47,7 +47,6 @@ export const UIEvents = {
 
         window.api.onWAStatus((status) => {
             AppState.updateWAStatusUI(status);
-            AppState.updateSessionLabel(status);
             if (AppState.currentView === 'conexiones') {
                 Router.navigate('conexiones'); 
             }

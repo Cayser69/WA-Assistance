@@ -1,12 +1,14 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import electron from 'electron';
+const { app } = electron;
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Carpeta de almacenamiento interna (Raíz del proyecto/assets/templates)
-const ASSETS_PATH = path.join(process.cwd(), 'assets', 'templates');
+// Carpeta de almacenamiento interna (Raíz de datos de usuario/media)
+const ASSETS_PATH = path.join(app.getPath('userData'), 'media');
 
 /**
  * Gestor de Medios Físicos
@@ -37,7 +39,7 @@ export const MediaManager = {
         try {
             fs.copyFileSync(sourcePath, targetPath);
             // Devolvemos la ruta relativa para guardarla en la DB
-            return path.join('assets', 'templates', fileName);
+            return path.join('media', fileName);
         } catch (error) {
             console.error('MediaManager: Error al copiar imagen:', error);
             return null;
@@ -49,7 +51,7 @@ export const MediaManager = {
      */
     deleteFile(relativePath) {
         if (!relativePath) return;
-        const fullPath = path.join(process.cwd(), relativePath);
+        const fullPath = path.join(app.getPath('userData'), relativePath);
         if (fs.existsSync(fullPath)) {
             try {
                 fs.unlinkSync(fullPath);

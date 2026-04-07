@@ -1,17 +1,26 @@
-import sqlite3 from 'sqlite3';
+import { createRequire } from 'module';
+const require = createRequire(import.meta.url);
+const sqlite3 = require('sqlite3');
+import electron from 'electron';
+const { app } = electron;
 import path from 'path';
-import { fileURLToPath } from 'url';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+let db = null;
 
-// La base de datos se guarda en la raíz del proyecto
-const dbPath = path.join(process.cwd(), 'database.sqlite');
-const db = new sqlite3.Database(dbPath);
+/**
+ * Obtiene la instancia de la base de datos, inicializándola si es necesario.
+ */
+function getDB() {
+    if (!db) {
+        const dbPath = path.join(app.getPath('userData'), 'database.sqlite');
+        db = new sqlite3.Database(dbPath);
+    }
+    return db;
+}
 
 const run = (sql, params = []) => {
     return new Promise((resolve, reject) => {
-        db.run(sql, params, function (err) {
+        getDB().run(sql, params, function (err) {
             if (err) reject(err);
             else resolve(this);
         });
@@ -20,7 +29,7 @@ const run = (sql, params = []) => {
 
 const all = (sql, params = []) => {
     return new Promise((resolve, reject) => {
-        db.all(sql, params, (err, rows) => {
+        getDB().all(sql, params, (err, rows) => {
             if (err) reject(err);
             else resolve(rows);
         });
@@ -224,7 +233,5 @@ export async function saveMessageLog(telefono, mensaje, tipo) {
     return await run("INSERT INTO logs (telefono, mensaje, tipo) VALUES (?, ?, ?)", [telefono, mensaje, tipo]);
 }
 
-// Inicializar DB al cargar el módulo
-initDB();
-
-export default db;
+// Exportamos la función para obtener el DB si fuera necesario externamente
+export { getDB };

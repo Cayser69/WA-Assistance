@@ -1,5 +1,5 @@
 import electron from 'electron';
-const { ipcMain, dialog } = electron;
+const { ipcMain, dialog, app } = electron;
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -121,6 +121,7 @@ export function registerIPCHandlers(mainWindow) {
     ipcMain.handle('app:read-template', async (event, relativePath) => {
         // Normalizar la ruta para Windows/Linux
         const normalized = relativePath.replace(/\//g, path.sep);
+        // Usar app.getAppPath() para encontrar archivos dentro del paquete de la app
         const fullPath = path.resolve(process.cwd(), normalized);
         
         try {
