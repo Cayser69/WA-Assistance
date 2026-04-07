@@ -1,0 +1,67 @@
+<header class="main-header">
+    <h2 id="ai-view-title">Configuración IA</h2>
+</header>
+
+<div class="ai-grid animate-fade-in">
+    <!-- SECCIÓN: CONEXIÓN -->
+    <div id="section-ai-conexion" class="tab-content ai-card">
+        <div class="card glass-card">
+            <h3><span class="material-icons-outlined">vpn_key</span> Credenciales y Conexión</h3>
+            <div class="form-group-col">
+                <div class="input-field">
+                    <label>OpenAI API Key</label>
+                    <div class="api-key-container">
+                        <input type="password" id="openai-key" placeholder="sk-..." style="flex: 1">
+                        <button id="btn-save-key" class="btn btn-primary">Validar y Guardar</button>
+                    </div>
+                </div>
+
+                <div class="input-field">
+                    <label>Modelo del Cerebro</label>
+                    <select id="openai-model" class="model-selector">
+                        <option value="gpt-4o-mini">GPT-4o Mini (Velocidad y Ahorro)</option>
+                        <option value="gpt-4o">GPT-4o (Máxima Inteligencia)</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SECCIÓN: PERSONALIDAD -->
+    <div id="section-ai-personalidad" class="tab-content ai-card hidden">
+        <div class="card glass-card">
+            <h3><span class="material-icons-outlined">psychology</span> Personalidad y Comportamiento</h3>
+            <div class="form-group-col">
+                <label>Prompt del Sistema (Instrucciones):</label>
+                <textarea id="ai-system-prompt" class="prompt-area" style="min-height: 300px;" placeholder="Ej: Eres un asistente experto en ventas inmobiliarias..."></textarea>
+                
+                <div style="display: flex; justify-content: flex-end; margin-top: 15px;">
+                    <button id="btn-save-prompt" class="btn btn-success">
+                        <span class="material-icons-outlined">save</span> GUARDAR PERSONALIDAD
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SECCIÓN: AUTOMATIZACIÓN -->
+    <div id="section-ai-automatizacion" class="tab-content ai-card hidden">
+        <div class="card glass-card">
+            <h3><span class="material-icons-outlined">bolt</span> Automatización de Respuestas</h3>
+            <div class="status-row" style="background: rgba(34, 197, 94, 0.05); margin-bottom: 20px;">
+                <span class="material-icons-outlined" style="color: var(--primary)">info</span>
+                <span>La IA responderá de forma automática a los mensajes entrantes de clientes desconocidos.</span>
+            </div>
+            
+            <div class="ai-toggle-footer" style="border: none; padding: 0;">
+                <div class="header-left">
+                    <strong>Activar Auto-Respuesta:</strong>
+                    <input type="checkbox" id="ai-auto-reply" style="width: 20px; height: 20px; cursor: pointer;">
+                </div>
+                <button id="btn-save-automation" class="btn btn-success">
+                     <span class="material-icons-outlined">save</span> GUARDAR CAMBIOS
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

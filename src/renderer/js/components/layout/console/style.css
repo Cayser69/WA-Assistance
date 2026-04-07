@@ -1,0 +1,74 @@
+/**
+ * Componente: Console - Estilos Encapsulados 🎨✨
+ */
+
+.console-wrapper {
+    background: #000;
+    border-top: 1px solid var(--glass-border);
+    height: 180px;
+    min-height: 35px;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    transition: height 0.1s ease-out;
+}
+
+.console-wrapper.minimized {
+    height: 35px !important;
+}
+
+.resizer-handle {
+    position: absolute;
+    top: -3px;
+    left: 0;
+    right: 0;
+    height: 6px;
+    cursor: row-resize;
+    z-index: 100;
+}
+
+.resizer-handle:hover {
+    background: var(--primary);
+    opacity: 0.5;
+}
+
+.console-header {
+    background: #111;
+    padding: 8px 20px;
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    cursor: pointer;
+}
+
+.console-content {
+    flex: 1;
+    padding: 15px 20px;
+    font-family: 'Courier New', Courier, monospace;
+    overflow-y: auto;
+    font-size: 0.85rem;
+}
+
+/* Tipos de Logs */
+.log-info { color: #aaa; margin-bottom: 4px; }
+.log-success { color: var(--primary); margin-bottom: 4px; }
+.log-error { color: #ef4444; margin-bottom: 4px; }
+
+.toggle-btn {
+    cursor: pointer;
+    font-size: 18px !important;
+    transition: transform 0.3s ease;
+}
+
+.minimized .toggle-btn {
+    transform: rotate(180deg);
+}
+
+.minimized .console-content {
+    display: none;
+}

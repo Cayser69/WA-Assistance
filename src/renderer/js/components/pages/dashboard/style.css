@@ -1,0 +1,84 @@
+/* Dashboard HUB (Landing de Inicio) */
+
+.hub-container {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+    align-items: center;
+}
+
+.hub-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 30px;
+    width: 100%;
+    max-width: 1000px;
+}
+
+.hub-card {
+    background: var(--card-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: 20px;
+    padding: 30px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+    height: 100%; /* Asegurar que todas las cajas tengan la misma altura */
+}
+
+.hub-card .btn {
+    margin-top: auto; /* Empujar el botón siempre al fondo */
+    width: 100%;
+    justify-content: center;
+}
+
+.hub-card:hover {
+    transform: translateY(-10px);
+    border-color: var(--primary);
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.hub-icon {
+    font-size: 50px;
+    color: var(--primary);
+}
+
+.hub-card h3 {
+    margin: 0;
+    font-size: 1.3rem;
+}
+
+.hub-card p {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    line-height: 1.4;
+}
+
+.hub-info-card {
+    width: 100%;
+    max-width: 1000px;
+}
+
+.info-steps {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-top: 15px;
+}
+
+.step {
+    padding: 12px;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 10px;
+    font-size: 0.95rem;
+}
+
+.step strong {
+    color: var(--primary);
+}

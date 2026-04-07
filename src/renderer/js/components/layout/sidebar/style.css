@@ -1,0 +1,138 @@
+.sidebar {
+    width: 260px;
+    height: 100vh;
+    background: #1e293b;
+    border-right: 1px solid rgba(255, 255, 255, 0.05);
+    display: flex;
+    flex-direction: column;
+    padding: 24px 0;
+    transition: var(--transition);
+}
+
+.logo-container {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 0 24px 32px;
+}
+
+.logo-icon {
+    color: var(--primary);
+    font-size: 2rem;
+}
+
+.app-name {
+    font-size: 1.2rem;
+    font-weight: 700;
+    letter-spacing: -0.025em;
+    color: var(--text-main);
+}
+
+.nav-links {
+    list-style: none;
+    flex: 1;
+}
+
+.nav-label {
+    padding: 24px 24px 8px;
+    text-transform: uppercase;
+    font-size: 0.7rem;
+    font-weight: 800;
+    color: var(--text-muted);
+    letter-spacing: 0.05em;
+}
+
+.sidebar li {
+    padding: 12px 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    color: var(--text-muted);
+    transition: var(--transition);
+    border-left: 3px solid transparent;
+}
+
+.sidebar li:hover {
+    background: rgba(255, 255, 255, 0.03);
+    color: var(--text-main);
+}
+
+.sidebar li.active {
+    color: var(--primary);
+    background: rgba(34, 197, 94, 0.05);
+    border-left-color: var(--primary);
+}
+
+.sidebar .material-icons-outlined {
+    font-size: 1.25rem;
+}
+
+.nav-group-header {
+    justify-content: space-between;
+}
+
+.header-content {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.nav-sub-links {
+    list-style: none;
+    background: rgba(0, 0, 0, 0.1);
+    max-height: 0;
+    overflow: hidden;
+    transition: var(--transition);
+}
+
+.nav-sub-links.expanded {
+    max-height: 400px;
+}
+
+.nav-sub-links li {
+    padding-left: 54px;
+    font-size: 0.9rem;
+}
+
+.chevron {
+    transition: transform 0.3s ease;
+}
+
+.expanded-header .chevron {
+    transform: rotate(180deg);
+}
+
+.sidebar-footer {
+    padding: 20px 24px;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.account-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.account-details {
+    display: flex;
+    flex-direction: column;
+}
+
+.wa-number {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-main);
+}
+
+.wa-status-label {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+}

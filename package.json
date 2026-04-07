@@ -1,0 +1,25 @@
+{
+  "name": "wa-sales-assistant",
+  "version": "1.0.0",
+  "description": "WhatsApp Cold Sales Assistant for Windows",
+  "main": "src/main/index.js",
+  "type": "module",
+  "scripts": {
+    "start": "nodemon",
+    "test-db": "node test-db.js"
+  },
+  "nodemonConfig": {
+    "ignore": [".wwebjs_auth/*", "src/renderer/*"],
+    "delay": "2500"
+  },
+  "dependencies": {
+    "electron": "^30.0.0",
+    "openai": "^6.33.0",
+    "qrcode": "^1.5.3",
+    "sqlite3": "^5.1.0",
+    "whatsapp-web.js": "^1.23.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.14"
+  }
+}

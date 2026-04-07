@@ -1,0 +1,100 @@
+<aside class="sidebar">
+    <div class="logo-container">
+        <span class="material-icons-outlined logo-icon">whatsapp</span>
+        <h1 class="app-name">WA Assistant</h1>
+    </div>
+    <nav id="sidebar-nav">
+        <ul class="nav-links">
+        <div class="nav-label">Panel de Control</div>
+        <li onclick="router.navigate('dashboard')" id="nav-dashboard">
+            <span class="material-icons-outlined">dashboard</span> Dashboard
+        </li>
+        <li onclick="router.navigate('conexiones')" id="nav-conexiones">
+            <span class="material-icons-outlined">phonelink_setup</span> Conexión
+        </li>
+        
+        <div class="nav-label">Gestión de Envíos</div>
+        <!-- Grupo Campañas -->
+        <li class="nav-group-header" onclick="ui.toggleNavGroup('group-campanas')">
+            <div class="header-content">
+                <div class="header-left">
+                    <span class="material-icons-outlined">campaign</span> Campañas
+                </div>
+                <span class="material-icons-outlined chevron">expand_more</span>
+            </div>
+        </li>
+        <ul class="nav-sub-links" id="group-campanas">
+            <li onclick="router.navigate('campanas', {tab: 'mensaje'})" id="nav-campanas-mensaje">
+                <span class="material-icons-outlined">send</span> Lanzar Envío
+            </li>
+            <li onclick="router.navigate('campanas', {tab: 'plantillas'})" id="nav-campanas-plantillas">
+                <span class="material-icons-outlined">fact_check</span> Mis Plantillas
+            </li>
+            <li onclick="router.navigate('campanas', {tab: 'multimedia'})" id="nav-campanas-multimedia">
+                <span class="material-icons-outlined">image</span> Multimedia
+            </li>
+            <li onclick="router.navigate('campanas', {tab: 'audiencia'})" id="nav-campanas-audiencia">
+                <span class="material-icons-outlined">groups</span> Audiencia
+            </li>
+        </ul>
+
+        <!-- Grupo Scanner -->
+        <li class="nav-group-header" onclick="ui.toggleNavGroup('group-scanner')">
+            <div class="header-content">
+                <div class="header-left">
+                    <span class="material-icons-outlined">search</span> Validador (Scanner)
+                </div>
+                <span class="material-icons-outlined chevron">expand_more</span>
+            </div>
+        </li>
+        <ul class="nav-sub-links" id="group-scanner">
+            <li onclick="router.navigate('scanner', {tab: 'config'})" id="nav-scanner-config">
+                <span class="material-icons-outlined">play_arrow</span> Lanzar Escaneo
+            </li>
+            <li onclick="router.navigate('scanner', {tab: 'progreso'})" id="nav-scanner-progreso">
+                <span class="material-icons-outlined">analytics</span> Progreso en Vivo
+            </li>
+            <li onclick="router.navigate('scanner', {tab: 'resultados'})" id="nav-scanner-resultados">
+                <span class="material-icons-outlined">fact_check</span> Resultados
+            </li>
+        </ul>
+
+        <li onclick="router.navigate('historial')" id="nav-historial">
+            <span class="material-icons-outlined">history</span> Historial
+        </li>
+
+        <div class="nav-label">Inteligencia Artificial</div>
+        
+        <!-- Grupo IA -->
+        <li class="nav-group-header" onclick="ui.toggleNavGroup('group-ai')">
+            <div class="header-content">
+                <div class="header-left">
+                    <span class="material-icons-outlined">smart_toy</span> Configurar IA
+                </div>
+                <span class="material-icons-outlined chevron">expand_more</span>
+            </div>
+        </li>
+        <ul class="nav-sub-links" id="group-ai">
+            <li onclick="router.navigate('aiConfig', {tab: 'conexion'})" id="nav-aiConfig-conexion">
+                <span class="material-icons-outlined">vpn_key</span> Conexión
+            </li>
+            <li onclick="router.navigate('aiConfig', {tab: 'personalidad'})" id="nav-aiConfig-personalidad">
+                <span class="material-icons-outlined">psychology</span> Personalidad
+            </li>
+            <li onclick="router.navigate('aiConfig', {tab: 'automatizacion'})" id="nav-aiConfig-automatizacion">
+                <span class="material-icons-outlined">bolt</span> Automatización
+            </li>
+        </ul>
+    </nav>
+
+    <!-- Pie de Sidebar con info de cuenta -->
+    <div class="sidebar-footer">
+        <div class="account-info">
+            <span class="material-icons-outlined">account_circle</span>
+            <div class="account-details">
+                <span id="sidebar-wa-number" class="wa-number">No conectado</span>
+                <span id="sidebar-wa-status" class="wa-status-label">Desconectado</span>
+            </div>
+        </div>
+    </div>
+</aside>

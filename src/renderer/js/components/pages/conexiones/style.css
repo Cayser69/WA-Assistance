@@ -1,0 +1,91 @@
+/* Estilos de Conexión de WhatsApp y QR */
+
+.center-content {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start; /* Subir al inicio */
+    min-height: 70vh;
+    padding-top: 40px; /* Margen superior controlado */
+}
+
+.qr-card-large {
+    max-width: 420px; /* Estrechar la tarjeta para que sea más vertical y equilibrada */
+    width: 100%;
+    text-align: center;
+}
+
+.qr-placeholder-large {
+    width: 300px;
+    height: 300px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.4);
+    border-radius: 20px;
+    margin: 20px auto; /* Centrar horizontalmente */
+    border: 2px dashed var(--glass-border);
+}
+
+.qr-image {
+    width: 260px;
+    height: 260px;
+    border-radius: 12px;
+    display: block;
+}
+
+.success-message {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    color: var(--primary);
+    height: 100%;
+}
+
+.success-message span {
+    font-size: 64px;
+}
+
+/* Status Badges */
+.status-panel {
+    margin-top: auto;
+}
+
+.status-badge {
+    padding: 8px 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(0, 0, 0, 0.2);
+}
+
+.dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+}
+
+.disconnect .dot { background: #ef4444; }
+.connect .dot { background: #22c55e; }
+.authenticated .dot { 
+    background: #f59e0b; 
+    animation: statusPulse 1.5s infinite ease-in-out;
+}
+
+@keyframes statusPulse {
+    0% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.4; transform: scale(1.2); }
+    100% { opacity: 1; transform: scale(1); }
+}
+
+@keyframes animate-pulse {
+    0% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.1); opacity: 0.8; }
+    100% { transform: scale(1); opacity: 1; }
+}
+.animate-pulse {
+    animation: animate-pulse 2s infinite ease-in-out;
+}

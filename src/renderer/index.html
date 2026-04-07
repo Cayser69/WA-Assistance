@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WA Sales Assistant</title>
+    <!-- Estilos Globales -->
+    <link rel="stylesheet" href="style/global.css">
+    <!-- Iconos y Fuentes -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
+    <script>
+        // Capturador de Errores Global para el Comienzo ✨
+        window.onerror = function(msg, url, line, col, error) {
+            console.error('[Error Crítico]', msg, url, line, col, error);
+            const body = document.body;
+            if (body) {
+                const errDiv = document.createElement('div');
+                errDiv.style.cssText = "position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.9);color:white;padding:40px;z-index:10000;font-family:monospace;overflow:auto;";
+                errDiv.innerHTML = `<h3>🚨 ERROR CRÍTICO DE ARRANQUE</h3><p>${msg}</p><p>En: ${url}:${line}</p><pre>${error?.stack || ''}</pre>`;
+                body.appendChild(errDiv);
+            }
+            return false;
+        };
+        window.onunhandledrejection = event => {
+            console.error('[Promesa Fallida]', event.reason);
+        };
+    </script>
+</head>
+<body class="dark-mode">
+
+    <div class="app-container">
+        <!-- Indicador de Carga Estático (Diagnóstico) -->
+        <div id="app-loading-screen" style="position:fixed;top:0;left:0;width:100%;height:100%;background:#0f172a;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999;color:white;font-family:sans-serif;pointer-events:none;">
+            <div style="width:40px;height:40px;border:4px solid #22c55e;border-top-color:transparent;border-radius:50%;animation:spin 1s linear infinite;margin-bottom:15px;"></div>
+            <style>@keyframes spin { to { transform: rotate(360deg); } }</style>
+            <span>Iniciando WA Sender Pro...</span>
+            <small id="boot-status" style="margin-top:10px;color:#94a3b8;">Motor visual activo. Cargando componentes...</small>
+        </div>
+
+        <!-- Barra Lateral -->
+        <div id="sidebar-root"></div>
+
+        <!-- Contenedor Principal -->
+        <main class="content">
+            <!-- Banner Global de Pausa -->
+            <div id="global-pause-banner" class="pause-banner" style="display: none;">
+                <span class="material-icons-outlined">schedule</span>
+                <span><b>MODO PAUSA ACTIVO:</b> Fuera de horario comercial (09:00 - 19:00).</span>
+            </div>
+
+            <!-- Hub de Conectividad Global -->
+            <div id="hub-root"></div>
+
+            <!-- Contenido Dinámico de Vistas -->
+            <div id="view-root"></div>
+            
+            <!-- Consola Global de Ejecución -->
+            <div id="console-root"></div>
+        </main>
+    </div>
+
+    <!-- Punto de Entrada de la Aplicación (Esm Estático) -->
+    <script type="module" src="./js/index.js"></script>
+    <script>
+        // Capturar fallos específicos de carga de módulos 🛡️
+        window.addEventListener('error', (e) => {
+            if (e.target.tagName === 'SCRIPT') {
+                console.error('[Boot] 🔥 Error cargando script:', e.target.src);
+            }
+        }, true);
+    </script>
+</body>
+</html>

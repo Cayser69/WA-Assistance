@@ -1,0 +1,22 @@
+        <header class="main-header">
+            <h2>Gestión de Conexión</h2>
+        </header>
+
+        <div class="center-content animate-fade-in">
+            <div class="card glass-card qr-card-large">
+                <h3 id="qr-title">Vincular nuevo dispositivo</h3>
+                <p id="qr-subtitle" class="text-muted">Escanea el código QR desde WhatsApp > Dispositivos vinculados.</p>
+                <div id="qr-container" class="qr-placeholder-large">
+                    <p>Esperando señal de WhatsApp...</p>
+                </div>
+                
+                <div id="logout-container" style="margin-top: 25px; display: none;">
+                    <button id="btn-logout" class="btn btn-danger" style="width: 100%;">
+                        <span class="material-icons-outlined">link_off</span> DESVINCULAR DISPOSITIVO
+                    </button>
+                    <p class="text-muted" style="font-size: 0.8rem; margin-top: 10px;">
+                        Esto cerrará la sesión actual y permitirá escanear un nuevo QR.
+                    </p>
+                </div>
+            </div>
+        </div>

@@ -1,0 +1,12 @@
+{
+  "watch": ["src/main"],
+  "ext": "js,json",
+  "ignore": [
+    "node_modules",
+    "src/renderer",
+    ".wwebjs_auth",
+    "*.sqlite",
+    "*.log"
+  ],
+  "exec": "electron ."
+}

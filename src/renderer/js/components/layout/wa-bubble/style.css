@@ -1,0 +1,81 @@
+/**
+ * Componente: WhatsAppBubble - Estilos Encapsulados 🎨✨💬
+ */
+
+.whatsapp-preview-container {
+    background: url('https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png');
+    background-color: #0b141a;
+    border-radius: 16px;
+    padding: 30px 20px;
+    display: flex;
+    flex-direction: column;
+    min-height: 250px;
+    border: 1px solid rgba(255,255,255,0.05);
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+}
+
+.wa-bubble-wrapper {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 10px;
+    width: 100%;
+}
+
+.wa-bubble {
+    background-color: #005c4b; /* Verde WhatsApp Oscuro */
+    color: #e9edef;
+    padding: 8px 12px 8px 12px;
+    border-radius: 8px 0px 8px 8px;
+    max-width: 85%;
+    position: relative;
+    font-size: 14.2px;
+    line-height: 1.6;
+    box-shadow: 0 1px 0.5px rgba(0,0,0,0.13);
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    display: flex;
+    flex-direction: column;
+}
+
+.wa-bubble-image {
+    width: calc(100% + 24px);
+    margin: -8px -12px 8px -12px;
+    border-radius: 8px 0 0 0;
+    max-height: 200px;
+    object-fit: cover;
+    display: block;
+}
+
+/* El "rabito" de la burbuja */
+.wa-bubble::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: -10px;
+    width: 0;
+    height: 0;
+    border-left: 12px solid #005c4b;
+    border-bottom: 12px solid transparent;
+}
+
+.wa-time {
+    display: block;
+    font-size: 11px;
+    color: rgba(255,255,255,0.4);
+    text-align: right;
+    margin-top: 4px;
+}
+
+.wa-check {
+    color: #53bdeb;
+    margin-left: 3px;
+    font-size: 16px;
+    vertical-align: bottom;
+}
+
+/* Markdown Support */
+.wa-bubble b, .wa-bubble strong { font-weight: 700; color: #fff; }
+.wa-bubble i, .wa-bubble em { font-style: italic; opacity: 0.9; }
+.wa-bubble strike { text-decoration: line-through; opacity: 0.6; }

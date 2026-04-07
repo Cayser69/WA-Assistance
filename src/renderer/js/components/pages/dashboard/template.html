@@ -1,0 +1,43 @@
+        <header class="main-header">
+            <h2>Panel de Inicio</h2>
+        </header>
+
+        <div class="hub-container animate-fade-in">
+            <div class="hub-grid">
+                <div class="hub-card" onclick="router.navigate('conexiones')">
+                    <span class="material-icons-outlined hub-icon">qr_code_2</span>
+                    <h3>Paso 1: Conexión</h3>
+                    <p>Escanea el código QR para vincular tu WhatsApp y empezar a vender.</p>
+                    <button class="btn btn-primary">Ir a Conexión</button>
+                </div>
+
+                <div class="hub-card" onclick="router.navigate('campanas', {tab: 'mensaje'})">
+                    <span class="material-icons-outlined hub-icon">rocket_launch</span>
+                    <h3>Paso 2: Campaña</h3>
+                    <p>Configura tu mensaje de venta y gestiona tu lista de prospectos.</p>
+                    <button class="btn btn-success">Ir a Campaña</button>
+                </div>
+
+                <div class="hub-card" onclick="router.navigate('historial')">
+                    <span class="material-icons-outlined hub-icon">history</span>
+                    <h3>Paso 3: Historial</h3>
+                    <p>Revisa el estado de tus envíos pasados y el éxito de tus campañas.</p>
+                    <button class="btn btn-secondary">Ver Historial</button>
+                </div>
+            </div>
+
+            <div class="card glass-card hub-info-card">
+                <h3><span class="material-icons-outlined">info</span> Guía Rápida para el Comercial</h3>
+                <div class="info-steps">
+                    <div class="step">
+                        <strong>1. Vinculación:</strong> Asegúrate de que el estado de WhatsApp sea "Conectado" antes de iniciar.
+                    </div>
+                    <div class="step">
+                        <strong>2. Prospectos:</strong> Añade los números en formato internacional (ej: 34600000000).
+                    </div>
+                    <div class="step">
+                        <strong>3. Seguridad:</strong> Usa retardos de al menos 10-30 segundos para evitar bloqueos.
+                    </div>
+                </div>
+            </div>
+        </div>

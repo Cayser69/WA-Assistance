@@ -1,0 +1,133 @@
+.scanner-container {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.scanner-grid {
+    display: grid;
+    grid-template-columns: 1fr 1.5fr;
+    gap: 30px;
+}
+
+.scanner-config .card {
+    padding: 25px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.scanner-status .card {
+    padding: 25px;
+    height: 100%;
+}
+
+.scanner-input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.scanner-input-group label {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+}
+
+.scanner-input-row {
+    display: grid;
+    grid-template-columns: 80px 1fr;
+    gap: 10px;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.stat-box {
+    background: rgba(0, 0, 0, 0.2);
+    padding: 15px;
+    border-radius: 12px;
+    text-align: center;
+}
+
+.stat-value {
+    display: block;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--primary);
+}
+
+.stat-label {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.progress-container {
+    margin-top: 30px;
+    background: rgba(255, 255, 255, 0.05);
+    height: 10px;
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.progress-bar {
+    height: 100%;
+    background: var(--primary);
+    width: 0%;
+    transition: width 0.3s ease;
+}
+
+.current-status-box {
+    margin-top: 20px;
+    padding: 15px;
+    background: rgba(34, 197, 94, 0.05);
+    border: 1px solid rgba(34, 197, 94, 0.1);
+    border-radius: 10px;
+    text-align: center;
+}
+
+.current-status-box strong {
+    display: block;
+    margin-bottom: 5px;
+    color: var(--primary);
+}
+
+.current-status-box span {
+    font-size: 0.9rem;
+    font-family: 'Courier New', Courier, monospace;
+}
+
+.scanner-footer {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.safety-notice {
+    background: rgba(245, 158, 11, 0.05);
+    padding: 15px;
+    border-radius: 12px;
+    border: 1px solid rgba(245, 158, 11, 0.2);
+    display: flex;
+    gap: 15px;
+    align-items: center;
+}
+
+.safety-notice .material-icons-outlined {
+    color: #f59e0b;
+    font-size: 2rem;
+}
+
+.safety-notice p {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin: 0;
+}

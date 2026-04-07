@@ -1,0 +1,82 @@
+/* Estilos para la sección de Inteligencia Artificial */
+
+.ai-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 24px;
+    max-width: 800px;
+}
+
+.ai-card {
+    padding: 30px;
+}
+
+.model-selector {
+    padding: 10px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--glass-border);
+    border-radius: 8px;
+    color: white;
+    font-size: 0.95rem;
+    outline: none;
+    width: 100%;
+    margin-top: 5px;
+}
+
+.model-selector option {
+    background: var(--bg-dark);
+}
+
+.prompt-area {
+    min-height: 200px;
+    font-family: 'Segoe UI', Roboto, sans-serif;
+    line-height: 1.5;
+}
+
+.status-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 15px;
+    background: rgba(34, 197, 94, 0.1);
+    border-radius: 8px;
+    border: 1px solid rgba(34, 197, 94, 0.2);
+    margin-bottom: 20px;
+}
+
+.api-key-container {
+    display: flex;
+    gap: 10px;
+}
+
+.ai-toggle-footer {
+    border-top: 1px solid var(--glass-border);
+    padding-top: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* Sidebar Submenu */
+.nav-group {
+    margin-bottom: 15px;
+}
+
+.nav-label {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    padding: 0 16px;
+    margin-bottom: 10px;
+    display: block;
+}
+
+.sub-nav {
+    padding-left: 20px;
+}
+
+.sub-nav li {
+    font-size: 0.9rem !important;
+    padding: 10px 16px !important;
+}
