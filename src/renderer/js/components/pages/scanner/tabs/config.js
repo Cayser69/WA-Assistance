@@ -6,6 +6,23 @@ export const ConfigTab = {
         <div class="card glass-card">
             <h3><span class="material-icons-outlined">settings</span> Configuración de Escaneo</h3>
             
+            <!-- BANNER DE PERSISTENCIA ✨ -->
+            <div id="scanner-persistence-banner" class="status-row animate-fade-in" style="display: none; background: rgba(30, 64, 175, 0.1); border: 1px solid rgba(30, 64, 175, 0.2); margin-top: 15px;">
+                <span class="material-icons-outlined" style="color: #60a5fa">history</span>
+                <div style="flex: 1; font-size: 0.8rem;">
+                    <strong>Tarea Pendiente Detectada</strong><br>
+                    Último número procesado: <span id="persist-last-number" style="font-weight: 700;">---</span>
+                </div>
+                <div style="display: flex; gap: 10px;">
+                    <button id="btn-discard-scanner" class="btn btn-icon" title="Descartar y empezar de cero">
+                        <span class="material-icons-outlined" style="color: #ef4444; font-size: 1.1rem;">delete_sweep</span>
+                    </button>
+                    <button id="btn-resume-scanner" class="btn btn-primary" style="padding: 6px 12px; font-size: 0.75rem;">
+                        <span class="material-icons-outlined" style="font-size: 1rem;">play_arrow</span> REANUDAR
+                    </button>
+                </div>
+            </div>
+            
             <div class="scanner-input-group">
                 <label>Número Inicial (Prefijo + Número)</label>
                 <div class="scanner-input-row">

@@ -8,6 +8,7 @@ class OpenAIClient {
         this.client = null;
         this.model = 'gpt-4o-mini';
         this.prompt = 'Eres un asistente de ventas profesional.';
+        this.knowledgeBase = ''; // Nueva base de conocimiento de negocio 🧠
         this.isActive = false;
     }
 
@@ -24,12 +25,13 @@ class OpenAIClient {
     /**
      * Actualiza la configuración de la IA.
      */
-    config({ apiKey, model, prompt, isActive }) {
+    config({ apiKey, model, prompt, knowledgeBase, isActive }) {
         if (apiKey) {
             this.client = new OpenAI({ apiKey });
         }
         if (model) this.model = model;
         if (prompt) this.prompt = prompt;
+        if (knowledgeBase !== undefined) this.knowledgeBase = knowledgeBase;
         this.isActive = isActive;
     }
 
@@ -43,7 +45,10 @@ class OpenAIClient {
             const response = await this.client.chat.completions.create({
                 model: this.model,
                 messages: [
-                    { role: "system", content: this.prompt },
+                    { 
+                        role: "system", 
+                        content: `${this.prompt}\n\nCONTEXTO DEL NEGOCIO:\n${this.knowledgeBase}` 
+                    },
                     { role: "user", content: userMessage }
                 ],
                 temperature: 0.7,

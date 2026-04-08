@@ -8,9 +8,8 @@
     gap: 15px;
     padding: 12px 30px;
     background: rgba(15, 23, 42, 0.4);
-    backdrop-filter: blur(8px);
-    border-bottom: 1px solid var(--glass-border);
-    margin-bottom: 0px;
+    backdrop-filter: blur(12px); /* Blur más denso */
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
     position: sticky;
     top: 0;
     z-index: 900;
@@ -26,12 +25,19 @@
     border: 1px solid rgba(255, 255, 255, 0.05);
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     min-width: 140px;
+    cursor: pointer;
+    user-select: none;
 }
 
 .hub-item:hover {
-    background: rgba(255, 255, 255, 0.07);
-    border-color: rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.2);
     transform: translateY(-1px);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+}
+
+.hub-item:active {
+    transform: scale(0.98);
 }
 
 .hub-icon-small {
@@ -63,26 +69,28 @@
 /* Colores Dinámicos */
 .hub-item.connect {
     border-left: 3px solid var(--primary);
-    background: rgba(34, 197, 94, 0.04);
+    background: rgba(34, 197, 94, 0.05);
+    box-shadow: var(--neon-success);
 }
 .hub-item.connect .hub-icon-small { color: var(--primary); }
 
 .hub-item.authenticated {
     border-left: 3px solid #eab308;
-    background: rgba(234, 179, 8, 0.04);
+    background: rgba(234, 179, 8, 0.05);
 }
 .hub-item.authenticated .hub-icon-small { color: #eab308; animation: hub-pulse 2s infinite; }
 
 .hub-item.disconnect {
     border-left: 3px solid #ef4444;
-    background: rgba(239, 68, 68, 0.04);
+    background: rgba(239, 68, 68, 0.05);
+    box-shadow: var(--neon-error);
 }
 .hub-item.disconnect .hub-icon-small { color: #ef4444; }
 
 .hub-item.active-process {
     border-left: 3px solid var(--secondary);
-    background: rgba(99, 102, 241, 0.06);
-    box-shadow: 0 0 15px rgba(99, 102, 241, 0.1);
+    background: rgba(96, 165, 250, 0.08);
+    box-shadow: var(--neon-accent);
 }
 .hub-item.active-process .hub-icon-small { color: var(--secondary); animation: hub-pulse 2s infinite; }
 

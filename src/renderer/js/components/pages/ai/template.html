@@ -30,14 +30,25 @@
     <!-- SECCIÓN: PERSONALIDAD -->
     <div id="section-ai-personalidad" class="tab-content ai-card hidden">
         <div class="card glass-card">
-            <h3><span class="material-icons-outlined">psychology</span> Personalidad y Comportamiento</h3>
+            <h3><span class="material-icons-outlined">psychology</span> Personalidad y Contexto</h3>
             <div class="form-group-col">
-                <label>Prompt del Sistema (Instrucciones):</label>
-                <textarea id="ai-system-prompt" class="prompt-area" style="min-height: 300px;" placeholder="Ej: Eres un asistente experto en ventas inmobiliarias..."></textarea>
+                <div class="input-field">
+                    <label>Prompt del Sistema (Instrucciones):</label>
+                    <textarea id="ai-system-prompt" class="prompt-area" style="min-height: 150px; margin-bottom: 20px;" placeholder="Ej: Eres un asistente experto en ventas inmobiliarias..."></textarea>
+                </div>
+                
+                <div class="input-field">
+                    <label>Base de Conocimiento de Negocio (Información):</label>
+                    <div class="status-row" style="background: rgba(34, 197, 94, 0.05); margin-bottom: 5px;">
+                        <span class="material-icons-outlined" style="color: var(--primary); font-size: 1rem;">info</span>
+                        <span style="font-size: 0.75rem;">Pega aquí tus productos, precios, horarios y FAQs para que la IA los sepa.</span>
+                    </div>
+                    <textarea id="ai-knowledge-base" class="prompt-area" style="min-height: 250px;" placeholder="Ej: Precio pizza margarita: 10€. Horario: 10:00 a 22:00..."></textarea>
+                </div>
                 
                 <div style="display: flex; justify-content: flex-end; margin-top: 15px;">
                     <button id="btn-save-prompt" class="btn btn-success">
-                        <span class="material-icons-outlined">save</span> GUARDAR PERSONALIDAD
+                        <span class="material-icons-outlined">save</span> GUARDAR PERSONALIDAD Y CONTEXTO
                     </button>
                 </div>
             </div>

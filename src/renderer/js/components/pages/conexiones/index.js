@@ -45,10 +45,14 @@ export const Conexiones = {
                     qrTitle.textContent = 'Vincular nuevo dispositivo';
                     qrSubtitle.style.display = 'block';
                 } else if (appState.waStatus === 'connect' || appState.waStatus === 'authenticated') {
+                    const formattedNumber = appState.waNumber ? appState.formatPhoneNumber(appState.waNumber) : 'Dispositivo Vinculado';
                     qrContainer.innerHTML = `
                         <div class="success-message">
-                            <span class="material-icons-outlined animate-pulse">verified</span>
-                            <p>${appState.waStatus === 'connect' ? 'Conectado con éxito' : 'Sincronizando...'}</p>
+                            <span class="material-icons-outlined animate-pulse" style="font-size: 3rem; color: var(--neon-success);">verified</span>
+                            <div style="margin-top: 15px;">
+                                <p style="font-weight: 600; font-size: 1.1rem;">${appState.waStatus === 'connect' ? 'Conexión Activa' : 'Sincronizando...'}</p>
+                                <p class="text-muted" style="font-size: 0.9rem; margin-top: 5px;">${formattedNumber}</p>
+                            </div>
                         </div>
                     `;
                     logoutContainer.style.display = 'block';
@@ -60,18 +64,44 @@ export const Conexiones = {
                 }
             };
 
-            // Ejecución inicial
+            // Ejecución inicial y actualización visual 🔄
             syncUI();
 
-            // 4. Lógica de Logout con confirmación de usuario
-            if (btnLogout) {
-                btnLogout.onclick = async () => {
-                    const confirmLogout = await confirm('¿Estás seguro de que deseas desvincular este dispositivo? Se cerrará la sesión actual.');
-                    if (confirmLogout) {
-                        btnLogout.disabled = true;
-                        btnLogout.innerHTML = '<span class="material-icons-outlined animate-spin">sync</span> CERRANDO SESIÓN...';
-                        await window.api.logout();
-                        console.log('[Conexiones] 🚪 Logout solicitado.');
+            // 5. Lógica de Sincronización de Contactos 👥
+            const btnSync = document.getElementById('btn-sync-contacts');
+            const syncStatusMsg = document.getElementById('sync-status-msg');
+
+            if (btnSync) {
+                btnSync.onclick = async () => {
+                    const status = await window.api.invoke('wa:get-status');
+                    if (status !== 'connect') {
+                        return alert('WhatsApp debe estar conectado para sincronizar la agenda.');
+                    }
+
+                    btnSync.disabled = true;
+                    btnSync.innerHTML = '<span class="material-icons-outlined animate-spin">sync</span> SINCRONIZANDO...';
+                    
+                    try {
+                        const result = await window.api.invoke('wa:sync-contacts');
+                        if (result.success) {
+                            syncStatusMsg.style.display = 'block';
+                            syncStatusMsg.innerHTML = `
+                                <div style="color: var(--primary); font-weight: 600;">
+                                    ¡Éxito! Se han importado ${result.imported} nuevos leads.
+                                </div>
+                                <div class="text-muted" style="margin-top: 5px;">
+                                    Total contactos procesados: ${result.total}
+                                </div>
+                            `;
+                            appState.pushLog({ text: `Sincronización completa: ${result.imported} nuevos leads añadidos.`, type: 'success' });
+                        } else {
+                            alert('Error: ' + result.error);
+                        }
+                    } catch (e) {
+                        console.error('Error al sincronizar:', e);
+                    } finally {
+                        btnSync.disabled = false;
+                        btnSync.innerHTML = '<span class="material-icons-outlined">group_add</span> SINCRONIZAR MIS CONTACTOS';
                     }
                 };
             }

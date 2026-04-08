@@ -11,6 +11,8 @@ contextBridge.exposeInMainWorld('api', {
     insertLead: (telefono) => ipcRenderer.invoke('db:insertLead', telefono),
     markAsContacted: (id) => ipcRenderer.invoke('db:markAsContacted', id),
     saveLog: (data) => ipcRenderer.invoke('db:saveLog', data),
+    getChats: () => ipcRenderer.invoke('db:get-chats'),
+    getChatMessages: (tel) => ipcRenderer.invoke('db:get-chat-messages', tel),
 
     // Campaña
     startCampaign: (data) => ipcRenderer.invoke('wa:start-campaign', data),
@@ -56,8 +58,11 @@ contextBridge.exposeInMainWorld('api', {
     // Multimedia y Sistema
     importTemplateImage: (path) => ipcRenderer.invoke('media:importTemplateImage', path),
     getAppPath: () => ipcRenderer.invoke('app:getPath'),
-    openFile: (filters) => ipcRenderer.invoke('dialog:openFile', { filters }),
+    openFileDialog: (filters) => ipcRenderer.invoke('dialog:openFile', { filters }),
     
     // Nuevo: Cargador de Plantillas (IPC)
     readTemplate: (relativePath) => ipcRenderer.invoke('app:read-template', relativePath),
+
+    // Puente Genérico (Para compatibilidad con módulos existentes) 🛠️
+    invoke: (channel, ...args) => ipcRenderer.invoke(channel, ...args),
 });

@@ -1,5 +1,5 @@
-import { waClient } from '../client.js';
-import * as db from '../../../services/database/index.js';
+import { waClient } from '../../core/client.js';
+import * as db from '../../../../services/database/index.js';
 
 /**
  * Gestor de Lógica de Validación del Scanner

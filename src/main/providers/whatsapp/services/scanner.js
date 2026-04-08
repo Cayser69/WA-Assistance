@@ -1,7 +1,7 @@
 import { ScannerScheduler } from './scanner/scheduler.js';
 import { ScannerLogic } from './scanner/logic.js';
 import { ScannerExecutor } from './scanner/executor.js';
-import * as db from '../../services/database/index.js';
+import * as db from '../../../services/database/index.js';
 
 /**
  * Orquestador del Scanner de WhatsApp
@@ -69,12 +69,17 @@ class WhatsAppScanner {
         this.broadcastStatus();
         this.log(`Scanner: Iniciado para ${config.range} números...`, 'info');
 
-        // Modificamos config para el reintento
+        // Modificamos config para el reintento usando aritmética BigInt segura 🧮
         const runConfig = { ...config };
         if (startIndex > 0) {
-            const startBigInt = BigInt(config.baseNumber) + BigInt(startIndex);
-            runConfig.baseNumber = startBigInt.toString();
-            runConfig.range = config.range - startIndex;
+            try {
+                const startBigInt = BigInt(config.baseNumber) + BigInt(startIndex);
+                runConfig.baseNumber = startBigInt.toString();
+                runConfig.range = Math.max(0, config.range - startIndex);
+                this.log(`Scanner: Reanudando desde ${runConfig.baseNumber}...`, 'info');
+            } catch (e) {
+                console.error('Error calculando BigInt offset:', e);
+            }
         }
 
         try {
@@ -100,6 +105,7 @@ class WhatsAppScanner {
             this.log(`❌ Error crítico en scanner: ${fatalError.message}`, 'error');
         } finally {
             this.isRunning = false;
+            this.isStopping = false; // Reset flag
             this.sendStatus('INACTIVO');
         }
     }
@@ -148,6 +154,7 @@ class WhatsAppScanner {
      */
     stop() {
         this.isRunning = false;
+        this.isStopping = true; // Señal para el executor de que paramos manualmente
         this.status.paused = false;
         this.status.nextCheck = null;
         this.broadcastStatus();

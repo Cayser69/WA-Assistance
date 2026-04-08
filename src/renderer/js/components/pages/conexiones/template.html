@@ -14,7 +14,22 @@
                     <button id="btn-logout" class="btn btn-danger" style="width: 100%;">
                         <span class="material-icons-outlined">link_off</span> DESVINCULAR DISPOSITIVO
                     </button>
-                    <p class="text-muted" style="font-size: 0.8rem; margin-top: 10px;">
+                    
+                    <!-- PANEL DE SINCRONIZACIÓN DE CONTACTOS 👥 -->
+                    <div id="sync-contacts-area" style="margin-top: 30px; padding-top: 20px; border-top: 1px dashed var(--glass-border);">
+                        <h4><span class="material-icons-outlined" style="vertical-align: middle;">sync_alt</span> Sincronización de Agenda</h4>
+                        <p class="text-muted" style="font-size: 0.75rem; margin-bottom: 15px;">
+                            Extrae tus contactos personales y guárdalos como Leads para tus campañas.
+                        </p>
+                        <button id="btn-sync-contacts" class="btn btn-secondary" style="width: 100%;">
+                            <span class="material-icons-outlined">group_add</span> SINCRONIZAR MIS CONTACTOS
+                        </button>
+                        <div id="sync-status-msg" style="margin-top: 10px; font-size: 0.75rem; text-align: center; display: none;">
+                            <!-- Inyectado dinámicamente -->
+                        </div>
+                    </div>
+
+                    <p class="text-muted" style="font-size: 0.8rem; margin-top: 20px;">
                         Esto cerrará la sesión actual y permitirá escanear un nuevo QR.
                     </p>
                 </div>

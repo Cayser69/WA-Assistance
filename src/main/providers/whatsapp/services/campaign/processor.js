@@ -30,7 +30,7 @@ export class CampaignProcessor {
         if (!useAI) return message;
 
         // Importación dinámica para evitar ciclos de dependencia
-        const { aiClient } = await import('../../../services/ai/client.js');
+        const { aiClient } = await import('../../../../services/ai/client.js');
         
         if (aiClient.isActive) {
             this.mainWindow.webContents.send('wa:log', { 

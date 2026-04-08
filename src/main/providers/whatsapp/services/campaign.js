@@ -1,7 +1,7 @@
 import { CampaignScheduler } from './campaign/scheduler.js';
 import { CampaignProcessor } from './campaign/processor.js';
 import { CampaignExecutor } from './campaign/executor.js';
-import * as db from '../../services/database/index.js';
+import * as db from '../../../services/database/index.js';
 
 /**
  * Orquestador de Campañas de WhatsApp

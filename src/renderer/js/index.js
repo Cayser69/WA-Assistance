@@ -31,6 +31,12 @@ window.addEventListener('DOMContentLoaded', async () => {
         if (hubRoot) {
             hubRoot.innerHTML = Hub.render();
             await Hub.init();
+            
+            // Sincronización inicial de persistencia 🛰️
+            setTimeout(async () => {
+                const saved = await window.api.checkPersistence('scanner_active');
+                if (saved) window.Hub.updateScanner(true, true);
+            }, 1000);
         }
 
         // 4. Cargar Consola 📟

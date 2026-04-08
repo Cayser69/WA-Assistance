@@ -2,120 +2,182 @@ import { WhatsAppBubble } from '../../../layout/wa-bubble/index.js';
 
 export const PlantillasTab = {
     render: () => `
-        <div id="section-plantillas" class="animate-fade-in">
-            <div class="template-console-grid">
-                
-                <!-- Columna 1: Librería de Plantillas (Estrecha) -->
-                <nav class="left-panel">
-                    <div class="card glass-card">
-                        <div class="template-header">
-                            <h4 style="margin:0; font-size: 0.95rem;">
-                                <span class="material-icons-outlined" style="vertical-align: middle; font-size: 1.1rem;">fact_check</span> Librería
-                            </h4>
-                            <button id="btn-new-template" class="btn btn-secondary" style="padding: 4px 8px; font-size: 0.75rem;">
-                                <span class="material-icons-outlined" style="font-size: 0.9rem;">add</span> Nueva
-                            </button>
-                        </div>
-                        <p class="text-muted" style="font-size: 0.7rem; margin: 10px 0;">Tus mensajes guardados.</p>
-                        
-                        <div id="templates-list-container" class="template-list-scroll" style="max-height: 550px;">
-                            <!-- Inyectado dinámicamente -->
-                        </div>
-                    </div>
-                </nav>
+        <div id="section-plantillas" class="animate-fade-in template-console-layout">
+            
+            <!-- 1. LIBRERÍA SUPERIOR (Horizontal) -->
+            <section class="template-library-top">
+                <div class="template-header">
+                    <h4 style="margin:0; font-size: 0.95rem;">
+                        <span class="material-icons-outlined" style="vertical-align: middle; font-size: 1.1rem;">fact_check</span> Mis Plantillas Guardadas
+                    </h4>
+                    <button id="btn-new-template" class="btn btn-secondary" style="padding: 4px 12px;">
+                        <span class="material-icons-outlined" style="font-size: 1.1rem;">add</span> Crear Nueva
+                    </button>
+                </div>
+                <div id="templates-list-container" class="library-scroll">
+                    <!-- Cards inyectadas dinámicamente -->
+                </div>
+            </section>
 
-                <!-- Columna 2: Vista Previa Central (WhatsApp Mockup) -->
-                <div class="preview-panel">
-                    <div class="card glass-card" style="padding: 15px; background: rgba(0,0,0,0.4);">
-                        <h4 style="margin-bottom: 15px; font-size: 0.9rem; text-align: center; color: var(--text-muted);">
-                            <span class="material-icons-outlined" style="font-size: 1rem; vertical-align: middle;">visibility</span> Vista Previa
+            <!-- 2. GRID INFERIOR (Preview | Editor) -->
+            <section class="template-editor-grid">
+                
+                <!-- Columna Izquierda: Vista Previa -->
+                <div class="preview-column">
+                    <div class="card glass-card" style="padding: 20px; background: rgba(0,0,0,0.4); height: 100%;">
+                        <h4 style="margin-bottom: 20px; font-size: 0.9rem; color: var(--text-muted); text-align: center;">
+                            <span class="material-icons-outlined" style="font-size: 1.1rem; vertical-align: middle;">visibility</span> Vista Previa del Chat
                         </h4>
                         
                         <div class="whatsapp-preview-container" id="wa-preview-root">
-                            <!-- Inyectado dinámicamente -->
+                            <!-- Burbuja inyectada -->
                         </div>
                         
-                        <div style="margin-top: 20px; padding: 10px; border-top: 1px solid var(--glass-border); text-align:center;">
-                           <p class="text-muted" style="font-size: 0.7rem;">Así lo verá el cliente en su dispositivo.</p>
+                        <div style="margin-top: 25px; padding-top: 15px; border-top: 1px solid var(--glass-border); text-align:center;">
+                           <p class="text-muted" style="font-size: 0.75rem;">Visualización exacta de cómo lo recibirá el cliente.</p>
                         </div>
                     </div>
                 </div>
 
-                <!-- Columna 3: Editor Lateral (Completo) -->
-                <main class="right-panel">
+                <!-- Columna Derecha: Formulario Editor -->
+                <div class="editor-column">
                     <div class="card glass-card">
                         <div class="form-group-col">
                             <input type="hidden" id="edit-template-id" value="">
                             
                             <div class="form-group">
-                                <label>Nombre identificativo</label>
-                                <input type="text" id="template-name" placeholder="p.ej. Campaña Oferta Black Friday">
+                                <label>Nombre de la Plantilla</label>
+                                <input type="text" id="template-name" placeholder="p.ej. Bienvenida Clientes Nuevos">
                             </div>
 
+                            <!-- GALERÍA DE IMÁGENES -->
                             <div class="form-group">
-                                <label>Imagen de la Plantilla</label>
-                                <div id="template-image-area" class="image-selector-row" style="cursor: pointer; position: relative; min-height: 100px;">
-                                    <div id="img-preview-placeholder">
-                                        <span class="material-icons-outlined" style="font-size: 2rem; color: var(--glass-border);">add_photo_alternate</span>
-                                        <p style="font-size: 0.75rem; margin-top: 5px;">Añadir Imagen</p>
-                                    </div>
-                                    <img id="img-preview-full" src="" style="display: none; max-height: 80px; border-radius: 8px;">
-                                    
-                                    <button id="btn-remove-image" class="btn-icon" style="display: none; position: absolute; top: 5px; right: 5px; background: rgba(0,0,0,0.5); border-radius: 50%;">
-                                        <span class="material-icons-outlined" style="color: white; font-size: 1rem;">close</span>
+                                <label>Seleccionar Imagen de la Galería</label>
+                                <div class="image-gallery-selector" id="image-gallery-root">
+                                    <!-- Miniaturas inyectadas -->
+                                </div>
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px;">
+                                    <span class="text-muted" style="font-size: 0.7rem;">Clica una imagen para usarla o sube una nueva:</span>
+                                    <button id="btn-upload-new-img" class="btn btn-secondary" style="font-size: 0.7rem; padding: 2px 8px;">
+                                        <span class="material-icons-outlined" style="font-size: 0.9rem;">upload</span> Subir Foto
                                     </button>
                                 </div>
                                 <input type="hidden" id="template-image-path" value="">
                             </div>
 
                             <div class="form-group">
-                                <label>Contenido del Mensaje</label>
-                                <textarea id="template-content" placeholder="Introduce el texto aquí. Recuerda que puedes usar *negrita* y _cursiva_." style="min-height: 180px;"></textarea>
+                                <label>Contenido del Mensaje (Soporta Markdown)</label>
+                                <textarea id="template-content" placeholder="Escribe aquí tu mensaje... Puedes usar *negrita* y _cursiva_." style="min-height: 150px;"></textarea>
                             </div>
 
-                            <div style="display: flex; gap: 15px; margin-top: 20px;">
-                                <button id="btn-save-template" class="btn btn-primary" style="flex: 1; padding: 12px !important;">
-                                    <span class="material-icons-outlined">offline_pin</span> GUARDAR PLANTILLA
+                            <div style="display: flex; gap: 15px; margin-top: 10px;">
+                                <button id="btn-save-template" class="btn btn-primary" style="flex: 1; padding: 15px !important;">
+                                    <span class="material-icons-outlined">save</span> GUARDAR CAMBIOS
+                                </button>
+                                <button id="btn-delete-current" class="btn btn-icon" style="background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.2); display: none;">
+                                    <span class="material-icons-outlined" style="color: #ef4444;">delete</span>
                                 </button>
                             </div>
                         </div>
                     </div>
-                </main>
-            </div>
+                </div>
+
+            </section>
         </div>
     `,
 
     init: async (appState) => {
-        // Inicializar el componente modular (Carga HTML/CSS)
         await WhatsAppBubble.init();
 
         const listContainer = document.getElementById('templates-list-container');
+        const galleryRoot = document.getElementById('image-gallery-root');
         const nameInput = document.getElementById('template-name');
         const contentInput = document.getElementById('template-content');
         const idInput = document.getElementById('edit-template-id');
         const imagePathInput = document.getElementById('template-image-path');
-        const imgArea = document.getElementById('template-image-area');
-        const imgFull = document.getElementById('img-preview-full');
-        const imgPlaceholder = document.getElementById('img-preview-placeholder');
-        const btnRemoveImg = document.getElementById('btn-remove-image');
         const waPreviewRoot = document.getElementById('wa-preview-root');
         const btnSave = document.getElementById('btn-save-template');
         const btnNew = document.getElementById('btn-new-template');
+        const btnUpload = document.getElementById('btn-upload-new-img');
+        const btnDelete = document.getElementById('btn-delete-current');
 
         let currentTemplates = [];
+        let currentImages = [];
 
         const updatePreview = () => {
             const text = contentInput.value;
             const imagePath = imagePathInput.value;
-            
-            // Usamos el componente centralizado
             waPreviewRoot.innerHTML = WhatsAppBubble.render(text, imagePath);
         };
 
-        contentInput.addEventListener('input', updatePreview);
+        const refreshGallery = async () => {
+            currentImages = await window.api.invoke('media:listImages');
+            galleryRoot.innerHTML = currentImages.map(imgName => {
+                const fullPath = `media/${imgName}`;
+                const isSelected = imagePathInput.value === fullPath;
+                return `
+                    <img src="file://${window.api.getAppPath()}/${fullPath}" 
+                         class="gallery-item ${isSelected ? 'selected' : ''}" 
+                         data-path="${fullPath}"
+                         title="${imgName}">
+                `;
+            }).join('') || '<p class="text-muted" style="grid-column: 1/-1; padding: 20px; font-size: 0.75rem;">No hay imágenes aún.</p>';
 
-        imgArea.onclick = async (e) => {
-            if (e.target.closest('#btn-remove-image')) return;
+            galleryRoot.querySelectorAll('.gallery-item').forEach(img => {
+                img.onclick = () => {
+                    galleryRoot.querySelectorAll('.gallery-item').forEach(i => i.classList.remove('selected'));
+                    img.classList.add('selected');
+                    imagePathInput.value = img.dataset.path;
+                    updatePreview();
+                };
+            });
+        };
+
+        const refreshTemplatesList = async () => {
+            currentTemplates = await window.api.getTemplates();
+            listContainer.innerHTML = currentTemplates.map(t => `
+                <div class="template-card ${idInput.value == t.id ? 'active' : ''}" data-id="${t.id}">
+                    <div class="card-title">${t.nombre}</div>
+                    <div class="card-snippet">
+                        ${t.image_path ? '🖼️ con imagen • ' : ''}
+                        ${t.contenido.substring(0, 30)}...
+                    </div>
+                </div>
+            `).join('') || '<div class="text-muted" style="padding: 20px;">Sin plantillas.</div>';
+
+            listContainer.querySelectorAll('.template-card').forEach(card => {
+                card.onclick = () => {
+                    const template = currentTemplates.find(t => t.id == card.dataset.id);
+                    if (template) fillForm(template);
+                };
+            });
+        };
+
+        const fillForm = (t) => {
+            idInput.value = t.id;
+            nameInput.value = t.nombre;
+            contentInput.value = t.contenido;
+            imagePathInput.value = t.image_path || '';
+            btnDelete.style.display = 'block';
+            btnSave.innerHTML = '<span class="material-icons-outlined">save</span> ACTUALIZAR PLANTILLA';
+            updatePreview();
+            refreshGallery(); 
+            refreshTemplatesList();
+        };
+
+        const resetForm = () => {
+            idInput.value = '';
+            nameInput.value = '';
+            contentInput.value = '';
+            imagePathInput.value = '';
+            btnDelete.style.display = 'none';
+            btnSave.innerHTML = '<span class="material-icons-outlined">offline_pin</span> GUARDAR PLANTILLA';
+            updatePreview();
+            refreshGallery();
+            refreshTemplatesList();
+        };
+
+        btnUpload.onclick = async () => {
             const selectedPath = await window.api.openFileDialog({
                 filters: [{ name: 'Imágenes', extensions: ['jpg', 'png', 'jpeg', 'webp'] }]
             });
@@ -123,108 +185,38 @@ export const PlantillasTab = {
                 const internalPath = await window.api.importTemplateImage(selectedPath);
                 if (internalPath) {
                     imagePathInput.value = internalPath;
-                    imgFull.src = `file://${window.api.getAppPath()}/${internalPath}`;
-                    imgFull.style.display = 'block';
-                    imgPlaceholder.style.display = 'none';
-                    btnRemoveImg.style.display = 'block';
+                    await refreshGallery();
                     updatePreview();
                 }
             }
         };
 
-        btnRemoveImg.onclick = (e) => {
-            e.stopPropagation();
-            imagePathInput.value = '';
-            imgFull.src = '';
-            imgFull.style.display = 'none';
-            imgPlaceholder.style.display = 'block';
-            btnRemoveImg.style.display = 'none';
-            updatePreview();
+        btnSave.onclick = async () => {
+            const data = {
+                id: idInput.value,
+                nombre: nameInput.value.trim(),
+                contenido: contentInput.value.trim(),
+                imagePath: imagePathInput.value
+            };
+            if (!data.nombre || !data.contenido) return alert('Nombre y contenido obligatorios.');
+            await window.api.saveTemplate(data);
+            appState.log(`Plantilla "${data.nombre}" guardada.`, 'success');
+            resetForm();
         };
 
-        const refreshList = async () => {
-            currentTemplates = await window.api.getTemplates();
-            if (!listContainer) return;
-
-            listContainer.innerHTML = currentTemplates.length ? currentTemplates.map(t => `
-                <div class="template-item" data-id="${t.id}" style="padding: 10px;">
-                    <div class="info" style="max-width: 150px;">
-                        <span class="name" style="font-size: 0.85rem;">${t.nombre}</span>
-                        <span class="snippet" style="font-size: 0.7rem; display: flex; align-items: center; gap: 3px;">
-                            ${t.image_path ? '<span class="material-icons-outlined" style="font-size: 0.75rem; color: var(--primary);">image</span>' : ''}
-                            ${t.contenido.substring(0, 20)}...
-                        </span>
-                    </div>
-                    <div class="actions">
-                        <button class="btn-icon btn-delete" data-id="${t.id}">
-                            <span class="material-icons-outlined" style="color: #ef4444; font-size: 1rem;">delete</span>
-                        </button>
-                    </div>
-                </div>
-            `).join('') : '<div class="text-center p-20 text-muted" style="font-size: 0.8rem;">Vacio.</div>';
-
-            listContainer.querySelectorAll('.template-item').forEach(item => {
-                item.onclick = (e) => {
-                    if (e.target.closest('.btn-delete')) return;
-                    listContainer.querySelectorAll('.template-item').forEach(i => i.classList.remove('active'));
-                    item.classList.add('active');
-                    const template = currentTemplates.find(t => t.id == item.dataset.id);
-                    if (template) {
-                        idInput.value = template.id;
-                        nameInput.value = template.nombre;
-                        contentInput.value = template.contenido;
-                        imagePathInput.value = template.image_path || '';
-                        if (template.image_path) {
-                            imgFull.src = `file://${window.api.getAppPath()}/${template.image_path}`;
-                            imgFull.style.display = 'block'; imgPlaceholder.style.display = 'none'; btnRemoveImg.style.display = 'block';
-                        } else {
-                            imgFull.style.display = 'none'; imgPlaceholder.style.display = 'block'; btnRemoveImg.style.display = 'none';
-                        }
-                        updatePreview();
-                        btnSave.innerHTML = '<span class="material-icons-outlined">save</span> ACTUALIZAR';
-                    }
-                };
-            });
-
-            listContainer.querySelectorAll('.btn-delete').forEach(btn => {
-                btn.onclick = async (e) => {
-                    e.stopPropagation();
-                    if (confirm('¿Eliminar?')) {
-                        await window.api.deleteTemplate(btn.dataset.id);
-                        if (idInput.value == btn.dataset.id) resetForm();
-                        await refreshList();
-                    }
-                };
-            });
-        };
-
-        const resetForm = () => {
-            idInput.value = ''; nameInput.value = ''; contentInput.value = '';
-            imagePathInput.value = ''; imgFull.src = ''; imgFull.style.display = 'none';
-            imgPlaceholder.style.display = 'block'; btnRemoveImg.style.display = 'none';
-            updatePreview();
-            btnSave.innerHTML = '<span class="material-icons-outlined">save</span> GUARDAR';
-            listContainer.querySelectorAll('.template-item').forEach(i => i.classList.remove('active'));
+        btnDelete.onclick = async () => {
+            if (confirm('¿Eliminar esta plantilla definitivamente?')) {
+                await window.api.deleteTemplate(idInput.value);
+                resetForm();
+            }
         };
 
         btnNew.onclick = resetForm;
-        btnSave.onclick = async () => {
-            const nombre = nameInput.value.trim();
-            const contenido = contentInput.value.trim();
-            const id = idInput.value;
-            const imagePath = imagePathInput.value;
-            if (!nombre || !contenido) return alert('Campos obligatorios.');
+        contentInput.oninput = updatePreview;
 
-            await window.api.saveTemplate({ id, nombre, contenido, imagePath });
-            
-            // Refresco inmediato de la librería
-            await refreshList();
-            
-            appState.log(`Plantilla "${nombre}" ${id ? 'actualizada' : 'creada'} con éxito.`, 'success');
-            
-            // Limpiamos y preparamos para la siguiente acción
-            resetForm();
-        };
-        await refreshList();
+        // Init
+        await refreshTemplatesList();
+        await refreshGallery();
+        updatePreview();
     }
 };

@@ -1,0 +1,52 @@
+<section id="chat-section" class="chat-container animate-fade-in">
+    <div class="chat-layout glass-card">
+        <!-- Columna Izquierda: Lista de Contactos -->
+        <aside class="chat-sidebar">
+            <div class="search-box">
+                <span class="material-icons-outlined">search</span>
+                <input type="text" id="chat-search" placeholder="Buscar conversación...">
+            </div>
+            
+            <div class="contacts-list" id="chat-contacts-list">
+                <!-- Se cargará dinámicamente -->
+                <div class="text-center p-20" style="opacity: 0.5;">
+                    <p>Cargando conversaciones...</p>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Columna Derecha: Ventana de Mensajes -->
+        <main class="chat-window">
+            <div id="chat-welcome-screen" class="welcome-screen">
+                <span class="material-icons-outlined">chat</span>
+                <h3>Tus Mensajes</h3>
+                <p>Selecciona una conversación para ver el historial de mensajes enviados y recibidos.</p>
+            </div>
+
+            <div id="chat-content-view" class="chat-content-view" style="display: none;">
+                <header class="chat-header">
+                    <div class="contact-info">
+                        <div class="avatar">
+                            <span class="material-icons-outlined">account_circle</span>
+                        </div>
+                        <div class="details">
+                            <h4 id="active-chat-name">Número de Teléfono</h4>
+                            <span id="active-chat-status" class="status-online">Activo</span>
+                        </div>
+                    </div>
+                </header>
+
+                <div class="messages-viewport" id="chat-messages-viewport">
+                    <!-- Las burbujas de chat se inyectan aquí -->
+                </div>
+
+                <footer class="chat-input-area">
+                   <p class="read-only-notice">
+                       <span class="material-icons-outlined">info</span> 
+                       Modo Visualización: Los mensajes enviados desde la APP aparecen aquí.
+                   </p>
+                </footer>
+            </div>
+        </main>
+    </div>
+</section>

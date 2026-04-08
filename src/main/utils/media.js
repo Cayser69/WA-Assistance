@@ -57,5 +57,20 @@ export const MediaManager = {
                 fs.unlinkSync(fullPath);
             } catch (e) {}
         }
+    },
+
+    /**
+     * Lista todas las imágenes en la carpeta de medios.
+     */
+    listImages() {
+        this.ensureDir();
+        try {
+            const files = fs.readdirSync(ASSETS_PATH);
+            // Filtrar solo imágenes comunes y devolver nombres
+            return files.filter(f => /\.(jpg|jpeg|png|webp|gif)$/i.test(f));
+        } catch (error) {
+            console.error('MediaManager: Error al listar imágenes:', error);
+            return [];
+        }
     }
 };

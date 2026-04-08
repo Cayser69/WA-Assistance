@@ -4,9 +4,9 @@
 import { Dashboard } from '../components/pages/dashboard/index.js';
 import { Conexiones } from '../components/pages/conexiones/index.js';
 import { Campanas } from '../components/pages/campanas/index.js';
-import { Historial } from '../components/pages/historial/index.js';
 import { AI } from '../components/pages/ai/index.js';
 import { Scanner } from '../components/pages/scanner/index.js';
+import { Chat } from '../components/pages/chat/index.js';
 
 import { AppState } from './state.js';
 
@@ -15,9 +15,9 @@ export const Router = {
         'dashboard': Dashboard,
         'conexiones': Conexiones,
         'campanas': Campanas,
-        'historial': Historial,
         'aiConfig': AI,
-        'scanner': Scanner
+        'scanner': Scanner,
+        'chat': Chat
     },
 
     /**
@@ -51,28 +51,34 @@ export const Router = {
      * Actualiza la clase 'active' en los enlaces de la barra lateral.
      */
     updateActiveLink: (viewId, tabId) => {
-        // Limpiar estados previos
+        // 1. Limpiar estados previos
         document.querySelectorAll('.sidebar .active').forEach(li => li.classList.remove('active'));
         
+        // Determinar ID del link (Soporta Nivel 2 y Nivel 3)
         const targetId = tabId ? `nav-${viewId}-${tabId}` : `nav-${viewId}`;
         const el = document.getElementById(targetId);
         
         if (el) {
             el.classList.add('active');
             
-            const groupMapping = { 
-                'campanas': 'group-campanas', 
-                'aiConfig': 'group-ai',
-                'scanner': 'group-scanner'
-            };
-            const groupId = groupMapping[viewId];
-            if (groupId) {
+            // 2. Auto-expandir grupos padres para mostrar ubicación actual 🧭
+            const groupsToExpand = [];
+            
+            if (viewId === 'campanas' || viewId === 'scanner' || viewId === 'conexiones' || viewId === 'chat') {
+                groupsToExpand.push('group-whatsapp');
+                if (viewId === 'campanas') groupsToExpand.push('subgroup-campanas');
+                if (viewId === 'scanner') groupsToExpand.push('subgroup-scanner');
+            } else if (viewId === 'aiConfig') {
+                groupsToExpand.push('group-ai');
+            }
+
+            groupsToExpand.forEach(groupId => {
                 const group = document.getElementById(groupId);
                 if (group) {
                     group.classList.add('expanded');
                     if (group.previousElementSibling) group.previousElementSibling.classList.add('expanded-header');
                 }
-            }
+            });
         }
     }
 };

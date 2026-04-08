@@ -59,4 +59,51 @@ npm start
 
 # 3. Iniciar el entorno de desarrollo profundo (Diagnósticos, errores y todos los console.log)
 npm run start:debug
+```
+
+---
+
+## 📂 Estructura del Proyecto (Versión Modular v2)
+
+Para mantener la escalabilidad, el código se divide en responsabilidades claras:
+
+```text
+src/
+├── main/ (Proceso Principal / Motor)
+│   ├── index.js (Punto de entrada Electron)
+│   ├── ipc/ (Controladores de comunicación)
+│   ├── providers/
+│   │   └── whatsapp/ (Core, Managers y Servicios de WA)
+│   └── services/ (Base de Datos, IA)
+└── renderer/ (Proceso de Renderizado / Frontend)
+    ├── index.html (Contenedor base)
+    ├── js/
+    │   ├── index.js (Bootstrap de UI)
+    │   ├── loader.js (Motor de carga de plantillas)
+    │   ├── router.js (Gestor de navegación)
+    │   ├── components/ (Sidebar, Hub, Consola)
+    │   └── views/ (Dashboard, Campañas, Plantillas)
+    ├── style/
+    │   ├── global.css (Diseño base y animaciones)
+    │   └── modules/ (Variables y temas)
+    └── templates/ (Fragmentos HTML dinámicos)
+```
+
+---
+
+## 🛠️ Estabilidad y Solución de Problemas (Lecciones Aprendidas)
+
+- **Ejecución en Windows**: Siempre arrancar Electron apuntando directamente al archivo `src/main/index.js` para evitar problemas de shadowing de módulos.
+- **Rutas Relativas**: Utilizar `process.cwd()` para la resolución de recursos locales en lugar de `app.getAppPath()`, garantizando consistencia en entornos de desarrollo.
+- **Gestión de Sesiones**: Mantener la higiene de procesos matando instancias huérfanas de Chrome/Puppeteer antes de cada inicialización.
+
+
+---
+
+## 🛠️ Estabilidad y Solución de Problemas (Lecciones Aprendidas)
+
+- **Ejecución en Windows**: Siempre arrancar Electron apuntando directamente al archivo `src/main/index.js` para evitar problemas de shadowing de módulos.
+- **Rutas Relativas**: Utilizar `process.cwd()` para la resolución de recursos locales en lugar de `app.getAppPath()`, garantizando consistencia en entornos de desarrollo.
+- **Gestión de Sesiones**: Mantener la higiene de procesos matando instancias huérfanas de Chrome/Puppeteer antes de cada inicialización.
+
 \`\`\`

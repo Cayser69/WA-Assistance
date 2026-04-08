@@ -4,6 +4,7 @@
   "description": "WhatsApp Cold Sales Assistant for Windows",
   "main": "src/main/index.js",
   "type": "module",
+  "author": "Cristian Jimenez Martinez <cristianjimeneztrabajo@gmail.com>",
   "scripts": {
     "start": "chcp 65001 > nul && .\\node_modules\\electron\\dist\\electron.exe src/main/index.js",
     "start:debug": "set DEBUG=true&& chcp 65001 > nul && .\\node_modules\\electron\\dist\\electron.exe src/main/index.js",
@@ -40,7 +41,7 @@
   "build": {
     "appId": "com.cayser.wa-assistance",
     "productName": "WA-Assistance",
-    "asar": false,
+    "asar": true,
     "directories": {
       "output": "dist"
     },

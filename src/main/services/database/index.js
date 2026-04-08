@@ -1,46 +1,19 @@
-import { createRequire } from 'module';
-const require = createRequire(import.meta.url);
-const sqlite3 = require('sqlite3');
-import electron from 'electron';
-const { app } = electron;
-import path from 'path';
+import { run, getDB } from './connection.js';
 
-let db = null;
-
-/**
- * Obtiene la instancia de la base de datos, inicializándola si es necesario.
- */
-function getDB() {
-    if (!db) {
-        const dbPath = path.join(app.getPath('userData'), 'database.sqlite');
-        db = new sqlite3.Database(dbPath);
-    }
-    return db;
-}
-
-const run = (sql, params = []) => {
-    return new Promise((resolve, reject) => {
-        getDB().run(sql, params, function (err) {
-            if (err) reject(err);
-            else resolve(this);
-        });
-    });
-};
-
-const all = (sql, params = []) => {
-    return new Promise((resolve, reject) => {
-        getDB().all(sql, params, (err, rows) => {
-            if (err) reject(err);
-            else resolve(rows);
-        });
-    });
-};
+// Importar todos los modelos para re-exportar (Retrocompatibilidad)
+import * as persistence from './models/persistence.js';
+import * as settings from './models/settings.js';
+import * as templates from './models/templates.js';
+import * as leads from './models/leads.js';
+import * as logs from './models/logs.js';
 
 /**
- * Inicializa las tablas necesarias.
+ * Inicializa las tablas necesarias de la base de datos.
+ * Se llama al arrancar la aplicación para garantizar la integridad estructural.
  */
 export async function initDB() {
     try {
+        // Tablas Base
         await run(`
             CREATE TABLE IF NOT EXISTS leads (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -85,153 +58,43 @@ export async function initDB() {
             )
         `);
 
-        // Migraciones rápidas
-        try {
-            await run('ALTER TABLE templates ADD COLUMN image_path TEXT');
-        } catch (e) {}
+        // Migraciones rápidas de seguridad (Evita errores de columna ausente)
+        try { await run('ALTER TABLE templates ADD COLUMN image_path TEXT'); } catch (e) {}
+        try { await run('ALTER TABLE leads ADD COLUMN created_at DATETIME DEFAULT CURRENT_TIMESTAMP'); } catch (e) {}
+        try { await run('ALTER TABLE leads ADD COLUMN nombre TEXT'); } catch (e) {}
 
-        try {
-            await run('ALTER TABLE leads ADD COLUMN created_at DATETIME DEFAULT CURRENT_TIMESTAMP');
-        } catch (e) {}
-
-        try {
-            await run('ALTER TABLE leads ADD COLUMN nombre TEXT');
-        } catch (e) {}
-
-        console.log('Base de datos inicializada correctamente.');
+        console.log('[Database] ✅ Esquema inicializado correctamente.');
     } catch (error) {
-        console.error('Error al inicializar la base de datos:', error);
+        console.error('[Database] ❌ Error crítico durante la inicialización:', error);
+        throw error;
     }
 }
 
-// --- Métodos de Persistencia ---
-export async function savePersistence(key, value) {
-    const data = typeof value === 'object' ? JSON.stringify(value) : value;
-    await run('INSERT OR REPLACE INTO persistence (key, value) VALUES (?, ?)', [key, data]);
-}
+// --- Re-exportación de todos los métodos (Manteniendo la firma original) ---
 
-export async function getPersistence(key) {
-    const rows = await all('SELECT value FROM persistence WHERE key = ?', [key]);
-    if (rows.length === 0) return null;
-    try {
-        return JSON.parse(rows[0].value);
-    } catch (e) {
-        return rows[0].value;
-    }
-}
+// Persistencia
+export const { savePersistence, getPersistence, clearPersistence } = persistence;
 
-export async function clearPersistence(key) {
-    await run('DELETE FROM persistence WHERE key = ?', [key]);
-}
+// Plantillas
+export const { saveTemplate, deleteTemplate, getTemplates } = templates;
 
-// --- Métodos de Plantillas ---
-export async function saveTemplate(id, nombre, contenido) {
-    if (id) {
-        await run('UPDATE templates SET nombre = ?, contenido = ? WHERE id = ?', [nombre, contenido, id]);
-    } else {
-        await run('INSERT INTO templates (nombre, contenido) VALUES (?, ?)', [nombre, contenido]);
-    }
-}
+// Ajustes
+export const { saveSetting, getSetting, getAllSettings } = settings;
 
-export async function deleteTemplate(id) {
-    await run('DELETE FROM templates WHERE id = ?', [id]);
-}
+// Leads/Contactos
+export const { 
+    isLeadExists, 
+    insertLead, 
+    getLeads, 
+    getLeadsCount, 
+    getPendingLeads, 
+    getLeadsWithoutName, 
+    updateLeadName, 
+    markLeadAsContacted 
+} = leads;
 
-export async function getTemplates() {
-    return await all('SELECT * FROM templates ORDER BY nombre ASC');
-}
+// Logs de Mensajes
+export { saveMessageLog, getUniqueChats, getChatMessages } from './models/logs.js';
 
-// --- Métodos de Configuración ---
-export async function saveSetting(key, value) {
-    await run('INSERT OR REPLACE INTO settings (key, value) VALUES (?, ?)', [key, value]);
-}
-
-export async function getSetting(key) {
-    const row = await all('SELECT value FROM settings WHERE key = ?', [key]);
-    return row.length > 0 ? row[0].value : null;
-}
-
-export async function getAllSettings() {
-    const rows = await all('SELECT * FROM settings');
-    return rows.reduce((acc, row) => {
-        acc[row.key] = row.value;
-        return acc;
-    }, {});
-}
-
-export async function isLeadExists(telefono) {
-    const row = await all('SELECT id FROM leads WHERE telefono = ?', [telefono]);
-    return row.length > 0;
-}
-
-/**
- * Inserta un nuevo lead, evitando duplicados.
- * Retorna { id, isDuplicate: boolean }
- */
-export async function insertLead(telefono, nombre = null) {
-    const exists = await isLeadExists(telefono);
-    if (exists) {
-        return { isDuplicate: true };
-    }
-    const result = await run('INSERT INTO leads (telefono, nombre) VALUES (?, ?)', [telefono, nombre]);
-    return { id: result.lastID, isDuplicate: false };
-}
-
-export async function getLeads(filter = 'all', limit = 50, offset = 0, searchQuery = '') {
-    let sql = "SELECT * FROM leads ";
-    let params = [];
-    let where = [];
-
-    if (filter === 'pendiente') where.push("estado = 'pendiente'");
-    if (searchQuery) {
-        where.push("telefono LIKE ?");
-        params.push(`%${searchQuery}%`);
-    }
-
-    if (where.length > 0) sql += " WHERE " + where.join(" AND ");
-
-    sql += " ORDER BY id DESC LIMIT ? OFFSET ?";
-    params.push(limit, offset);
-    
-    return await all(sql, params);
-}
-
-export async function getLeadsCount(filter = 'all', searchQuery = '') {
-    let sql = "SELECT COUNT(*) as total FROM leads ";
-    let params = [];
-    let where = [];
-
-    if (filter === 'pendiente') where.push("estado = 'pendiente'");
-    if (searchQuery) {
-        where.push("telefono LIKE ?");
-        params.push(`%${searchQuery}%`);
-    }
-
-    if (where.length > 0) sql += " WHERE " + where.join(" AND ");
-    
-    const rows = await all(sql, params);
-    return rows[0].total;
-}
-
-export async function getPendingLeads() {
-    return await all("SELECT * FROM leads WHERE estado = 'pendiente'");
-}
-
-export async function getLeadsWithoutName() {
-    return await all("SELECT * FROM leads WHERE nombre IS NULL OR nombre = ''");
-}
-
-export async function updateLeadName(id, nombre) {
-    return await run("UPDATE leads SET nombre = ?, created_at = CURRENT_TIMESTAMP WHERE id = ?", [nombre, id]);
-}
-
-export async function markLeadAsContacted(id) {
-    return await run("UPDATE leads SET estado = 'contactado', fecha_contacto = CURRENT_TIMESTAMP WHERE id = ?", [id]);
-}
-
-export async function saveMessageLog(telefono, mensaje, tipo) {
-    return await run("INSERT INTO logs (telefono, mensaje, tipo) VALUES (?, ?, ?)", [telefono, mensaje, tipo]);
-}
-
-// Exportamos la función para obtener el DB si fuera necesario externamente
+// Exportación de la conexión original por si se requiere
 export { getDB };

@@ -48,6 +48,7 @@ export const AI = {
             const keyInput = document.getElementById('openai-key');
             const modelSelect = document.getElementById('openai-model');
             const promptArea = document.getElementById('ai-system-prompt');
+            const knowledgeArea = document.getElementById('ai-knowledge-base');
             const autoReplyCheck = document.getElementById('ai-auto-reply');
             const btnSaveKey = document.getElementById('btn-save-key');
             const btnSavePrompt = document.getElementById('btn-save-prompt');
@@ -58,6 +59,7 @@ export const AI = {
             if (keyInput) keyInput.value = settings.openai_key || '';
             if (modelSelect) modelSelect.value = settings.openai_model || 'gpt-4o-mini';
             if (promptArea) promptArea.value = settings.openai_prompt || 'Eres un asistente experto.';
+            if (knowledgeArea) knowledgeArea.value = settings.openai_knowledge_base || '';
             if (autoReplyCheck) autoReplyCheck.checked = settings.ai_auto_reply === 'true';
 
             /**
@@ -69,6 +71,7 @@ export const AI = {
                         apiKey: keyInput ? keyInput.value.trim() : settings.openai_key,
                         model: modelSelect ? modelSelect.value : settings.openai_model,
                         prompt: promptArea ? promptArea.value : settings.openai_prompt,
+                        knowledgeBase: knowledgeArea ? knowledgeArea.value : settings.openai_knowledge_base,
                         isActive: autoReplyCheck ? autoReplyCheck.checked : (settings.ai_auto_reply === 'true')
                     });
                 }
@@ -87,8 +90,9 @@ export const AI = {
             if (btnSavePrompt) {
                 btnSavePrompt.onclick = async () => {
                     await window.api.saveSetting('openai_prompt', promptArea.value);
+                    await window.api.saveSetting('openai_knowledge_base', knowledgeArea.value);
                     await syncAI();
-                    alert('🧠 Personalidad de la IA guardada con éxito.');
+                    alert('🧠 Personalidad y Contexto guardados con éxito.');
                 };
             }
 

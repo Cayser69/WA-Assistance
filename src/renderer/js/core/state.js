@@ -4,6 +4,7 @@
 export const AppState = {
     currentView: 'dashboard',
     waStatus: 'disconnect',
+    waNumber: null,
     qrBase64: null,
     logs: [],
     selectedLeads: [],
@@ -49,6 +50,7 @@ export const AppState = {
         const number = typeof data === 'object' ? data.number : null;
         
         AppState.waStatus = status;
+        if (number) AppState.waNumber = number;
         
         const statusMap = {
             'connect': { text: 'Conectado', color: 'connect' },
