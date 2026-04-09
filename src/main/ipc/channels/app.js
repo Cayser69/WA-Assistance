@@ -19,15 +19,22 @@ export function registerAppHandlers(mainWindow) {
     });
 
     // --- Utilidades de Sistema e Información ---
+
+    // Ruta base del proyecto (para leer templates HTML/CSS del renderer)
     ipcMain.handle('app:getPath', () => {
         return app.isPackaged ? app.getAppPath() : process.cwd();
+    });
+
+    // ✅ NUEVO: Ruta de userData (donde se guardan imágenes y la DB)
+    ipcMain.handle('app:getUserDataPath', () => {
+        return app.getPath('userData');
     });
 
     ipcMain.handle('app:read-template', async (event, relativePath) => {
         const normalized = relativePath.replace(/\//g, path.sep);
         const baseRoot = app.isPackaged ? app.getAppPath() : process.cwd();
         const fullPath = path.resolve(baseRoot, normalized);
-        
+
         try {
             if (!fs.existsSync(fullPath)) return null;
             return fs.readFileSync(fullPath, 'utf8');

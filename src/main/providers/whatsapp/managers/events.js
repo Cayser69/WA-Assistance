@@ -1,8 +1,9 @@
-import qrcode from 'qrcode';
+import * as qrHandler from './events/qr.js';
+import * as connHandler from './events/connection.js';
+import * as syncHandler from './events/sync.js';
 
 /**
- * Gestor de Despacho de Eventos de WhatsApp (Subcomponente de Cliente)
- * Responsabilidad: Escuchar eventos del cliente y notificar al Renderer.
+ * Gestor de Eventos de WhatsApp (Orquestador Modular) 📂🏗️✨
  */
 export class EventDispatcher {
     constructor(client, mainWindow, appStatus) {
@@ -12,62 +13,40 @@ export class EventDispatcher {
     }
 
     /**
-     * Registra todos los escuchadores de eventos.
+     * Vincula los eventos del cliente de WhatsApp con sus respectivos manejadores.
      */
     setup(messagingManager) {
         if (!this.client) return;
 
-        // --- Evento: Código QR ---
-        this.client.on('qr', (qr) => {
-            this.appStatus.set('disconnect');
-            qrcode.toDataURL(qr, (err, url) => {
-                if (this.mainWindow) this.mainWindow.webContents.send('wa:qr-update', url);
-            });
-        });
+        // Contexto compartido para los manejadores
+        const context = {
+            client: this.client,
+            mainWindow: this.mainWindow,
+            appStatus: this.appStatus,
+            messagingManager
+        };
 
-        // --- Evento: Autenticación ---
-        this.client.on('authenticated', () => {
-            this.appStatus.set('authenticated');
-            console.log('WhatsApp Events: Autenticado. Esperando sincronización...');
-            if (this.mainWindow) this.mainWindow.webContents.send('wa:status', 'authenticated');
-        });
+        // 1. Evento de Escaneo QR
+        this.client.on('qr', (qr) => qrHandler.handleQR(qr, context));
 
-        // --- Evento: Cliente Listo ---
-        this.client.on('ready', () => {
-            this.appStatus.set('connect');
-            const me = this.client.info?.wid?.user || '---';
-            console.log(`WhatsApp Events: Cliente Listo (${me})`);
-            
-            if (this.mainWindow) {
-                this.mainWindow.webContents.send('wa:status', { 
-                    status: 'connect', 
-                    number: me 
-                });
-                this.mainWindow.webContents.send('wa:log', { 
-                    text: `Conexión establecida con ${me}.`, 
-                    type: 'success' 
-                });
-            }
-        });
+        // 2. Eventos de Estado de Conexión
+        this.client.on('authenticated', () => connHandler.handleAuthenticated(context));
+        this.client.on('ready', () => connHandler.handleReady(context));
+        this.client.on('disconnected', (reason) => connHandler.handleDisconnected(reason, context));
 
-        // --- Evento: Desconexión ---
-        this.client.on('disconnected', (reason) => {
-            this.appStatus.set('disconnect');
-            console.log('WhatsApp Events: Desconectado.', reason);
-            if (this.mainWindow) {
-                this.mainWindow.webContents.send('wa:status', 'disconnect');
-                this.mainWindow.webContents.send('wa:log', { 
-                    text: `Desconectado: ${reason}`, 
-                    type: 'error' 
-                });
-            }
-        });
-
-        // --- Evento: Mensaje Entrante ---
+        // 3. Evento de Mensajes Entrantes
         this.client.on('message', async (msg) => {
-            if (messagingManager) {
-                await messagingManager.handleIncomingMessage(msg);
-            }
+            if (messagingManager) await messagingManager.handleIncomingMessage(msg);
+        });
+    }
+
+    /**
+     * Acceso directo a utilidades de sincronización (Si se requiere desde fuera)
+     */
+    async syncRecentChats() {
+        return await syncHandler.syncRecentChats({
+            client: this.client,
+            mainWindow: this.mainWindow
         });
     }
 }

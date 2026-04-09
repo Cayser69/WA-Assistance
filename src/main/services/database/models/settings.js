@@ -1,4 +1,4 @@
-import { run, all } from '../connection.js';
+import { run, all } from '../setup/connection.js';
 
 /**
  * Guarda o actualiza una configuración del sistema.

@@ -104,6 +104,13 @@ export const PlantillasTab = {
         let currentTemplates = [];
         let currentImages = [];
 
+        // ✅ Obtenemos la ruta de userData UNA sola vez para construir las URLs de galería.
+        // WhatsAppBubble.init() ya la cachea en _userDataPath, reutilizamos esa.
+        const getUserDataPath = async () => {
+            if (WhatsAppBubble._userDataPath) return WhatsAppBubble._userDataPath;
+            return await window.api.getUserDataPath();
+        };
+
         const updatePreview = () => {
             const text = contentInput.value;
             const imagePath = imagePathInput.value;
@@ -112,14 +119,21 @@ export const PlantillasTab = {
 
         const refreshGallery = async () => {
             currentImages = await window.api.invoke('media:listImages');
+            const userDataPath = await getUserDataPath();
+            // ✅ Ruta correcta: userData + /media/nombreArchivo
+            const baseUrl = userDataPath.replace(/\\/g, '/');
+
             galleryRoot.innerHTML = currentImages.map(imgName => {
-                const fullPath = `media/${imgName}`;
-                const isSelected = imagePathInput.value === fullPath;
+                const relativePath = `media/${imgName}`;
+                const isSelected = imagePathInput.value === relativePath;
+                // ✅ file:/// con tres barras para rutas absolutas en Windows
+                const imgUrl = `file:///${baseUrl}/media/${imgName}`;
                 return `
-                    <img src="file://${window.api.getAppPath()}/${fullPath}" 
+                    <img src="${imgUrl}" 
                          class="gallery-item ${isSelected ? 'selected' : ''}" 
-                         data-path="${fullPath}"
-                         title="${imgName}">
+                         data-path="${relativePath}"
+                         title="${imgName}"
+                         onerror="this.style.opacity='0.3'; this.title='Error al cargar: ${imgName}'">
                 `;
             }).join('') || '<p class="text-muted" style="grid-column: 1/-1; padding: 20px; font-size: 0.75rem;">No hay imágenes aún.</p>';
 
@@ -161,7 +175,7 @@ export const PlantillasTab = {
             btnDelete.style.display = 'block';
             btnSave.innerHTML = '<span class="material-icons-outlined">save</span> ACTUALIZAR PLANTILLA';
             updatePreview();
-            refreshGallery(); 
+            refreshGallery();
             refreshTemplatesList();
         };
 
@@ -178,15 +192,18 @@ export const PlantillasTab = {
         };
 
         btnUpload.onclick = async () => {
-            const selectedPath = await window.api.openFileDialog({
-                filters: [{ name: 'Imágenes', extensions: ['jpg', 'png', 'jpeg', 'webp'] }]
-            });
+            const selectedPath = await window.api.openFileDialog(
+                [{ name: 'Imágenes', extensions: ['jpg', 'png', 'jpeg', 'webp'] }]
+            );
             if (selectedPath) {
+                // ✅ Copiamos la imagen a la carpeta interna y guardamos la ruta relativa
                 const internalPath = await window.api.importTemplateImage(selectedPath);
                 if (internalPath) {
                     imagePathInput.value = internalPath;
                     await refreshGallery();
                     updatePreview();
+                } else {
+                    alert('Error al importar la imagen. Comprueba los permisos del archivo.');
                 }
             }
         };
@@ -199,9 +216,21 @@ export const PlantillasTab = {
                 imagePath: imagePathInput.value
             };
             if (!data.nombre || !data.contenido) return alert('Nombre y contenido obligatorios.');
-            await window.api.saveTemplate(data);
-            appState.log(`Plantilla "${data.nombre}" guardada.`, 'success');
-            resetForm();
+
+            try {
+                await window.api.saveTemplate(data);
+
+                // Verificación de seguridad para el log
+                if (appState && typeof appState.log === 'function') {
+                    appState.log(`Plantilla "${data.nombre}" guardada.`, 'success');
+                } else {
+                    alert('Plantilla guardada correctamente'); // Fallback visual
+                }
+
+                resetForm();
+            } catch (err) {
+                console.error("Error al guardar:", err);
+            }
         };
 
         btnDelete.onclick = async () => {

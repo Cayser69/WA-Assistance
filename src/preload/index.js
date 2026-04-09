@@ -8,11 +8,13 @@ contextBridge.exposeInMainWorld('api', {
     getPendingLeads: () => ipcRenderer.invoke('db:getPendingLeads'),
     getLeads: (filter, limit, offset, search) => ipcRenderer.invoke('db:getLeads', filter, limit, offset, search),
     getLeadsCount: (filter, search) => ipcRenderer.invoke('db:getLeadsCount', filter, search),
-    insertLead: (telefono) => ipcRenderer.invoke('db:insertLead', telefono),
+    insertLead: (telefono, nombre) => ipcRenderer.invoke('db:insertLead', telefono, nombre),
+    deleteLeads: (ids) => ipcRenderer.invoke('db:deleteLeads', ids),
     markAsContacted: (id) => ipcRenderer.invoke('db:markAsContacted', id),
     saveLog: (data) => ipcRenderer.invoke('db:saveLog', data),
     getChats: () => ipcRenderer.invoke('db:get-chats'),
     getChatMessages: (tel) => ipcRenderer.invoke('db:get-chat-messages', tel),
+    truncateLeads: () => ipcRenderer.invoke('db:truncate-leads'),
 
     // Campaña
     startCampaign: (data) => ipcRenderer.invoke('wa:start-campaign', data),
@@ -25,7 +27,14 @@ contextBridge.exposeInMainWorld('api', {
     logout: () => ipcRenderer.invoke('wa:logout'),
     getWAStatus: () => ipcRenderer.invoke('wa:get-status'),
     getCampaignStatus: () => ipcRenderer.invoke('wa:get-campaign-status'),
+    syncContacts: () => ipcRenderer.invoke('wa:sync-contacts'),
     onCampaignStatus: (callback) => ipcRenderer.on('wa:campaign-status', (event, status) => callback(status)),
+
+    // ✅ Evento: sincronización de chats completada (para recargar la lista)
+    onChatsSynced: (callback) => ipcRenderer.on('wa:chats-synced', () => callback()),
+
+    // ✅ Evento: mensaje entrante recibido en tiempo real
+    onMessageReceived: (callback) => ipcRenderer.on('wa:message-received', (event, data) => callback(data)),
 
     // Scanner
     startScanner: (data, startIndex) => ipcRenderer.invoke('wa:startScanner', data, startIndex),
@@ -44,8 +53,6 @@ contextBridge.exposeInMainWorld('api', {
     canUseAI: () => ipcRenderer.invoke('ai:get-status'),
 
     // Configuración Persistente (SQLite)
-
-    // Configuración Persistente (SQLite)
     saveSetting: (key, value) => ipcRenderer.invoke('db:saveSetting', { key, value }),
     getSetting: (key) => ipcRenderer.invoke('db:getSetting', key),
     getAllSettings: () => ipcRenderer.invoke('db:getAllSettings'),
@@ -57,10 +64,19 @@ contextBridge.exposeInMainWorld('api', {
 
     // Multimedia y Sistema
     importTemplateImage: (path) => ipcRenderer.invoke('media:importTemplateImage', path),
+
+    // Ruta base del proyecto (para HTML/CSS del renderer)
     getAppPath: () => ipcRenderer.invoke('app:getPath'),
+
+    // Ruta de userData (donde están las imágenes y la DB)
+    getUserDataPath: () => ipcRenderer.invoke('app:getUserDataPath'),
+
     openFileDialog: (filters) => ipcRenderer.invoke('dialog:openFile', { filters }),
-    
-    // Nuevo: Cargador de Plantillas (IPC)
+
+    // Alias para compatibilidad con multimedia.js
+    openFile: (options) => ipcRenderer.invoke('dialog:openFile', options),
+
+    // Cargador de Plantillas (IPC)
     readTemplate: (relativePath) => ipcRenderer.invoke('app:read-template', relativePath),
 
     // Puente Genérico (Para compatibilidad con módulos existentes) 🛠️

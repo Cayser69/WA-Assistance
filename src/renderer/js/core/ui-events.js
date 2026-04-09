@@ -46,6 +46,9 @@ export const UIEvents = {
         });
 
         window.api.onWAStatus((status) => {
+            // Ignorar estados de arranque para no ensuciar el estado real de conexión
+            if (status && typeof status === 'object' && status.status === 'boot') return;
+
             AppState.updateWAStatusUI(status);
             if (AppState.currentView === 'conexiones') {
                 Router.navigate('conexiones'); 

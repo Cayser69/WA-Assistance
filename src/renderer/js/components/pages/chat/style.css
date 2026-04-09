@@ -1,6 +1,10 @@
+/* =============================================
+   CHAT — Layout principal
+   ============================================= */
+
 .chat-container {
     position: absolute;
-    inset: 0; /* Cubre 100% del view-root hasta que llegue a la consola */
+    inset: 0;
     display: flex;
     flex-direction: column;
     overflow: hidden;
@@ -15,15 +19,23 @@
     background: transparent;
     border: none;
     box-shadow: none;
+    /* ✅ Altura explícita para que los hijos puedan hacer flex/scroll */
     height: 100%;
+    min-height: 0;
 }
 
-/* Columna Izquierda: Contactos */
+/* =============================================
+   Columna Izquierda: Contactos
+   ============================================= */
+
 .chat-sidebar {
     background: rgba(15, 23, 42, 0.4);
     border-right: 1px solid rgba(255, 255, 255, 0.05);
     display: flex;
     flex-direction: column;
+    /* ✅ Necesario para que el hijo con overflow pueda scrollear */
+    min-height: 0;
+    height: 100%;
 }
 
 .search-box {
@@ -32,6 +44,8 @@
     align-items: center;
     gap: 10px;
     background: rgba(0, 0, 0, 0.2);
+    /* ✅ No crece ni encoge, siempre ocupa su tamaño natural */
+    flex-shrink: 0;
 }
 
 .search-box input {
@@ -40,11 +54,33 @@
     color: var(--text-main);
     font-size: 0.9rem;
     width: 100%;
+    outline: none;
 }
 
 .contacts-list {
     flex: 1;
+    /* ✅ min-height: 0 es clave — sin esto flex ignora overflow-y */
+    min-height: 0;
     overflow-y: auto;
+    overflow-x: hidden;
+}
+
+/* Scrollbar estilizado para la lista de contactos */
+.contacts-list::-webkit-scrollbar {
+    width: 4px;
+}
+
+.contacts-list::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.contacts-list::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+}
+
+.contacts-list::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.2);
 }
 
 .contact-item {
@@ -53,8 +89,10 @@
     align-items: center;
     gap: 15px;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: background 0.2s ease;
     border-bottom: 1px solid rgba(255, 255, 255, 0.02);
+    /* ✅ Evita que el item se comprima */
+    flex-shrink: 0;
 }
 
 .contact-item:hover {
@@ -74,11 +112,13 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    flex-shrink: 0;
 }
 
 .contact-item .info {
     flex: 1;
     overflow: hidden;
+    min-width: 0;
 }
 
 .contact-item .name {
@@ -86,6 +126,9 @@
     font-weight: 600;
     font-size: 0.9rem;
     margin-bottom: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .contact-item .last-msg {
@@ -96,14 +139,21 @@
     text-overflow: ellipsis;
 }
 
-/* Columna Derecha: Ventana Chat */
+/* =============================================
+   Columna Derecha: Ventana Chat
+   ============================================= */
+
 .chat-window {
-    background: linear-gradient(rgba(11, 20, 26, 0.9), rgba(11, 20, 16, 0.95)), 
-                url('https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png');
+    background: linear-gradient(rgba(11, 20, 26, 0.9), rgba(11, 20, 16, 0.95)),
+        url('https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png');
     background-size: cover;
     background-position: center;
     display: flex;
     flex-direction: column;
+    /* ✅ Necesario para contener el scroll interno */
+    min-height: 0;
+    height: 100%;
+    overflow: hidden;
 }
 
 .welcome-screen {
@@ -117,7 +167,8 @@
     opacity: 0.5;
 }
 
-.welcome-screen i {
+.welcome-screen i,
+.welcome-screen .material-icons-outlined {
     font-size: 5rem;
     margin-bottom: 20px;
     color: var(--primary);
@@ -127,6 +178,7 @@
     display: flex;
     flex-direction: column;
     height: 100%;
+    min-height: 0;
 }
 
 .chat-header {
@@ -136,6 +188,7 @@
     border-bottom: 1px solid rgba(255, 255, 255, 0.05);
     display: flex;
     align-items: center;
+    flex-shrink: 0;
 }
 
 .chat-header .contact-info {
@@ -154,14 +207,34 @@
     color: var(--primary);
 }
 
-/* Burbujas de Chat */
+/* =============================================
+   Burbujas de Chat
+   ============================================= */
+
 .messages-viewport {
     flex: 1;
+    /* ✅ min-height: 0 permite que el scroll funcione dentro de flex */
+    min-height: 0;
     overflow-y: auto;
+    overflow-x: hidden;
     padding: 30px;
     display: flex;
     flex-direction: column;
     gap: 10px;
+}
+
+/* Scrollbar estilizado para los mensajes */
+.messages-viewport::-webkit-scrollbar {
+    width: 4px;
+}
+
+.messages-viewport::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.messages-viewport::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
 }
 
 .chat-bubble-wrapper {
@@ -186,10 +259,11 @@
     position: relative;
     line-height: 1.5;
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+    word-break: break-word;
 }
 
 .sent .chat-bubble {
-    background: #005c4b; /* Verde WA Deep */
+    background: #005c4b;
     color: #e9edef;
     border-bottom-right-radius: 0;
 }
@@ -209,10 +283,15 @@
     text-align: right;
 }
 
+/* =============================================
+   Footer — Modo Lectura
+   ============================================= */
+
 .chat-input-area {
     padding: 15px 25px;
     background: rgba(15, 23, 42, 0.8);
     backdrop-filter: blur(10px);
+    flex-shrink: 0;
 }
 
 .read-only-notice {

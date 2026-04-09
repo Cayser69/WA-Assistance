@@ -36,9 +36,10 @@ export const MultimediaTab = {
         }
 
         btnSelectImage.onclick = async () => {
-            const path = await window.api.openFile({
-                filters: [{ name: 'Imágenes', extensions: ['jpg', 'png', 'jpeg', 'webp'] }]
-            });
+            // ✅ Usamos openFileDialog (nombre correcto en el preload)
+            const path = await window.api.openFileDialog(
+                [{ name: 'Imágenes', extensions: ['jpg', 'png', 'jpeg', 'webp'] }]
+            );
             if (path) {
                 imagePathDisplay.textContent = path.split('\\').pop().split('/').pop();
                 btnClearImage.style.display = 'block';

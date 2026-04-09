@@ -48,7 +48,7 @@ class WhatsAppCampaign {
      */
     async start(params, startIndex = 0) {
         if (this.isRunning) {
-            return this.log('❌ Ya hay una campaña en curso.', 'error');
+            return { success: false, error: 'Ya hay una campaña en curso.' };
         }
         
         try {
@@ -63,7 +63,24 @@ class WhatsAppCampaign {
                 this.log(`🔄 Reanudando campaña desde el contacto ${startIndex + 1}...`, 'info');
             }
 
-            // Delegar la ejecución al motor especializado
+            // --- EJECUCIÓN NO BLOQUEANTE 🚀 ---
+            // Lanzamos el bucle sin await para responder inmediatamente al IPC
+            this._runExecutionLoop(runParams);
+
+            return { success: true };
+
+        } catch (fatalError) {
+            this.isRunning = false;
+            this.sendStatus('INACTIVO');
+            return { success: false, error: fatalError.message };
+        }
+    }
+
+    /**
+     * Bucle de ejecución interno (privado) para evitar bloqueo de IPC
+     */
+    async _runExecutionLoop(runParams) {
+        try {
             const wasInterrupted = await this.executor.execute(
                 runParams, 
                 this.scheduler, 
@@ -78,14 +95,12 @@ class WhatsAppCampaign {
                 this.log('🛑 Campaña interrumpida. El progreso se ha guardado.', 'warning');
             } else {
                 this.log('🎊 Campaña completada con éxito.', 'success');
-                // Solo limpiamos si terminó sin interrupciones
                 if (!this.isStopping) {
                     await db.clearPersistence('campaign_active');
                 }
             }
-
-        } catch (fatalError) {
-            this.log(`❌ Error crítico en campaña: ${fatalError.message}`, 'error');
+        } catch (err) {
+            this.log(`❌ Error crítico en ejecución: ${err.message}`, 'error');
         } finally {
             this.isRunning = false;
             this.isStopping = false;

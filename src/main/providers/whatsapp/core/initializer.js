@@ -2,7 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import electron from 'electron';
 const { app } = electron;
-import { SessionManager } from '../managers/session.js';
+import { SessionManager } from '../managers/session/index.js';
 import { MessagingManager } from '../managers/messaging.js';
 import { EventDispatcher } from '../managers/events.js';
 
@@ -29,11 +29,16 @@ export class WhatsAppInitializer {
         // 1. Verificación y Reparación
         if (fs.existsSync(sessionPath)) {
             console.log(`[WA-Init] 🛠️ Reparando sesión previa en ${sessionPath}...`);
+            this.emitToUI('wa:status', { status: 'boot', text: 'Limpiando caches de sesion...' });
             await SessionManager.repair(authPath);
         }
 
         // 2. Creación de Instancia
+        this.emitToUI('wa:status', { status: 'boot', text: 'Inicializando motor WhatsApp...' });
         this.parent.client = SessionManager.create(authPath);
+        
+        // Notificar que la aplicación base está lista para usarse (Loader se quita aquí)
+        this.emitToUI('wa:status', { status: 'boot', text: 'Aplicación lista', ready: true });
 
         // 3. Vincular Gestores
         this.parent.messaging = new MessagingManager(this.parent.client, this.parent.mainWindow);
@@ -46,6 +51,7 @@ export class WhatsAppInitializer {
         // 4. Lanzar Inicialización
         try {
             console.log('[WA-Init] 🚀 Arrancando client.initialize()...');
+            this.emitToUI('wa:status', { status: 'boot', text: 'Conectando con WhatsApp...' });
             await this.parent.client.initialize();
             this.parent.initialized = true;
         } catch (err) {

@@ -2,7 +2,6 @@
  * Componente: Chat & Mensajería 💬✨🛰️
  * Permite visualizar el historial de conversaciones y actividad real de la app.
  */
-import { AppState } from '../../../core/state.js';
 import { TemplateLoader } from '../../../core/loader.js';
 
 export const Chat = {
@@ -23,7 +22,7 @@ export const Chat = {
      */
     init: async () => {
         console.log('[Chat] 💬 Cargando interfaz de mensajería...');
-        
+
         try {
             // 1. Cargar estructura y estilos
             const html = await TemplateLoader.loadHTML('chat');
@@ -32,7 +31,6 @@ export const Chat = {
             const container = document.getElementById('view-chat-container');
             if (!container) return;
 
-            // Inyectamos el HTML modular
             container.innerHTML = html;
 
             await Chat.loadChats();
@@ -63,35 +61,47 @@ export const Chat = {
         if (!list) return;
 
         const filter = searchInput?.value.toLowerCase() || '';
-        
-        // Validación de Seguridad: Asegurar que Chat.chats sea un Array 🛡️
+
         if (!Array.isArray(Chat.chats)) {
-            console.warn('[Chat] ⚠️ Los chats no se han cargado como un Array:', Chat.chats);
             Chat.chats = [];
         }
 
-        const filtered = Chat.chats.filter(c => c.telefono.includes(filter));
+        const filtered = Chat.chats.filter(c =>
+            c.telefono.includes(filter) ||
+            (c.nombre || '').toLowerCase().includes(filter)
+        );
 
         if (filtered.length === 0) {
-            list.innerHTML = `<div class="text-center p-20" style="opacity: 0.5;"><p>No hay conservaciones aún.</p></div>`;
+            list.innerHTML = `
+                <div class="text-center p-20" style="opacity: 0.5;">
+                    <p>No hay conversaciones aún.</p>
+                    <p style="font-size: 0.75rem; margin-top: 8px;">Los chats aparecerán aquí al conectar WhatsApp.</p>
+                </div>`;
             return;
         }
 
         list.innerHTML = filtered.map(chat => `
             <div class="contact-item ${Chat.activeChat === chat.telefono ? 'active' : ''}" 
-                 onclick="Chat.selectContact('${chat.telefono}')">
+                 data-tel="${chat.telefono}">
                 <div class="avatar">
                     <span class="material-icons-outlined">account_circle</span>
                 </div>
                 <div class="info">
                     <div class="header-row" style="display: flex; justify-content: space-between; align-items: start;">
                         <span class="name">${chat.nombre || chat.telefono}</span>
-                        <span class="time" style="font-size: 0.6rem; opacity: 0.5;">${new Date(chat.last_msg_date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                        <span class="time" style="font-size: 0.6rem; opacity: 0.5;">
+                            ${chat.last_msg_date ? new Date(chat.last_msg_date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : ''}
+                        </span>
                     </div>
                     <span class="last-msg">${chat.mensaje || 'Sin mensajes'}</span>
                 </div>
             </div>
         `).join('');
+
+        // ✅ Event delegation en lugar de onclick inline (evita problemas con caracteres especiales en teléfonos)
+        list.querySelectorAll('.contact-item').forEach(item => {
+            item.onclick = () => Chat.selectContact(item.dataset.tel);
+        });
     },
 
     /**
@@ -99,13 +109,20 @@ export const Chat = {
      */
     selectContact: async (telefono) => {
         Chat.activeChat = telefono;
-        
-        // UI Updates
-        document.getElementById('chat-welcome-screen').style.display = 'none';
-        document.getElementById('chat-content-view').style.display = 'flex';
-        document.getElementById('active-chat-name').innerText = telefono;
-        
-        Chat.renderContacts(); // Actualizar clase 'active'
+
+        const welcomeScreen = document.getElementById('chat-welcome-screen');
+        const contentView = document.getElementById('chat-content-view');
+        const activeName = document.getElementById('active-chat-name');
+
+        if (welcomeScreen) welcomeScreen.style.display = 'none';
+        if (contentView) contentView.style.display = 'flex';
+        if (activeName) {
+            // Buscar el nombre en los chats cargados
+            const chat = Chat.chats.find(c => c.telefono === telefono);
+            activeName.innerText = chat?.nombre || telefono;
+        }
+
+        Chat.renderContacts();
         await Chat.loadMessages(telefono);
     },
 
@@ -131,10 +148,17 @@ export const Chat = {
         const viewport = document.getElementById('chat-messages-viewport');
         if (!viewport) return;
 
+        if (!messages || messages.length === 0) {
+            viewport.innerHTML = `<div class="text-center" style="opacity: 0.4; padding: 40px;">Sin mensajes registrados.</div>`;
+            return;
+        }
+
         viewport.innerHTML = messages.map(msg => {
             const isSent = msg.tipo === 'enviado';
-            const date = new Date(msg.fecha).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-            
+            const date = msg.fecha
+                ? new Date(msg.fecha).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+                : '';
+
             return `
                 <div class="chat-bubble-wrapper ${isSent ? 'sent' : 'received'}">
                     <div class="chat-bubble">
@@ -145,24 +169,35 @@ export const Chat = {
             `;
         }).join('');
 
-        // Auto-scroll al fondo
         viewport.scrollTop = viewport.scrollHeight;
     },
 
     /**
-     * Configura listeners de eventos (Búsqueda y Logs en tiempo real)
+     * Configura listeners de eventos
      */
     setupEventListeners: () => {
         // Búsqueda en tiempo real
         const searchInput = document.getElementById('chat-search');
         searchInput?.addEventListener('input', () => Chat.renderContacts());
 
-        // Actualización en tiempo real desde WhatsApp
+        // ✅ Sincronización completada desde el main process: recargar lista de chats
+        window.api.onChatsSynced(async () => {
+            console.log('[Chat] 🔄 Sincronización detectada, recargando chats...');
+            await Chat.loadChats();
+        });
+
+        // ✅ Mensaje recibido en tiempo real
+        window.api.onMessageReceived(async (data) => {
+            console.log('[Chat] 📨 Mensaje entrante de:', data.tel);
+            await Chat.loadChats();
+            if (Chat.activeChat === data.tel) {
+                await Chat.loadMessages(data.tel);
+            }
+        });
+
+        // Compatibilidad con el evento anterior de campaña
         window.api.onMessageLog(async (log) => {
-            console.log('[Chat] 📨 Nuevo mensaje detectado, actualizando historial...');
-            await Chat.loadChats(); // Recargar lista de contactos para mostrar el último mensaje
-            
-            // Si el mensaje es del chat activo, recargar mensajes
+            await Chat.loadChats();
             if (Chat.activeChat === log.tel) {
                 await Chat.loadMessages(log.tel);
             }

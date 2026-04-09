@@ -25,23 +25,19 @@
         window.onunhandledrejection = event => {
             console.error('[Promesa Fallida]', event.reason);
         };
-        // DIAGNÓSTICO DE CHOQUE 💉✨
-        window.addEventListener('DOMContentLoaded', () => {
-            const status = document.getElementById('boot-status');
-            if (status) {
-                status.innerText = "HTML y JS Síncrono: OK. Verificando acceso a archivos...";
-                console.log('--- [DIAGNÓSTICO HTML] --- 🟢 Ventana lista.');
-                
-                fetch('js/index.js')
-                    .then(r => {
-                        console.log(`--- [DIAGNÓSTICO FETCH] --- 📡 Estado archivo js/index.js: ${r.status} (${r.ok ? 'OK' : 'FALLÓ'})`);
-                        if (r.ok) status.innerText = "Acceso a JS: OK. Intentando cargar módulos...";
-                        else status.innerText = `❌ Error de Acceso JS: ${r.status}`;
-                    })
-                    .catch(e => {
-                        console.error('--- [DIAGNÓSTICO FETCH] --- 🕵️ Fallo total al leer js/index.js:', e);
-                        status.innerText = "❌ Fallo crítico de acceso a archivos (CORS/URL)";
-                    });
+        // DIAGNÓSTICO Y CONTROL DE CARGA 🛡️✨
+        window.api.onWAStatus((status) => {
+            if (status && typeof status === 'object' && status.status === 'boot') {
+                const bootText = document.getElementById('boot-status');
+                if (bootText) bootText.innerText = status.text;
+
+                if (status.ready) {
+                    const loader = document.getElementById('app-loading-screen');
+                    if (loader) {
+                        loader.style.opacity = '0';
+                        setTimeout(() => loader.style.display = 'none', 500);
+                    }
+                }
             }
         });
     </script>
@@ -80,8 +76,8 @@
         </main>
     </div>
 
-    <!-- Punto de Entrada de la Aplicación (Esm Estático) -->
-    <script type="module" src="./js/index.js" onerror="console.error('--- [ERROR SCRIPT MODULE] --- 🔥 No se pudo cargar js/index.js como módulo')"></script>
+    <!-- Punto de Entrada de la Aplicación -->
+    <script type="module" src="js/index.js" onerror="document.getElementById('boot-status').innerText='❌ Error critico: No se pudo cargar el motor JS'; console.error('--- [ERROR SCRIPT MODULE] --- 🔥 No se pudo cargar js/index.js como módulo')"></script>
     <script>
         // Capturar fallos específicos de carga de módulos 🛡️
         window.addEventListener('error', (e) => {

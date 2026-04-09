@@ -4,6 +4,7 @@
 export const AppState = {
     currentView: 'dashboard',
     waStatus: 'disconnect',
+    campaignStatus: 'INACTIVO',
     waNumber: null,
     qrBase64: null,
     logs: [],
@@ -74,12 +75,29 @@ export const AppState = {
 
         // 2. Delegar al componente Hub (Nav superior)
         if (window.Hub) window.Hub.updateWhatsApp(current);
+
+        // 3. Control dinámico de botones de acción dependientes de conexión
+        const btnSync = document.getElementById('btn-sync-contacts');
+        if (btnSync) {
+            if (status === 'connect') {
+                btnSync.disabled = false;
+                btnSync.style.opacity = '1';
+                btnSync.style.cursor = 'pointer';
+                btnSync.title = 'Sincronizar contactos ahora';
+            } else {
+                btnSync.disabled = true;
+                btnSync.style.opacity = '0.5';
+                btnSync.style.cursor = 'not-allowed';
+                btnSync.title = 'Debes estar conectado a WhatsApp para sincronizar';
+            }
+        }
     },
 
     /**
      * Actualiza el estado de Campaña en el Hub Global.
      */
     updateCampaignStatusUI: (status) => {
+        AppState.campaignStatus = status;
         const isActive = status !== 'INACTIVO' && status;
 
         // Delegar al componente Hub

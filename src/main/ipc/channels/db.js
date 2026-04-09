@@ -17,8 +17,10 @@ export function registerDBHandlers() {
         return await db.getLeadsCount(filter, search);
     });
     
-    ipcMain.handle('db:insertLead', async (event, tel) => await db.insertLead(tel));
+    ipcMain.handle('db:insertLead', async (event, tel, nombre) => await db.insertLead(tel, nombre));
+    ipcMain.handle('db:deleteLeads', async (event, ids) => await db.deleteLeads(ids));
     ipcMain.handle('db:markAsContacted', async (event, id) => await db.markLeadAsContacted(id));
+    ipcMain.handle('db:truncate-leads', async () => await db.truncateLeads());
     
     // --- Logs y Chats ---
     ipcMain.handle('db:saveLog', async (event, logData) => {

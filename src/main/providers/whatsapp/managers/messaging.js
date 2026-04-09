@@ -1,5 +1,9 @@
+import * as sender from './messaging/sender.js';
+import * as contacts from './messaging/contacts.js';
+import * as handler from './messaging/handler.js';
+
 /**
- * Gestor de Mensajería y Contactos de WhatsApp (Subcomponente de Cliente)
+ * Gestor de Mensajería y Contactos de WhatsApp (Orquestador Modular) 📂🏗️🧼
  * Responsabilidad: Envío de mensajes, búsqueda de contactos e integración con IA.
  */
 export class MessagingManager {
@@ -12,61 +16,37 @@ export class MessagingManager {
      * Envia un mensaje a un número específico.
      */
     async send(phone, msg) {
-        if (!this.client) throw new Error('Cliente no inicializado');
-        const chatId = phone.includes('@c.us') ? phone : `${phone}@c.us`;
-        return await this.client.sendMessage(chatId, msg);
+        return await sender.send(this.client, phone, msg);
     }
 
     /**
      * Verifica si un número está registrado en WhatsApp.
      */
     async isRegistered(phone) {
-        if (!this.client) return false;
-        const chatId = phone.includes('@c.us') ? phone : `${phone}@c.us`;
-        try {
-            return await this.client.isRegisteredUser(chatId);
-        } catch (err) {
-            return false;
-        }
+        return await sender.isRegistered(this.client, phone);
     }
 
     /**
      * Obtiene el nombre público (pushname) de un contacto.
      */
     async getContactName(phone) {
-        if (!this.client) return null;
-        try {
-            const chatId = phone.includes('@c.us') ? phone : `${phone}@c.us`;
-            const contact = await this.client.getContactById(chatId);
-            return contact.pushname || contact.name || null;
-        } catch (err) {
-            return null;
-        }
+        return await contacts.getContactName(this.client, phone);
+    }
+
+    /**
+     * Obtiene todos los contactos registrados en el teléfono.
+     */
+    async getContacts() {
+        return await contacts.getContacts(this.client);
     }
 
     /**
      * Lógica de respuesta automática con IA.
      */
     async handleIncomingMessage(msg) {
-        if (msg.from.includes('@g.us') || msg.isStatus) return;
-
-        // Importación dinámica para evitar ciclos de dependencia (ajustada a la arquitectura anidada)
-        const { aiClient } = await import('../../../services/ai/client.js');
-        
-        if (aiClient.isActive && this.mainWindow) {
-            this.mainWindow.webContents.send('wa:log', { 
-                text: `IA: Procesando mensaje de ${msg.from.split('@')[0]}...`, 
-                type: 'info' 
-            });
-            
-            const reply = await aiClient.getReply(msg.body);
-            if (reply) {
-                await msg.reply(reply);
-                this.mainWindow.webContents.send('wa:log', { 
-                    text: `IA responde: ${reply}`, 
-                    type: 'success' 
-                });
-            }
-        }
+        await handler.handleIncomingMessage(msg, {
+            client: this.client,
+            mainWindow: this.mainWindow
+        });
     }
 }

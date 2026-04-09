@@ -14,7 +14,7 @@ export class CampaignExecutor {
      * Bucle principal de envío masivo.
      */
     async execute(params, scheduler, processor, statusCallback) {
-        const { leads, message, minDelay, maxDelay, imagePath, useAI, ignoreHours } = params;
+        const { leads, mensaje, delayMin, delayMax, imagePath, useAI, ignoreHours = false } = params;
         
         // 1. Preparar recursos iniciales (Imagen)
         const media = await processor.prepareMedia(imagePath, this.log.bind(this));
@@ -37,7 +37,7 @@ export class CampaignExecutor {
 
                 // 3. Procesar Contenido (IA)
                 this.log(`Preparando envío a ${lead.telefono}...`, 'info');
-                const finalMessage = await processor.getAIVariant(message, useAI);
+                const finalMessage = await processor.getAIVariant(mensaje, useAI);
 
                 // 4. ENVÍO REAL
                 if (media) {
@@ -47,7 +47,7 @@ export class CampaignExecutor {
                 }
 
                 // 5. Registro y Logs
-                await db.saveMessageLog(lead.telefono, message, 'enviado');
+                await db.saveMessageLog(lead.telefono, mensaje, 'enviado');
                 await db.markLeadAsContacted(lead.id);
                 this.log(`✅ Enviado a ${lead.telefono}`, 'success');
                 
@@ -61,7 +61,7 @@ export class CampaignExecutor {
 
                 // 6. Gestionar siguiente Delay o Pausa por Lotes (cada 50)
                 const delayInterrupted = await scheduler.handleNextDelay(
-                    sentCount, minDelay, maxDelay, 
+                    sentCount, delayMin, delayMax, 
                     statusCallback.isStopping, 
                     this.log.bind(this)
                 );

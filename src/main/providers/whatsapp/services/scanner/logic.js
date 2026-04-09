@@ -22,9 +22,17 @@ export class ScannerLogic {
             if (isReg) {
                 // Capturar nombre si es posible (Pushname de WhatsApp)
                 const pushname = await waClient.getContactName(phone);
-                await db.insertLead(phone, pushname);
                 
-                this.log(`✅ Encontrado válido ${phone}${pushname ? ` (${pushname})` : ''}`, 'success');
+                // Lógica de limpieza: si el nombre es igual al teléfono, lo dejamos vacío
+                const isPhoneInName = /^[\d\+\s\(\)\-]{8,}$/.test((pushname || '').trim());
+                const finalName = isPhoneInName ? null : pushname;
+
+                // En el scanner, el 'phone' es lo que el usuario metió, 
+                // pero Meta podría devolver un ID interno. 
+                // Por ahora el 'phone' es la clave principal humana.
+                await db.insertLead(phone, finalName, 'prospecto');
+                
+                this.log(`✅ Validado: ${phone}${finalName ? ` (${finalName})` : ''}`, 'success');
                 return true;
             }
         } catch (err) {

@@ -1,17 +1,27 @@
-import { run, all, getDB } from '../connection.js';
+import { run, all, getDB } from '../setup/connection.js';
 
 /**
  * Registra un log de mensaje enviado o recibido.
+ * ✅ INSERT OR IGNORE evita duplicados sin lanzar error.
  */
-export async function saveMessageLog(telefono, mensaje, tipo) {
-    return await run("INSERT INTO logs (telefono, mensaje, tipo) VALUES (?, ?, ?)", [telefono, mensaje, tipo]);
+export async function saveMessageLog(telefono, mensaje, tipo, fecha = null) {
+    if (fecha) {
+        return await run(
+            'INSERT OR IGNORE INTO logs (telefono, mensaje, tipo, fecha) VALUES (?, ?, ?, ?)',
+            [telefono, mensaje, tipo, fecha]
+        );
+    }
+    return await run(
+        'INSERT OR IGNORE INTO logs (telefono, mensaje, tipo) VALUES (?, ?, ?)',
+        [telefono, mensaje, tipo]
+    );
 }
 
 /**
  * Recupera la lista de chats únicos (último mensaje de cada contacto). 💬
+ * ✅ Incluye nombre desde leads si existe.
  */
 export async function getUniqueChats() {
-    const db = await getDB();
     const sql = `
         SELECT 
             l.telefono, 
@@ -34,7 +44,6 @@ export async function getUniqueChats() {
  * Recupera el historial completo de mensajes con un contacto específico. 📜
  */
 export async function getChatMessages(telefono) {
-    const db = await getDB();
     const sql = `
         SELECT id, mensaje, tipo, fecha 
         FROM logs 

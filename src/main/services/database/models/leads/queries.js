@@ -1,23 +1,34 @@
-import { run, all } from '../connection.js';
+import { all } from '../../setup/connection.js';
+import { normalizePhone } from './utils.js';
 
 /**
- * Verifica si un lead ya existe por su teléfono.
+ * Gestor de Consultas para el Modelo de Leads 🔍
  */
-export async function isLeadExists(telefono) {
-    const row = await all('SELECT id FROM leads WHERE telefono = ?', [telefono]);
-    return row.length > 0;
-}
 
 /**
- * Inserta un nuevo lead, evitando duplicados.
+ * Verifica si un lead ya existe por su teléfono o ID de Meta.
  */
-export async function insertLead(telefono, nombre = null) {
-    const exists = await isLeadExists(telefono);
-    if (exists) {
-        return { isDuplicate: true };
+export async function isLeadExists(telefono, metaId = null) {
+    const cleanTel = normalizePhone(telefono);
+    const cleanMeta = metaId ? normalizePhone(metaId) : null;
+    
+    // Búsqueda Inteligente: Exacta + Variante sin prefijo (si aplica)
+    let sql = 'SELECT id FROM leads WHERE (telefono = ?';
+    let params = [cleanTel];
+
+    if (cleanTel && cleanTel.startsWith('34') && cleanTel.length === 11) {
+        sql += ' OR telefono = ?';
+        params.push(cleanTel.substring(2)); // Buscar la versión de 9 dígitos
     }
-    const result = await run('INSERT INTO leads (telefono, nombre) VALUES (?, ?)', [telefono, nombre]);
-    return { id: result.lastID, isDuplicate: false };
+    sql += ')';
+
+    if (cleanMeta) {
+        sql += ' OR meta_id = ?';
+        params.push(cleanMeta);
+    }
+    
+    const row = await all(sql, params);
+    return row.length > 0;
 }
 
 /**
@@ -29,6 +40,11 @@ export async function getLeads(filter = 'all', limit = 50, offset = 0, searchQue
     let where = [];
 
     if (filter === 'pendiente') where.push("estado = 'pendiente'");
+    if (filter === 'contacto' || filter === 'prospecto' || filter === 'manual') {
+        where.push("tipo = ?");
+        params.push(filter);
+    }
+    
     if (searchQuery) {
         where.push("telefono LIKE ?");
         params.push(`%${searchQuery}%`);
@@ -51,6 +67,11 @@ export async function getLeadsCount(filter = 'all', searchQuery = '') {
     let where = [];
 
     if (filter === 'pendiente') where.push("estado = 'pendiente'");
+    if (filter === 'contacto' || filter === 'prospecto' || filter === 'manual') {
+        where.push("tipo = ?");
+        params.push(filter);
+    }
+    
     if (searchQuery) {
         where.push("telefono LIKE ?");
         params.push(`%${searchQuery}%`);
@@ -74,18 +95,4 @@ export async function getPendingLeads() {
  */
 export async function getLeadsWithoutName() {
     return await all("SELECT * FROM leads WHERE nombre IS NULL OR nombre = ''");
-}
-
-/**
- * Actualiza el nombre de un lead por su ID.
- */
-export async function updateLeadName(id, nombre) {
-    return await run("UPDATE leads SET nombre = ?, created_at = CURRENT_TIMESTAMP WHERE id = ?", [nombre, id]);
-}
-
-/**
- * Marca un lead como contactado.
- */
-export async function markLeadAsContacted(id) {
-    return await run("UPDATE leads SET estado = 'contactado', fecha_contacto = CURRENT_TIMESTAMP WHERE id = ?", [id]);
 }

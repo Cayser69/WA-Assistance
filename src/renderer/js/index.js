@@ -49,9 +49,6 @@ window.addEventListener('DOMContentLoaded', async () => {
         console.log('[Renderer-Boot] 🧭 Navegando al Dashboard (Aislamiento 5)...');
         await Router.navigate('dashboard');
 
-        const loader = document.getElementById('app-loading-screen');
-        if (loader) loader.style.display = 'none';
-
         console.log('[Renderer-Boot] ✅ Chasis completo: Hub, Sidebar y Consola.');
     } catch (err) {
         console.error('[Renderer-Boot] 🔥 ERROR EN AISLAMIENTO 5:', err);

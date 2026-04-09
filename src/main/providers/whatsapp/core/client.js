@@ -5,7 +5,7 @@ import electron from 'electron';
 const { app } = electron;
 
 // Sub-gestores y Servicios Modulares 🛰️
-import { SessionManager } from '../managers/session.js';
+import { SessionManager } from '../managers/session/index.js';
 import { WhatsAppInitializer } from './initializer.js';
 
 /**

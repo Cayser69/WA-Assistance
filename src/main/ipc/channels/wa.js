@@ -36,12 +36,27 @@ export function registerWAHandlers() {
     // --- Sincronización de Agenda Real 👥 ---
     ipcMain.handle('wa:sync-contacts', async () => {
         try {
+            // Validación de seguridad: No sincronizar si no hay conexión activa
+            if (waClient.getStatus() !== 'connect') {
+                return { success: false, error: 'WhatsApp no está conectado. Escanea el QR primero.' };
+            }
+
             const contacts = await waClient.getContacts();
             let imported = 0;
             
             for (const c of contacts) {
-                const result = await db.insertLead(c.number, c.name);
-                if (!result.isDuplicate) imported++;
+                const telefono = c.number; // Teléfono humano
+                const name = c.name || c.pushname || null;
+                const metaId = c.id ? c.id.user : null;
+                
+                // Filtro Radical: Solo números de 5 a 13 dígitos (Teléfonos reales)
+                const isRealPhone = telefono && telefono.length >= 5 && telefono.length <= 13;
+
+                if (isRealPhone && telefono !== '0') {
+                    // insertLead ahora es simple y unificado por teléfono
+                    const result = await db.insertLead(telefono, name, 'contacto', metaId);
+                    if (!result.isDuplicate) imported++;
+                }
             }
             
             return { success: true, total: contacts.length, imported };

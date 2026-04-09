@@ -60,12 +60,16 @@ export const MensajeTab = {
         const btnIniciar = document.getElementById('btn-iniciar-campana');
         const btnDetener = document.getElementById('btn-detener-campana');
         const textareaMessage = document.getElementById('campana-mensaje');
-        const selectTemplates = document.getElementById('select-templates');
-        const checkAIVariation = document.getElementById('check-ai-variation');
-
         // Cargar ajustes previos
         const settings = await window.api.getAllSettings();
         
+        // Sincronizar estado inicial de los botones 🔄
+        const currentStatus = AppState.campaignStatus;
+        if (currentStatus === 'EJECUTANDO' || currentStatus.includes('PAUSADO')) {
+            btnIniciar.style.display = 'none';
+            btnDetener.style.display = 'flex';
+        }
+
         if (textareaMessage) {
             if (settings.last_campaign_message) textareaMessage.value = settings.last_campaign_message;
         }
