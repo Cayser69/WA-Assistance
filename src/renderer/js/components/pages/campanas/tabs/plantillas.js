@@ -29,7 +29,7 @@ export const PlantillasTab = {
                             <span class="material-icons-outlined" style="font-size: 1.1rem; vertical-align: middle;">visibility</span> Vista Previa del Chat
                         </h4>
                         
-                        <div class="whatsapp-preview-container" id="wa-preview-root">
+                        <div class="whatsapp-preview-window" id="wa-preview-root">
                             <!-- Burbuja inyectada -->
                         </div>
                         

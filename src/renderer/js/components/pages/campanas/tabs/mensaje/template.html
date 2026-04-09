@@ -1,0 +1,73 @@
+<div id="section-mensaje" class="animate-fade-in section-mensaje">
+    <div class="form-container">
+        <!-- Tarjeta Maestra -->
+        <div class="card glass-card campaign-card">
+            
+            <!-- Columna Izquierda: Configuración -->
+            <div class="setup-panel">
+                <div class="template-header">
+                    <label class="setup-label">
+                        <span class="material-icons-outlined">tune</span> 1. Configuración del Mensaje
+                    </label>
+                </div>
+
+                <div class="safety-notice">
+                    <span class="material-icons-outlined">security</span>
+                    <p>Protección de envío y retardos inteligentes activos.</p>
+                </div>
+
+                <div class="form-group">
+                    <label class="group-label">1. Selecciona tu mensaje</label>
+                     <select id="select-templates" class="template-select" style="width: 100%;">
+                        <option value="">Elegir Plantilla...</option>
+                     </select>
+                     <textarea id="campana-mensaje" style="display: none;"></textarea>
+                     <input type="hidden" id="campana-image-path" value="">
+                </div>
+
+                <div class="ai-switch-row">
+                    <div class="header-left">
+                        <span class="material-icons-outlined ai-icon">auto_awesome</span>
+                        <div>
+                            <strong class="ai-title">Variación Anti-Spam (IA)</strong>
+                            <div class="text-muted ai-subtitle">Mensajes únicos por cada lead.</div>
+                        </div>
+                    </div>
+                    <input type="checkbox" id="check-ai-variation" class="ai-checkbox">
+                </div>
+
+                <div class="actions-footer">
+                    <!-- Contador de Audiencia Seleccionada 📊 -->
+                    <div id="mensaje-selected-count-bar" class="selected-count-bar">
+                        <span class="material-icons-outlined">groups</span>
+                        <span id="mensaje-selected-count" class="count-text">0 contactos seleccionados</span>
+                    </div>
+
+                    <button id="btn-iniciar-campana" class="btn btn-success btn-large btn-full">
+                        <span class="material-icons-outlined">rocket_launch</span> INICIAR ENVÍO MASIVO
+                    </button>
+
+                    <button id="btn-detener-campana" class="btn btn-stop btn-large btn-full" style="display: none;">
+                        <span class="material-icons-outlined">stop_circle</span> DETENER ENVÍO
+                    </button>
+                </div>
+            </div>
+
+            <!-- Columna Derecha: Vista Previa Dinámica (Consistente) -->
+            <div class="preview-panel">
+                <div class="preview-header">
+                     <label class="preview-label">
+                        <span class="material-icons-outlined">visibility</span> Vista Previa Real
+                     </label>
+                </div>
+                
+                <div id="wa-preview-root" class="whatsapp-preview-window">
+                    <div class="loading-placeholder">
+                        Selecciona una plantilla para ver el resultado final...
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>

@@ -1,13 +1,6 @@
 <div class="wa-bubble-wrapper">
-    <div class="wa-bubble">
-        <div id="wa-bubble-image-container">
-            {{image}}
-        </div>
-        <div class="wa-msg-text">
-            {{text}}
-        </div>
-        <span class="wa-time">
-            {{time}} <span class="material-icons-outlined wa-check">done_all</span>
-        </span>
+    <div class="wa-bubble-sent">
+        <div class="wa-bubble-tail"><svg viewBox="0 0 8 13" preserveAspectRatio="none"><path d="M5.188,0H0v11.193l6.467-8.625C7.526,1.103,6.546,0,5.188,0z" fill="currentColor"></path></svg></div>
+        <div class="wa-bubble-content"><div id="wa-bubble-image-container">{{image}}</div><div class="wa-msg-text">{{text}}</div><div class="wa-bubble-meta"><span class="wa-time">{{time}}</span><span class="material-icons-outlined wa-check">done_all</span></div></div>
     </div>
 </div>

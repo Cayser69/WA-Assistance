@@ -17,37 +17,35 @@ export const Scanner = {
      * Lógica de inicialización.
      */
     init: async (appState, params = {}) => {
-        console.log('[Scanner] 🔍 Iniciando módulo de validación...');
+        const activeTab = params.tab || 'config';
+        console.log(`[Scanner] 🔍 Gestionando pestaña: ${activeTab}...`);
 
         try {
-            // 1. Cargar HTML y Estilos
-            const html = await TemplateLoader.loadHTML('scanner');
-            await TemplateLoader.loadCSS('scanner');
+            let root = document.getElementById('scanner-content-root');
 
-            const container = document.getElementById('scanner-view-container');
-            if (!container) return;
+            // 1. Detección de Estructura Persistente 🛡️
+            if (!root) {
+                const html = await TemplateLoader.loadHTML('scanner');
+                await TemplateLoader.loadCSS('scanner');
+                const container = document.getElementById('scanner-view-container');
+                if (container) container.innerHTML = html;
+                root = document.getElementById('scanner-content-root');
+            }
 
-            // Inyectamos la estructura base
-            container.innerHTML = html;
-
-            // 2. Determinar la pestaña activa
-            const activeTab = params.tab || 'config';
-            const root = document.getElementById('scanner-content-root');
             if (!root) return;
 
-            // 3. Mapeo de sub-componentes internos
+            // 2. Mapeo de sub-componentes internos
             const tabs = {
                 'config': ConfigTab,
                 'progreso': ProgresoTab,
                 'resultados': ResultadosTab
             };
-
             const component = tabs[activeTab] || ConfigTab;
 
-            // 4. Renderizar el contenido de la pestaña activa
+            // 3. Renderizado Inteligente
             root.innerHTML = component.render();
 
-            // 5. Actualizar título dinámico
+            // 4. Actualizar título dinámico
             const titles = { 
                 'config': 'Lanzar Escaneo Seguro', 
                 'progreso': 'Progreso en Vivo', 
@@ -56,12 +54,12 @@ export const Scanner = {
             const titleEl = document.getElementById('scanner-view-title');
             if (titleEl) titleEl.textContent = titles[activeTab] || 'Validador de Números';
 
-            // 6. Inicializar la lógica específica del sub-componente
+            // 5. Inicialización lógica
             if (component.init) {
                 await component.init(appState);
             }
 
-            console.log(`[Scanner] ✅ Pestaña '${activeTab}' cargada.`);
+            console.log(`[Scanner] ✅ Pestaña '${activeTab}' lista.`);
         } catch (err) {
             console.error('[Scanner] ❌ Error en inicialización:', err);
         }

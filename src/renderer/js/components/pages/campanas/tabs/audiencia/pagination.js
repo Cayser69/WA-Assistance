@@ -24,9 +24,13 @@ export class AudienciaPagination {
         if (this.isLoading || (isAppend && !this.hasMore)) return;
 
         this.isLoading = true;
+        
         if (!isAppend) {
             this.reset();
-            this.tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding: 20px;">Cargando...</td></tr>';
+            // Solo mostramos el estado de carga si la tabla está actualmente vacía de verdad
+            if (this.tbody.children.length === 0) {
+                this.tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding: 20px; color: var(--text-muted);">Consultando agenda...</td></tr>';
+            }
         }
 
         try {

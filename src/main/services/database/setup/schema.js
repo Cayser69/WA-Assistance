@@ -64,5 +64,7 @@ export const MIGRATIONS = [
  */
 export const INDEXES = [
     'CREATE INDEX IF NOT EXISTS idx_leads_nombre ON leads(nombre)',
+    'CREATE INDEX IF NOT EXISTS idx_leads_estado ON leads(estado)',
+    'CREATE INDEX IF NOT EXISTS idx_leads_tipo ON leads(tipo)',
     'CREATE UNIQUE INDEX IF NOT EXISTS idx_logs_unique ON logs(telefono, mensaje, tipo, fecha)'
 ];

@@ -14,6 +14,14 @@ export function getDB() {
     if (!db) {
         const dbPath = path.resolve(app.getPath('userData'), 'database.sqlite');
         db = new sqlite3.Database(dbPath);
+        
+        // Optimización de Base de Datos para Alto Rendimiento 🧊⚡
+        db.serialize(() => {
+            db.run("PRAGMA journal_mode = WAL;");
+            db.run("PRAGMA synchronous = NORMAL;");
+            db.run("PRAGMA temp_store = MEMORY;");
+            db.run("PRAGMA cache_size = -2000;"); // ~2MB de caché
+        });
     }
     return db;
 }

@@ -1,3 +1,5 @@
+import { AppOverlay } from '../../../../layout/loading-overlay/index.js';
+
 /**
  * Sub-manejador: Acciones de Audiencia 👥⚡
  */
@@ -16,20 +18,23 @@ export const AudienciaActions = {
                 const tel = inputPhone.value.trim();
                 const name = inputName ? inputName.value.trim() : null;
 
-                if (tel) {
+                if (!tel) return;
+
+                // Estado de Carga Local
+                const originalHTML = btnAdd.innerHTML;
+                btnAdd.disabled = true;
+                btnAdd.innerHTML = '<span class="material-icons-outlined animate-spin" style="font-size: 1.1rem;">sync</span>';
+
+                try {
                     const res = await window.api.insertLead(tel, name);
-                    if (res.isDuplicate) {
-                        // Si era duplicado, simplemente refrescamos para mostrar los datos actualizados (nombre, etc)
-                        inputPhone.value = '';
-                        if (inputName) inputName.value = '';
-                        refresh();
-                    } else if (res.error) {
-                        alert('Error: ' + res.error);
-                    } else {
-                        inputPhone.value = '';
-                        if (inputName) inputName.value = '';
-                        refresh();
-                    }
+                    inputPhone.value = '';
+                    if (inputName) inputName.value = '';
+                    await refresh();
+                } catch (err) {
+                    console.error('[Audiencia] Error al añadir lead:', err);
+                } finally {
+                    btnAdd.disabled = false;
+                    btnAdd.innerHTML = originalHTML;
                 }
             };
         }
@@ -38,17 +43,17 @@ export const AudienciaActions = {
         const btnSync = document.getElementById('btn-sync-contacts');
         if (btnSync) {
             btnSync.onclick = async () => {
-                btnSync.disabled = true;
-                btnSync.innerHTML = '<span class="material-icons-outlined animate-spin" style="font-size: 1rem; vertical-align: middle;">sync</span> SINCRONIZANDO...';
+                await AppOverlay.show('Sincronizando contactos desde WhatsApp...');
                 try {
                     const res = await window.api.syncContacts();
                     if (res.success) {
-                        alert(`Sincronización lista: ${res.imported} nuevos contacts.`);
-                        refresh();
+                        alert(`Sincronización lista: ${res.imported} nuevos contactos.`);
+                        await refresh();
                     } else alert('Error: ' + res.error);
+                } catch (err) {
+                    console.error('[Audiencia] Error en sincronización:', err);
                 } finally {
-                    btnSync.disabled = false;
-                    btnSync.innerHTML = '<span class="material-icons-outlined" style="font-size: 1rem; vertical-align: middle;">sync</span> SINCRONIZAR AHORA';
+                    AppOverlay.hide();
                     appState.updateWAStatusUI(appState.waStatus);
                 }
             };
@@ -66,10 +71,17 @@ export const AudienciaActions = {
                 }
 
                 if (confirm(`¿Estás seguro de que quieres eliminar los ${selectedIds.length} contactos seleccionados?`)) {
-                    await window.api.deleteLeads(selectedIds);
-                    appState.selectedLeads = []; // Limpiar selección
-                    context.updateCount();
-                    refresh();
+                    await AppOverlay.show(`Eliminando ${selectedIds.length} contactos...`);
+                    try {
+                        await window.api.deleteLeads(selectedIds);
+                        appState.selectedLeads = []; // Limpiar selección
+                        context.updateCount();
+                        await refresh();
+                    } catch (err) {
+                        console.error('[Audiencia] Error al eliminar:', err);
+                    } finally {
+                        AppOverlay.hide();
+                    }
                 }
             };
         }

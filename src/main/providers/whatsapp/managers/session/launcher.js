@@ -40,7 +40,14 @@ export const SessionLauncher = {
                 '--disable-accelerated-2d-canvas', 
                 '--no-first-run', 
                 '--no-zygote', 
-                '--disable-gpu'
+                '--disable-gpu',
+                '--disable-background-timer-throttling',
+                '--disable-backgrounding-occluded-windows',
+                '--disable-breakpad',
+                '--disable-component-update',
+                '--disable-domain-reliability',
+                '--disable-ipc-flooding-protection',
+                '--disable-renderer-backgrounding'
             ]
         };
 
