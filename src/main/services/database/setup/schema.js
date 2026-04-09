@@ -56,7 +56,9 @@ export const MIGRATIONS = [
     'ALTER TABLE leads ADD COLUMN nombre TEXT',
     "ALTER TABLE leads ADD COLUMN tipo TEXT DEFAULT 'manual'",
     "ALTER TABLE leads ADD COLUMN meta_id TEXT",
-    "ALTER TABLE leads ADD COLUMN reparado INTEGER DEFAULT 0"
+    "ALTER TABLE leads ADD COLUMN reparado INTEGER DEFAULT 0",
+    "ALTER TABLE logs ADD COLUMN media_path TEXT",
+    "ALTER TABLE logs ADD COLUMN mimetype TEXT"
 ];
 
 /**

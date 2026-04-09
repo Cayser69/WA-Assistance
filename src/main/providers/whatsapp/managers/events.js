@@ -34,9 +34,9 @@ export class EventDispatcher {
         this.client.on('ready', () => connHandler.handleReady(context));
         this.client.on('disconnected', (reason) => connHandler.handleDisconnected(reason, context));
 
-        // 3. Evento de Mensajes Entrantes
-        this.client.on('message', async (msg) => {
-            if (messagingManager) await messagingManager.handleIncomingMessage(msg);
+        // 3. Evento de Control Total de Mensajes (Entrantes y Salientes)
+        this.client.on('message_create', async (msg) => {
+            if (messagingManager) await messagingManager.handleMessage(msg);
         });
     }
 

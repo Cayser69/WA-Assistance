@@ -5,6 +5,7 @@
     grid-template-columns: 1fr;
     gap: 24px;
     max-width: 800px;
+    margin: 0 auto;
 }
 
 .ai-card {
@@ -35,12 +36,13 @@
 
 .status-row {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px 15px;
-    background: rgba(34, 197, 94, 0.1);
+    justify-content: flex-start;
+    align-items: start;
+    gap: 12px;
+    padding: 15px;
+    background: rgba(34, 197, 94, 0.05);
     border-radius: 8px;
-    border: 1px solid rgba(34, 197, 94, 0.2);
+    border: 1px solid rgba(34, 197, 94, 0.1);
     margin-bottom: 20px;
 }
 
@@ -79,4 +81,63 @@
 .sub-nav li {
     font-size: 0.9rem !important;
     padding: 10px 16px !important;
+}
+
+/* --- Sub-Pestañas de Conocimiento --- */
+
+.ai-sub-tabs {
+    display: flex;
+    gap: 5px;
+    padding: 10px;
+    margin-bottom: 20px;
+}
+
+.sub-tab-btn {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px 15px;
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: 8px;
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.sub-tab-btn span {
+    font-size: 1.1rem;
+}
+
+.sub-tab-btn:hover {
+    color: var(--text-main);
+    background: rgba(255, 255, 255, 0.03);
+}
+
+.sub-tab-btn.active {
+    background: rgba(34, 197, 94, 0.05);
+    border-color: rgba(34, 197, 94, 0.2);
+    color: var(--primary);
+    box-shadow: 0 4px 15px rgba(34, 197, 94, 0.05);
+}
+
+.ai-sub-content {
+    animation: slide-up 0.4s ease-out;
+}
+
+@keyframes slide-up {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.subtab-pane {
+    display: block;
+}
+
+.subtab-pane.hidden {
+    display: none;
 }

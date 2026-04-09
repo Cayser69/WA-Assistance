@@ -41,10 +41,10 @@ export class MessagingManager {
     }
 
     /**
-     * Lógica de respuesta automática con IA.
+     * Lógica de respuesta automática con IA y registro de historial.
      */
-    async handleIncomingMessage(msg) {
-        await handler.handleIncomingMessage(msg, {
+    async handleMessage(msg) {
+        await handler.handleMessage(msg, {
             client: this.client,
             mainWindow: this.mainWindow
         });

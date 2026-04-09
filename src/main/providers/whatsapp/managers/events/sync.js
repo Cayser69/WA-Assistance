@@ -62,9 +62,9 @@ export async function syncRecentChats(context) {
         await patchBrowser(client);
 
         // 2. Importaciones dinámicas (DB)
-        const { saveMessageLog } = await import('../../../services/database/models/logs.js');
-        const { insertLead, updateLeadName, isLeadExists } = await import('../../../services/database/models/leads.js');
-        const { run } = await import('../../../services/database/connection.js');
+        const { saveMessageLog } = await import('../../../../../services/database/models/logs.js');
+        const { insertLead, updateLeadName, isLeadExists } = await import('../../../../../services/database/models/leads.js');
+        const { run } = await import('../../../../../services/database/connection.js');
 
         const chats = await client.getChats();
         const individualChats = chats.filter(c => !c.isGroup).slice(0, 20);

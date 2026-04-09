@@ -13,6 +13,11 @@ const __dirname = path.dirname(__filename);
 
 console.log('[Main] 🚀 App Ready (Hybrid Core Activated)');
 
+// 0. Registrar Protocolos Multimedia 🛰️
+electron.protocol.registerSchemesAsPrivileged([
+    { scheme: 'app-media', privileges: { standard: true, secure: true, supportFetchAPI: true, stream: true } }
+]);
+
 // 1. Configurar Entorno 📂
 BootManager.configurePaths(app.isPackaged, process.cwd());
 
@@ -28,6 +33,14 @@ let isCleaningUp = false;
 
 // 3. Arranque de Servicios y Ventana 🖥️
 app.whenReady().then(async () => {
+    // Manejador del Protocolo Multimedia 🛰️
+    electron.protocol.handle('app-media', (request) => {
+        const filePath = request.url.replace('app-media://', '');
+        const decodedPath = decodeURIComponent(filePath);
+        const fullPath = path.join(app.getPath('userData'), decodedPath);
+        return electron.net.fetch(`file:///${fullPath}`);
+    });
+
     try {
         services = await BootManager.loadServices(__dirname);
         

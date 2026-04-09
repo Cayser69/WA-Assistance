@@ -86,25 +86,36 @@ export const AudienciaActions = {
             };
         }
 
-        // --- Selección Global ---
-        document.getElementById('btn-select-all').onclick = () => {
-            document.querySelectorAll('.lead-checkbox').forEach(cb => {
-                cb.checked = true;
-                const id = parseInt(cb.dataset.id);
-                if (!appState.selectedLeads.find(l => l.id === id)) {
-                    appState.selectedLeads.push({ id, telefono: cb.dataset.phone });
-                }
-            });
-            document.getElementById('master-checkbox').checked = true;
-            context.updateCount();
-        };
+        // --- Selección Global (Ubicada en el encabezado de la tabla) ---
+        const masterCheckbox = document.getElementById('master-checkbox');
+        if (masterCheckbox) {
+            masterCheckbox.onchange = () => {
+                const checked = masterCheckbox.checked;
+                document.querySelectorAll('.lead-checkbox').forEach(cb => {
+                    cb.checked = checked;
+                    const id = parseInt(cb.dataset.id);
+                    if (checked) {
+                        if (!appState.selectedLeads.find(l => l.id === id)) {
+                            appState.selectedLeads.push({ id, telefono: cb.dataset.phone });
+                        }
+                    } else {
+                        appState.selectedLeads = appState.selectedLeads.filter(l => l.id !== id);
+                    }
+                });
+                context.updateCount();
+            };
+        }
 
-        document.getElementById('btn-select-none').onclick = () => {
-            document.querySelectorAll('.lead-checkbox').forEach(cb => cb.checked = false);
-            appState.selectedLeads = [];
-            document.getElementById('master-checkbox').checked = false;
-            context.updateCount();
-        };
+        const btnClear = document.getElementById('btn-select-none');
+        if (btnClear) {
+            btnClear.onclick = () => {
+                document.querySelectorAll('.lead-checkbox').forEach(cb => cb.checked = false);
+                appState.selectedLeads = []; // Limpiar selección GLOBAL
+                if (masterCheckbox) masterCheckbox.checked = false;
+                context.updateCount();
+                alert('Toda la selección ha sido limpiada.');
+            };
+        }
 
         // --- Navegación ---
         document.getElementById('btn-go-to-message').onclick = () => {

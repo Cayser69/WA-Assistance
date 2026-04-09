@@ -1,0 +1,31 @@
+<div id="section-ai-personalidad" class="ai-card animate-fade-in">
+    <div class="card glass-card">
+        <div class="form-group-col">
+            
+            <!-- PARTE 1: INSTRUCCIONES MAESTRAS -->
+            <div class="input-field">
+                <label style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px;">
+                    <span class="material-icons-outlined" style="color: var(--primary)">psychology</span>
+                    Identidad y Perfil de la IA
+                </label>
+                
+                <div class="status-row">
+                    <span class="material-icons-outlined" style="color: var(--primary); font-size: 1.25rem;">info</span>
+                    <span style="font-size: 0.85rem; line-height: 1.5;">Define quién es la IA y cómo debe expresarse. Este es el "cerebro" que orquestará todas las respuestas.</span>
+                </div>
+
+                <textarea id="ai-system-prompt" class="prompt-area" style="min-height: 350px; margin-bottom: 20px;" placeholder="Ejemplo: Eres un asistente experto en ventas, amable, profesional y usas un tono cercano."></textarea>
+            </div>
+
+            <!-- BOTONES DE ACCIÓN -->
+            <div style="display: flex; justify-content: center; gap: 15px; margin-top: 35px; padding-top: 25px; border-top: 1px solid rgba(255, 255, 255, 0.05);">
+                <button id="btn-generate-prompt" class="btn btn-primary" style="padding: 12px 30px; min-width: 200px; background: var(--secondary)">
+                    <span class="material-icons-outlined">auto_awesome</span> GENERAR IDENTIDAD
+                </button>
+                <button id="btn-save-prompt" class="btn btn-success" style="padding: 12px 30px; min-width: 200px;">
+                    <span class="material-icons-outlined">save</span> GUARDAR IDENTIDAD
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

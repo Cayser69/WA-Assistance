@@ -106,7 +106,7 @@ class WhatsAppScanner {
         } finally {
             this.isRunning = false;
             this.isStopping = false; // Reset flag
-            this.sendStatus('INACTIVO');
+            this.broadcastStatus();
         }
     }
 

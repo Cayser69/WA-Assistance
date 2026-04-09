@@ -27,6 +27,9 @@ export const Router = {
         const root = document.getElementById('view-root');
         if (!root) return;
 
+        // 0. Identificar la vista actual en el root para ajustes de CSS dinámicos 🎭
+        root.className = `view-${viewId}`;
+
         const component = Router.views[viewId] || Dashboard;
         
         try {
@@ -70,6 +73,9 @@ export const Router = {
                 if (viewId === 'scanner') groupsToExpand.push('subgroup-scanner');
             } else if (viewId === 'aiConfig') {
                 groupsToExpand.push('group-ai');
+                if (['catalogo', 'faqs', 'operativa'].includes(tabId)) {
+                    groupsToExpand.push('subgroup-ai-knowledge');
+                }
             }
 
             groupsToExpand.forEach(groupId => {

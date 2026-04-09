@@ -1,9 +1,7 @@
 import { TemplateLoader } from '../../../core/loader.js';
 import { MensajeTab } from './tabs/mensaje/index.js';
-import { PlantillasTab } from './tabs/plantillas.js';
-import { AudienciaTab } from './tabs/audiencia.js';
-
-const DummyTab = { render: () => '<div class="p-20">Pestaña Aislada (Test)</div>', init: () => {} };
+import { PlantillasTab } from './tabs/plantillas/index.js';
+import { AudienciaTab } from './tabs/audiencia/index.js';
 
 /**
  * Componente: Campanas - Centro de Estrategia Industrial 📊📈🚀
@@ -32,8 +30,8 @@ export const Campanas = {
             // 1. Detección de Estructura Persistente 🛡️
             // Si el root no existe, cargamos la estructura base completa
             if (!root) {
-                const html = await TemplateLoader.loadHTML('pages/campanas');
-                await TemplateLoader.loadCSS('pages/campanas');
+                const html = await TemplateLoader.loadHTML('campanas');
+                await TemplateLoader.loadCSS('campanas');
                 const container = document.getElementById('view-campanas-container');
                 if (container) container.innerHTML = html;
                 root = document.getElementById('campaign-content-root');

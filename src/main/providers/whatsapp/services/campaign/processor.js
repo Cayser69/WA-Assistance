@@ -16,7 +16,14 @@ export class CampaignProcessor {
         try {
             const { default: pkg } = await import('whatsapp-web.js');
             const { MessageMedia } = pkg;
-            return MessageMedia.fromFilePath(imagePath);
+            const { app } = await import('electron');
+            const path = await import('path');
+
+            // Resolver ruta absoluta desde userData
+            const userDataPath = app.getPath('userData');
+            const absolutePath = path.join(userDataPath, imagePath);
+
+            return MessageMedia.fromFilePath(absolutePath);
         } catch (err) {
             logger(`❌ Error cargando imagen: ${err.message}`, 'error');
             return null;
@@ -30,15 +37,16 @@ export class CampaignProcessor {
         if (!useAI) return message;
 
         // Importación dinámica para evitar ciclos de dependencia
-        const { aiClient } = await import('../../../../services/ai/client.js');
+        const { aiClient } = await import('../../../../../services/ai/client.js');
         
         if (aiClient.isActive) {
             this.mainWindow.webContents.send('wa:log', { 
-                text: `IA: Generando variante para el envío...`, 
+                text: `IA: Generando variante personalizada basada en contexto...`, 
                 type: 'info' 
             });
             
-            const aiPrompt = `Reescribe este mensaje de forma profesional y amigable: "${message}"`;
+            // Prompt enriquecido para que la variante guarde relación con el negocio 🧠
+            const aiPrompt = `Reescribe este mensaje de forma profesional pero vendedora, asegurándote de mantener la coherencia con la base de conocimiento del negocio. MENSAJE A REESCRIBIR: "${message}"`;
             const variant = await aiClient.getReply(aiPrompt);
             return variant || message;
         }

@@ -33,6 +33,16 @@ export function registerWAHandlers() {
     ipcMain.handle('wa:getScannerStatus', () => waScanner.getStatus());
     ipcMain.handle('wa:startRepair', () => waScanner.startRepair());
 
+    // --- Envío Manual de Mensajes 💬 ---
+    ipcMain.handle('wa:send-message', async (event, { phone, message }) => {
+        try {
+            return await waClient.sendMessage(phone, message);
+        } catch (error) {
+            console.error('Error en IPC wa:send-message:', error);
+            return { success: false, error: error.message };
+        }
+    });
+
     // --- Sincronización de Agenda Real 👥 ---
     ipcMain.handle('wa:sync-contacts', async () => {
         try {

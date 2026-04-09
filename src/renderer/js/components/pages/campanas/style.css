@@ -352,3 +352,37 @@
     from { opacity: 0; transform: translateY(5px); }
     to { opacity: 1; transform: translateY(0); }
 }
+
+/* Botón Limpiar Selección (Compacto / Estilo CRM) 🧼 */
+.btn-clear-selection {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--text-muted);
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-clear-selection:hover {
+    background: rgba(255, 50, 50, 0.1);
+    color: #ff5f5f;
+    border-color: rgba(255, 50, 50, 0.2);
+}
+
+.btn-clear-selection span {
+    font-size: 1rem;
+}
+
+/* Checkbox Maestro Estilizado 🎨 */
+#master-checkbox {
+    cursor: pointer;
+    width: 16px;
+    height: 16px;
+    accent-color: var(--primary);
+}

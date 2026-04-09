@@ -1,50 +1,12 @@
+import { TemplateLoader } from '../../../../../core/loader.js';
+
 /**
  * Sub-Componente de Scanner: Progreso en Vivo
  */
 export const ProgresoTab = {
-    render: () => `
-        <div class="scanner-status">
-            <div class="card glass-card">
-                <h3><span class="material-icons-outlined">analytics</span> Progreso en Tiempo Real</h3>
-                
-                <div class="stats-grid">
-                    <div class="stat-box">
-                        <span class="stat-value" id="stat-total">0</span>
-                        <span class="stat-label">Total</span>
-                    </div>
-                    <div class="stat-box">
-                        <span class="stat-value" id="stat-checked">0</span>
-                        <span class="stat-label">Revisados</span>
-                    </div>
-                    <div class="stat-box">
-                        <span class="stat-value" id="stat-valid" style="color: var(--primary)">0</span>
-                        <span class="stat-label">Válidos</span>
-                    </div>
-                </div>
-
-                <div class="progress-container">
-                    <div id="scan-progress-bar" class="progress-bar"></div>
-                </div>
-
-                <div class="current-status-box" id="scan-current-info" style="display: none;">
-                    <strong id="scan-current-label">VALIDANDO AHORA:</strong>
-                    <span id="scan-current-number">---</span>
-                    <div id="scan-next-timer" style="font-size: 0.7rem; color: var(--text-muted); margin-top: 5px;"></div>
-                </div>
-
-                <div id="scanner-idle-msg" style="text-align: center; margin-top: 40px; color: var(--text-muted);">
-                    <span class="material-icons-outlined" style="font-size: 3rem; opacity: 0.2;">search</span>
-                    <p>No hay un escaneo activo en este momento.</p>
-                </div>
-
-                <div class="scanner-footer" style="margin-top: 30px;">
-                    <button id="btn-stop-scanner" class="btn btn-danger btn-stop" style="display: none; width: 100%;">
-                        <span class="material-icons-outlined">stop</span> DETENER ESCANEO ACTUAL
-                    </button>
-                </div>
-            </div>
-        </div>
-    `,
+    render: async () => {
+        return await TemplateLoader.loadHTML('scanner/tabs/progreso');
+    },
 
     init: async (appState) => {
         const btnStop = document.getElementById('btn-stop-scanner');
@@ -104,19 +66,18 @@ export const ProgresoTab = {
             }
         };
 
-        // Escuchar actualizaciones
+        // Escuchar actualizaciones dinámicas
         window.api.onScannerUpdate((status) => {
             updateUI(status);
         });
 
-        // Cargar estado inicial
+        // Cargar estado inicial al entrar en la pestaña
         const initialStatus = await window.api.getScannerStatus();
         updateUI(initialStatus);
 
         if (btnStop) {
             btnStop.onclick = async () => {
-                const confirmed = confirm('¿Seguro que quieres detener el escaneo?');
-                if (confirmed) {
+                if (confirm('¿Seguro que quieres detener el escaneo?')) {
                     await window.api.stopScanner();
                 }
             };

@@ -195,3 +195,57 @@ textarea:focus {
 .authenticated .dot, .status-badge.authenticated .dot { 
     background: #f59e0b; 
 }
+
+/* --- Aviso Global de Tareas Pendientes --- */
+.task-reminder-card {
+    position: fixed;
+    bottom: 25px;
+    right: 25px;
+    width: 350px;
+    z-index: 1000;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    animation: slide-in-bottom 0.5s ease-out forwards;
+}
+
+.task-reminder-card .card-content {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.task-reminder-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.task-reminder-header h4 {
+    margin: 0;
+    font-size: 0.95rem;
+    color: var(--primary);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn-close-reminder {
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    padding: 2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-close-reminder:hover {
+    color: #ef4444;
+}
+
+.task-reminder-body {
+    font-size: 0.85rem;
+    line-height: 1.4;
+    color: var(--text-main);
+}

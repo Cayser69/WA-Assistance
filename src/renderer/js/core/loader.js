@@ -9,9 +9,9 @@ export const TemplateLoader = {
      * Carga el contenido de un archivo HTML de forma asíncrona.
      * Intenta buscar en subcarpetas (pages, layout, shared) si no está en la raíz.
      */
-    async loadHTML(componentName, fileName = 'template.html') {
+    async loadHTML(componentName, fileName = 'template.html', forceReload = false) {
         const cacheKey = `html-${componentName}-${fileName}`;
-        if (this.cache[cacheKey]) return this.cache[cacheKey];
+        if (!forceReload && this.cache[cacheKey]) return this.cache[cacheKey];
 
         const subfolders = ['', 'pages/', 'layout/', 'shared/'];
         

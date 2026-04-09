@@ -85,8 +85,16 @@ export const UIEvents = {
                 } else {
                     btnIniciar.style.display = 'flex';
                     btnDetener.style.display = 'none';
+                    
+                    // Ocultar barra de progreso al terminar
+                    const progressRoot = document.getElementById('campaign-progress-container');
+                    if (progressRoot) progressRoot.style.display = 'none';
                 }
             }
+        });
+
+        window.api.onCampaignProgress((data) => {
+            AppState.updateCampaignProgressUI(data);
         });
 
         window.api.onMessageLog((log) => {

@@ -3,6 +3,7 @@ import { AppState } from './core/state.js';
 import { Sidebar } from './components/layout/sidebar/index.js';
 import { Hub } from './components/layout/hub/index.js';
 import { ConsoleComponent } from './components/layout/console/index.js';
+import { TaskReminder } from './components/shared/task-reminder/index.js';
 import { UIEvents } from './core/ui-events.js';
 
 window.addEventListener('DOMContentLoaded', async () => {
@@ -32,10 +33,15 @@ window.addEventListener('DOMContentLoaded', async () => {
             hubRoot.innerHTML = Hub.render();
             await Hub.init();
             
-            // Sincronización inicial de persistencia 🛰️
+            // Sincronización inicial de persistencia y servicios 🛰️
             setTimeout(async () => {
+                // 1. Escáner
                 const saved = await window.api.checkPersistence('scanner_active');
                 if (saved) window.Hub.updateScanner(true, true);
+
+                // 2. Inteligencia Artificial
+                const aiStatus = await window.api.invoke('ai:get-status');
+                if (aiStatus) AppState.updateAIStatusUI(aiStatus.enabled);
             }, 1000);
         }
 
@@ -48,6 +54,11 @@ window.addEventListener('DOMContentLoaded', async () => {
 
         console.log('[Renderer-Boot] 🧭 Navegando al Dashboard (Aislamiento 5)...');
         await Router.navigate('dashboard');
+
+        // 5. Comprobar tareas pendientes (Aviso Global) 🛰️
+        setTimeout(() => {
+            TaskReminder.init();
+        }, 1500);
 
         console.log('[Renderer-Boot] ✅ Chasis completo: Hub, Sidebar y Consola.');
     } catch (err) {

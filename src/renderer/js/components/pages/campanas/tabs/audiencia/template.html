@@ -1,0 +1,95 @@
+<div id="section-audiencia" class="animate-fade-in" style="display: flex; flex-direction: column; gap: 20px; width: 100%;">
+    
+    <!-- 1. Añadir Lead Manual (Superior - Ancho Completo) -->
+    <div class="card glass-card" style="width: 100%;">
+        <h3 style="display: flex; align-items: center; gap: 10px; margin-bottom: 20px;">
+            <span class="material-icons-outlined" style="color: var(--primary);">person_add</span> 
+            Añadir Lead Manual
+        </h3>
+        <div class="add-lead-row" style="display: flex; align-items: flex-end; gap: 20px; width: 100%;">
+            <div class="input-group" style="flex: 1;">
+                <label style="font-size: 0.75rem; color: var(--text-muted); display: block; margin-bottom: 8px;">Nombre del Contacto</label>
+                <input type="text" id="new-lead-name" placeholder="Ej: Juan Pérez" style="width: 100%;">
+            </div>
+            <div class="input-group" style="flex: 1;">
+                <label style="font-size: 0.75rem; color: var(--text-muted); display: block; margin-bottom: 8px;">Teléfono (WhatsApp)</label>
+                <input type="text" id="new-lead-phone" placeholder="Ej: 34600111222" style="width: 100%;">
+            </div>
+            <button id="btn-add-lead" class="btn btn-primary" style="height: 42px; padding: 0 30px; display: flex; align-items: center; gap: 8px;">
+                <span class="material-icons-outlined">add_circle</span>
+                <span>REGISTRAR CONTACTO</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- 2. Columnas Inferiores -->
+    <div style="display: grid; grid-template-columns: 320px 1fr; gap: 20px; width: 100%;">
+        
+        <!-- Acciones (Izquierda) -->
+        <div class="card glass-card">
+            <h3 style="display: flex; align-items: center; gap: 10px;">
+                <span class="material-icons-outlined" style="color: var(--primary);">check_box</span> Gestión de Selección
+            </h3>
+            <p class="text-muted" style="font-size: 0.8rem; margin-bottom: 20px;">Contactos marcados para el envío: <b id="count-selected" style="color: var(--primary); font-size: 1rem;">0</b></p>
+            
+            <div style="display: flex; flex-direction: column; gap: 12px; width: 100%;">
+                <button id="btn-delete-selected" class="btn" style="background: rgba(255,50,50,0.1); color: #ff5f5f; border: 1px solid rgba(255,50,50,0.2); font-size: 0.8rem; font-weight: 600; text-align: left; padding: 14px 16px;">
+                    <span class="material-icons-outlined" style="font-size: 1.2rem; vertical-align: middle; margin-right: 12px;">delete</span> ELIMINAR SELECCIONADOS
+                </button>
+                
+                <button id="btn-sync-contacts" class="btn" style="background: rgba(50,255,50,0.1); color: #5fff5f; border: 1px solid rgba(50,255,50,0.2); font-size: 0.8rem; font-weight: 600; text-align: left; padding: 14px 16px;">
+                    <span class="material-icons-outlined" style="font-size: 1.2rem; vertical-align: middle; margin-right: 12px;">sync</span> SINCRONIZAR WHATSAPP
+                </button>
+            
+                <hr style="border: 0; border-top: 1px solid var(--glass-border); margin: 8px 0;">
+                
+                <button id="btn-import-csv" class="btn" style="background: rgba(245,158,11,0.1); color: #f59e0b; border: 1px solid rgba(245,158,11,0.2); font-size: 0.8rem; font-weight: 600; text-align: left; padding: 14px 16px;">
+                    <span class="material-icons-outlined" style="font-size: 1.2rem; vertical-align: middle; margin-right: 12px;">upload_file</span> IMPORTAR CSV DE LEADS
+                </button>
+                
+                <button id="btn-go-to-message" class="btn" style="background: rgba(0,200,255,0.1); color: #00c8ff; border: 1px solid rgba(0,200,255,0.3); font-size: 0.85rem; font-weight: 600; text-align: left; padding: 16px 16px; box-shadow: 0 4px 15px rgba(0, 200, 255, 0.1);">
+                    <span class="material-icons-outlined" style="font-size: 1.3rem; vertical-align: middle; margin-right: 12px;">send</span> CONTINUAR A REDACCIÓN
+                </button>
+            </div>
+        </div>
+
+        <!-- Gestión de Base de Datos (Derecha) -->
+        <div class="card glass-card leads-card">
+            <div class="card-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="display: flex; align-items: center; gap: 15px;">
+                    <h3 style="display: flex; align-items: center; gap: 10px; margin: 0;">
+                        <span class="material-icons-outlined" style="color: var(--primary);">list</span> Base de Datos de Leads
+                    </h3>
+                    
+                    <button id="btn-select-none" class="btn-clear-selection" title="Desmarcar todos los contactos">
+                        <span class="material-icons-outlined">deselect</span>
+                        <span>Limpiar todo</span>
+                    </button>
+                </div>
+
+                <div class="filter-actions">
+                     <select id="filter-leads" class="template-select" style="min-width: 150px;">
+                        <option value="all">Filtro: Todos</option>
+                        <option value="pendiente">Filtro: Pendientes</option>
+                        <option value="contacto">Filtro: Contactos WA</option>
+                        <option value="prospecto">Filtro: Prospectos Scan</option>
+                     </select>
+                </div>
+            </div>
+            <div class="table-container">
+                <table id="leads-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 40px;"><input type="checkbox" id="master-checkbox"></th>
+                            <th>Teléfono</th>
+                            <th>Nombre</th>
+                            <th>Tipo</th>
+                            <th>Estado</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

@@ -72,13 +72,31 @@
             <span class="material-icons-outlined chevron">expand_more</span>
         </div>
         <div class="nav-group-content" id="group-ai">
-            <div class="sidebar-item level-2" onclick="router.navigate('aiConfig', {tab: 'conexion'})" id="nav-ai-config">
+            <div class="sidebar-item level-2" onclick="router.navigate('aiConfig', {tab: 'conexion'})" id="nav-aiConfig-conexion">
                 <span class="material-icons-outlined nav-icon">settings</span>
                 <span class="nav-label-text">Configuración API</span>
             </div>
-            <div class="sidebar-item level-2" onclick="router.navigate('aiConfig', {tab: 'personalidad'})" id="nav-ai-personalidad">
+
+            <div class="sidebar-item level-2" onclick="router.navigate('aiConfig', {tab: 'automatizacion'})" id="nav-aiConfig-automatizacion">
+                <span class="material-icons-outlined nav-icon">bolt</span>
+                <span class="nav-label-text">Automatización</span>
+            </div>
+            
+            <div class="sidebar-item level-2" onclick="router.navigate('aiConfig', {tab: 'personalidad'})" id="nav-aiConfig-personalidad">
                 <span class="material-icons-outlined nav-icon">psychology</span>
+                <span class="nav-label-text">Identidad IA</span>
+            </div>
+
+            <!-- SUB-GRUPO: CONOCIMIENTO -->
+            <div class="sidebar-item level-2 nav-group-header" onclick="ui.toggleNavGroup('subgroup-ai-knowledge')">
+                <span class="material-icons-outlined nav-icon">library_books</span>
                 <span class="nav-label-text">Conocimiento</span>
+                <span class="material-icons-outlined chevron">expand_more</span>
+            </div>
+            <div class="nav-group-content" id="subgroup-ai-knowledge">
+                <div class="sidebar-item level-3" onclick="router.navigate('aiConfig', {tab: 'catalogo'})" id="nav-aiConfig-catalogo">Catálogo</div>
+                <div class="sidebar-item level-3" onclick="router.navigate('aiConfig', {tab: 'faqs'})" id="nav-aiConfig-faqs">Preguntas Frecuentes</div>
+                <div class="sidebar-item level-3" onclick="router.navigate('aiConfig', {tab: 'operativa'})" id="nav-aiConfig-operativa">Operativa</div>
             </div>
         </div>
     </nav>

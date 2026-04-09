@@ -1,0 +1,31 @@
+<div class="card glass-card">
+    <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
+        <h3><span class="material-icons-outlined">fact_check</span> Números Válidos Encontrados</h3>
+        <button id="btn-repair-leads" class="btn btn-secondary btn-sm" title="Re-escanear nombres desconocidos">
+            <span class="material-icons-outlined">auto_fix_high</span> Reparar Nombres
+        </button>
+    </div>
+    <p class="text-muted">Aquí verás los últimos números que han sido validados con éxito y están listos para ser usados en campañas.</p>
+    
+    <div id="results-list-container" style="margin-top: 20px;">
+        <div class="table-container">
+            <table class="leads-table">
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Teléfono (WA)</th>
+                        <th>Estado</th>
+                        <th>Fecha</th>
+                    </tr>
+                </thead>
+                <tbody id="scanner-results-body">
+                    <tr>
+                        <td colspan="4" style="text-align: center; padding: 40px; color: var(--text-muted);">
+                            Cargando resultados...
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

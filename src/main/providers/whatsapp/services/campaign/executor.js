@@ -51,6 +51,19 @@ export class CampaignExecutor {
                 await db.markLeadAsContacted(lead.id);
                 this.log(`✅ Enviado a ${lead.telefono}`, 'success');
                 
+                // 5.2 Calcular y Emitir Progreso 📊
+                const total = leads.length;
+                const current = sentCount + 1;
+                const percent = Math.round((current / total) * 100);
+                if (this.mainWindow) {
+                    this.mainWindow.webContents.send('wa:campaign-progress', {
+                        percent,
+                        current,
+                        total,
+                        phone: lead.telefono
+                    });
+                }
+
                 // 5.5 Persistir progreso en tiempo real
                 await db.savePersistence('campaign_active', {
                     params,
@@ -59,13 +72,16 @@ export class CampaignExecutor {
 
                 sentCount++;
 
-                // 6. Gestionar siguiente Delay o Pausa por Lotes (cada 50)
-                const delayInterrupted = await scheduler.handleNextDelay(
-                    sentCount, delayMin, delayMax, 
-                    statusCallback.isStopping, 
-                    this.log.bind(this)
-                );
-                if (delayInterrupted || statusCallback.isStopping()) break;
+                // 6. Gestionar siguiente Delay o Pausa por Lotes (solo si hay más leads)
+                const isLast = leads.indexOf(lead) === leads.length - 1;
+                if (!isLast) {
+                    const delayInterrupted = await scheduler.handleNextDelay(
+                        sentCount, delayMin, delayMax, 
+                        statusCallback.isStopping, 
+                        this.log.bind(this)
+                    );
+                    if (delayInterrupted || statusCallback.isStopping()) break;
+                }
 
             } catch (error) {
                 this.log(`❌ Error con ${lead.telefono}: ${error.message}`, 'error');

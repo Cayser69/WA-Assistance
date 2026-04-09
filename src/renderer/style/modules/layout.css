@@ -37,6 +37,12 @@
     will-change: layout, transform; /* Optimización crítica para tabs dinámicos ✨ */
 }
 
+/* ✅ Especialización para Vistas Full-Bleed (Como el Chat) 💪 */
+#view-root.view-chat {
+    padding: 0;
+    overflow: hidden;
+}
+
 #console-root {
     width: 100%;
     height: auto;

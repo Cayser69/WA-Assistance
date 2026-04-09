@@ -23,12 +23,13 @@ contextBridge.exposeInMainWorld('api', {
     // Eventos WhatsApp
     onQRUpdate: (callback) => ipcRenderer.on('wa:qr-update', (event, qr) => callback(qr)),
     onWAStatus: (callback) => ipcRenderer.on('wa:status', (event, status) => callback(status)),
-    onMessageLog: (callback) => ipcRenderer.on('wa:log', (event, log) => callback(log)),
+    onCampaignStatus: (callback) => ipcRenderer.on('wa:campaign-status', (e, status) => callback(status)),
+    onCampaignProgress: (callback) => ipcRenderer.on('wa:campaign-progress', (e, data) => callback(data)),
+    onMessageLog: (callback) => ipcRenderer.on('wa:log', (e, log) => callback(log)),
     logout: () => ipcRenderer.invoke('wa:logout'),
     getWAStatus: () => ipcRenderer.invoke('wa:get-status'),
     getCampaignStatus: () => ipcRenderer.invoke('wa:get-campaign-status'),
     syncContacts: () => ipcRenderer.invoke('wa:sync-contacts'),
-    onCampaignStatus: (callback) => ipcRenderer.on('wa:campaign-status', (event, status) => callback(status)),
 
     // ✅ Evento: sincronización de chats completada (para recargar la lista)
     onChatsSynced: (callback) => ipcRenderer.on('wa:chats-synced', () => callback()),
@@ -51,6 +52,10 @@ contextBridge.exposeInMainWorld('api', {
     setAIConfig: (config) => ipcRenderer.invoke('ai:config', config),
     onAIStatus: (callback) => ipcRenderer.on('wa:ai-status', (event, status) => callback(status)),
     canUseAI: () => ipcRenderer.invoke('ai:get-status'),
+    getAISuggestion: (phone) => ipcRenderer.invoke('ai:get-suggestion', { phone }),
+
+    // WhatsApp Direct
+    sendMessage: (phone, message) => ipcRenderer.invoke('wa:send-message', { phone, message }),
 
     // Configuración Persistente (SQLite)
     saveSetting: (key, value) => ipcRenderer.invoke('db:saveSetting', { key, value }),

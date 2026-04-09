@@ -1,0 +1,32 @@
+<div id="section-ai-operativa" class="ai-card animate-fade-in">
+    <div class="card glass-card">
+        <label style="display: flex; align-items: center; gap: 8px; margin-bottom: 20px;">
+            <span class="material-icons-outlined" style="color: var(--primary)">schedule</span>
+            Operativa, Horarios y Políticas
+        </label>
+
+        <div class="status-row">
+            <span class="material-icons-outlined" style="color: var(--primary); font-size: 1.25rem;">info</span>
+            <span style="font-size: 0.85rem; line-height: 1.5;">Define tus horas de atención, zonas de envío y políticas de pago. Esto evita que la IA prometa cosas que no puedes cumplir.</span>
+        </div>
+
+        <div class="form-group-col">
+            <div class="input-field">
+                <textarea id="ai-kb-operativa" class="prompt-area" style="min-height: 400px;" placeholder="Ejemplo:
+- Horario: Lunes a Viernes de 9am a 6pm.
+- Envíos: Todo el país vía Courier, entrega en 24h.
+- Pagos: Transferencia, Tarjeta y Efectivo."></textarea>
+            </div>
+
+            <!-- BOTONES DE ACCIÓN -->
+            <div style="display: flex; justify-content: center; gap: 15px; margin-top: 25px; padding-top: 20px; border-top: 1px solid rgba(255, 255, 255, 0.05);">
+                <button id="btn-generate-operativa" class="btn btn-primary" style="padding: 12px 30px; min-width: 200px; background: var(--secondary)">
+                    <span class="material-icons-outlined">auto_awesome</span> GENERAR OPERATIVA
+                </button>
+                <button id="btn-save-operativa" class="btn btn-success" style="padding: 12px 30px; min-width: 200px;">
+                    <span class="material-icons-outlined">save</span> GUARDAR OPERATIVA
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

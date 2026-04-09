@@ -47,6 +47,50 @@ export const MediaManager = {
     },
 
     /**
+     * Guarda un archivo multimedia de WhatsApp (Base64) en la carpeta de chat. 📥
+     */
+    saveChatMedia(mediaData, sender) {
+        if (!mediaData || !mediaData.data) return null;
+
+        const chatMediaDir = path.join(ASSETS_PATH, 'chat');
+        if (!fs.existsSync(chatMediaDir)) {
+            fs.mkdirSync(chatMediaDir, { recursive: true });
+        }
+
+        const ext = this.getExtFromMime(mediaData.mimetype);
+        const fileName = `chat_${sender}_${Date.now()}${ext}`;
+        const targetPath = path.join(chatMediaDir, fileName);
+
+        try {
+            const buffer = Buffer.from(mediaData.data, 'base64');
+            fs.writeFileSync(targetPath, buffer);
+            // Devolvemos la ruta relativa consistente
+            return path.join('media', 'chat', fileName);
+        } catch (error) {
+            console.error('MediaManager: Error al guardar media de chat:', error);
+            return null;
+        }
+    },
+
+    /**
+     * Mapeo inteligente de extensiones según MimeType.
+     */
+    getExtFromMime(mime) {
+        const map = {
+            'image/jpeg': '.jpg',
+            'image/png': '.png',
+            'image/webp': '.webp',
+            'audio/ogg; codecs=opus': '.ogg',
+            'audio/mpeg': '.mp3',
+            'audio/mp4': '.m4a',
+            'audio/ogg': '.ogg',
+            'video/mp4': '.mp4',
+            'application/pdf': '.pdf'
+        };
+        return map[mime] || '.bin';
+    },
+
+    /**
      * Elimina un archivo de la carpeta interna.
      */
     deleteFile(relativePath) {

@@ -1,6 +1,7 @@
 <section id="chat-section" class="chat-container animate-fade-in">
-    <div class="chat-layout glass-card">
-        <!-- Columna Izquierda: Lista de Contactos -->
+    <div class="chat-layout">
+        
+        <!-- col-1: Sidebar (Contactos y Búsqueda) -->
         <aside class="chat-sidebar">
             <div class="search-box">
                 <span class="material-icons-outlined">search</span>
@@ -8,21 +9,21 @@
             </div>
             
             <div class="contacts-list" id="chat-contacts-list">
-                <!-- Se cargará dinámicamente -->
-                <div class="text-center p-20" style="opacity: 0.5;">
-                    <p>Cargando conversaciones...</p>
-                </div>
+                <!-- Se inyecta dinámicamente desde parts/sidebar.js -->
             </div>
         </aside>
 
-        <!-- Columna Derecha: Ventana de Mensajes -->
+        <!-- col-2: Ventana de Chat (Mensajes) -->
         <main class="chat-window">
+            
+            <!-- Pantalla de Bienvenida (Estado inicial) -->
             <div id="chat-welcome-screen" class="welcome-screen">
                 <span class="material-icons-outlined">chat</span>
                 <h3>Tus Mensajes</h3>
-                <p>Selecciona una conversación para ver el historial de mensajes enviados y recibidos.</p>
+                <p>Selecciona una conversación para ver el historial de mensajes y archivos multimedia.</p>
             </div>
 
+            <!-- Vista de Conversación Activa -->
             <div id="chat-content-view" class="chat-content-view" style="display: none;">
                 <header class="chat-header">
                     <div class="contact-info">
@@ -30,21 +31,28 @@
                             <span class="material-icons-outlined">account_circle</span>
                         </div>
                         <div class="details">
-                            <h4 id="active-chat-name">Número de Teléfono</h4>
-                            <span id="active-chat-status" class="status-online">Activo</span>
+                            <h4 id="active-chat-name">Cargando...</h4>
+                            <span class="status-online">En línea</span>
                         </div>
                     </div>
                 </header>
 
                 <div class="messages-viewport" id="chat-messages-viewport">
-                    <!-- Las burbujas de chat se inyectan aquí -->
+                    <!-- Las burbujas de chat se inyectan desde parts/window.js -->
                 </div>
 
                 <footer class="chat-input-area">
-                   <p class="read-only-notice">
-                       <span class="material-icons-outlined">info</span> 
-                       Modo Visualización: Los mensajes enviados desde la APP aparecen aquí.
-                   </p>
+                    <div class="input-container glass-card">
+                        <button id="btn-chat-ai" class="btn-chat-action ai-sparkle" title="Asistente de Redacción IA">
+                            <span class="material-icons-outlined">psychology</span>
+                        </button>
+                        
+                        <textarea id="chat-input-text" placeholder="Escribe un mensaje..." rows="1"></textarea>
+                        
+                        <button id="btn-chat-send" class="btn-chat-send" title="Enviar Mensaje">
+                            <span class="material-icons-outlined">send</span>
+                        </button>
+                    </div>
                 </footer>
             </div>
         </main>

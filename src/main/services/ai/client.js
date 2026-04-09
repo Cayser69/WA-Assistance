@@ -36,30 +36,58 @@ class OpenAIClient {
     }
 
     /**
-     * Genera una respuesta inteligente para un mensaje entrante.
+     * Inicializa la configuración desde la base de datos (Persistencia al arranque) 🛰️
      */
-    async getReply(userMessage) {
+    async initialize() {
+        try {
+            const db = await import('../database/index.js');
+            const settings = await db.getAllSettings();
+            
+            this.config({
+                apiKey: settings.openai_key,
+                model: settings.openai_model,
+                prompt: settings.openai_prompt,
+                knowledgeBase: settings.openai_knowledge_base,
+                isActive: settings.ai_auto_reply === 'true'
+            });
+            console.log(`[AI/Client] ✅ Motor inicializado (${this.model}). Estado: ${this.isActive ? 'Activo' : 'Inactivo'}`);
+        } catch (err) {
+            console.error('[AI/Client] ❌ Error cargando configuración inicial:', err.message);
+        }
+    }
+
+    /**
+     * Genera una respuesta inteligente incorporando el historial del chat si está disponible.
+     * @param {string} userMessage - El mensaje actual del usuario.
+     * @param {Array} history - Array de mensajes previos [{ role, content }].
+     */
+    async getReply(userMessage, history = []) {
         if (!this.client || !this.isActive) return null;
 
         try {
+            const messages = [
+                { 
+                    role: "system", 
+                    content: `${this.prompt}\n\nCONTEXTO DEL NEGOCIO:\n${this.knowledgeBase}` 
+                },
+                ...history, // Inyectar historial previo 📜
+                { role: "user", content: userMessage }
+            ];
+
             const response = await this.client.chat.completions.create({
                 model: this.model,
-                messages: [
-                    { 
-                        role: "system", 
-                        content: `${this.prompt}\n\nCONTEXTO DEL NEGOCIO:\n${this.knowledgeBase}` 
-                    },
-                    { role: "user", content: userMessage }
-                ],
+                messages,
                 temperature: 0.7,
             });
 
             return response.choices[0].message.content;
         } catch (error) {
-            console.error('OpenAI Error:', error);
+            console.error('[AI/Client] OpenAI Error:', error.message);
             return null;
         }
     }
 }
 
 export const aiClient = new OpenAIClient();
+// Auto-ejecutar inicialización si ya estamos en runtime
+aiClient.initialize();

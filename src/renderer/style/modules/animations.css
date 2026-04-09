@@ -37,3 +37,13 @@
 .animate-spin {
     animation: spin 1s linear infinite;
 }
+
+@keyframes slide-in-bottom {
+    from { transform: translateY(100%) translateX(0); opacity: 0; }
+    to { transform: translateY(0) translateX(0); opacity: 1; }
+}
+
+@keyframes slide-out-bottom {
+    from { transform: translateY(0) translateX(0); opacity: 1; }
+    to { transform: translateY(100%) translateX(0); opacity: 0; }
+}

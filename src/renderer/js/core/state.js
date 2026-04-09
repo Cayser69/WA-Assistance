@@ -9,6 +9,7 @@ export const AppState = {
     qrBase64: null,
     logs: [],
     selectedLeads: [],
+    campaignProgress: { percent: 0, current: 0, total: 0, phone: '' },
 
     /**
      * Añade un log al sistema y actualiza el DOM de la consola si existe.
@@ -51,7 +52,11 @@ export const AppState = {
         const number = typeof data === 'object' ? data.number : null;
         
         AppState.waStatus = status;
-        if (number) AppState.waNumber = number;
+        
+        // Solo actualizar el número si es válido y no es el placeholder '---' 📱
+        if (number && number !== '---') {
+            AppState.waNumber = number;
+        }
         
         const statusMap = {
             'connect': { text: 'Conectado', color: 'connect' },
@@ -64,7 +69,9 @@ export const AppState = {
         // 1. Actualizar Sidebar Footer
         const elNumber = document.getElementById('sidebar-wa-number');
         if (elNumber) {
-            elNumber.textContent = status === 'error' ? 'Error Crítico' : (number ? AppState.formatPhoneNumber(number) : 'No conectado');
+            // Usar siempre el número del AppState si existe, para no borrarlo en estados intermedios 🧠
+            elNumber.textContent = status === 'error' ? 'Error Crítico' : 
+                                  (AppState.waNumber ? AppState.formatPhoneNumber(AppState.waNumber) : 'No conectado');
         }
         
         const elStatus = document.getElementById('sidebar-wa-status');
@@ -105,6 +112,38 @@ export const AppState = {
     },
 
     /**
+     * Resetea el progreso a ceros para una nueva campaña.
+     */
+    resetCampaignProgress: () => {
+        AppState.campaignProgress = { percent: 0, current: 0, total: 0, phone: '' };
+        const progressRoot = document.getElementById('campaign-progress-container');
+        if (progressRoot) progressRoot.style.display = 'none';
+        
+        const bar = document.getElementById('campaign-progress-bar');
+        if (bar) bar.style.width = '0%';
+    },
+
+    /**
+     * Actualiza el progreso de la campaña en la UI.
+     */
+    updateCampaignProgressUI: (data) => {
+        AppState.campaignProgress = data;
+        const progressRoot = document.getElementById('campaign-progress-container');
+        if (progressRoot) {
+            // Solo mostrar si hay progreso real
+            progressRoot.style.display = data.total > 0 ? 'block' : 'none';
+            
+            const bar = document.getElementById('campaign-progress-bar');
+            const text = document.getElementById('campaign-progress-text');
+            const sub = document.getElementById('campaign-progress-subtext');
+            
+            if (bar) bar.style.width = `${data.percent}%`;
+            if (text) text.textContent = `${data.percent}% Completado`;
+            if (sub) sub.textContent = data.phone ? `Enviando a: ${data.phone} (${data.current}/${data.total})` : 'Preparando envíos...';
+        }
+    },
+
+    /**
      * Actualiza el estado del Scanner en el Hub Global.
      */
     updateScannerStatusUI: (status) => {
@@ -112,8 +151,24 @@ export const AppState = {
         const isPaused = status && status.paused;
         const isActive = isRunning || isPaused;
 
-        // Delegar al componente Hub
+        AppState.scannerStatus = isRunning ? 'RUNNING' : (isPaused ? 'PAUSED' : 'IDLE');
+
+        // 1. Delegar al componente Hub
         if (window.Hub) window.Hub.updateScanner(isActive, isPaused);
+
+        // 2. Control dinámico de botones en la pestaña de Configuración (si está abierta)
+        const btnStart = document.getElementById('btn-start-scanner');
+        const btnStop = document.getElementById('btn-stop-scanner');
+
+        if (btnStart && btnStop) {
+            if (isRunning || isPaused) {
+                btnStart.style.display = 'none';
+                btnStop.style.display = 'flex';
+            } else {
+                btnStart.style.display = 'flex';
+                btnStop.style.display = 'none';
+            }
+        }
     },
 
     /**

@@ -1,0 +1,31 @@
+<div id="section-ai-conexion" class="ai-card animate-fade-in">
+    <div class="card glass-card">
+        <label style="display: flex; align-items: center; gap: 8px; margin-bottom: 20px;">
+            <span class="material-icons-outlined" style="color: var(--primary)">vpn_key</span>
+            Credenciales y Conexión
+        </label>
+        
+        <div class="form-group-col">
+            <div class="input-field">
+                <label>OpenAI API Key</label>
+                <div class="api-key-container">
+                    <input type="password" id="openai-key" placeholder="sk-..." style="flex: 1">
+                </div>
+            </div>
+
+            <div class="input-field" style="margin-top: 15px;">
+                <label>Modelo del Cerebro</label>
+                <select id="openai-model" class="model-selector">
+                    <option value="gpt-4o-mini">GPT-4o Mini (Velocidad y Ahorro)</option>
+                    <option value="gpt-4o">GPT-4o (Máxima Inteligencia)</option>
+                </select>
+            </div>
+            
+            <div style="display: flex; justify-content: center; margin-top: 25px; padding-top: 20px; border-top: 1px solid rgba(255, 255, 255, 0.05);">
+                <button id="btn-save-key" class="btn btn-primary" style="padding: 12px 40px; min-width: 250px;">
+                    <span class="material-icons-outlined">save</span> VALIDAR Y GUARDAR CREDENCIALES
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

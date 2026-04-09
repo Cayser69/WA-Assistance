@@ -1,7 +1,7 @@
 import { TemplateLoader } from '../../../core/loader.js';
-import { ConfigTab } from './tabs/config.js';
-import { ProgresoTab } from './tabs/progreso.js';
-import { ResultadosTab } from './tabs/resultados.js';
+import { ConfigTab } from './tabs/config/index.js';
+import { ProgresoTab } from './tabs/progreso/index.js';
+import { ResultadosTab } from './tabs/resultados/index.js';
 
 /**
  * Componente: Validador de Números (Scanner) - Orquestador Modular
@@ -43,7 +43,7 @@ export const Scanner = {
             const component = tabs[activeTab] || ConfigTab;
 
             // 3. Renderizado Inteligente
-            root.innerHTML = component.render();
+            root.innerHTML = await component.render();
 
             // 4. Actualizar título dinámico
             const titles = { 

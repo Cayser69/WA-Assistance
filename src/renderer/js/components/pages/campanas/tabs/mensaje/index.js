@@ -1,5 +1,5 @@
-import { TemplateLoader } from '../../../../core/loader.js';
-import { WhatsAppBubble } from '../../../layout/wa-bubble/index.js';
+import { TemplateLoader } from '../../../../../core/loader.js';
+import { WhatsAppBubble } from '../../../../layout/wa-bubble/index.js';
 
 /**
  * Sub-componente Modular: Redacción de Mensaje y Lanzamiento 🚀✨📱
@@ -135,7 +135,10 @@ export const MensajeTab = {
                 await window.api.saveSetting('last_campaign_message', mensaje);
                 await window.api.saveSetting('use_ai_variation', useAI ? 'true' : 'false');
 
-                // Arrancar campaña en el proceso Main
+                // 1. Reset PROACTIVO del progreso para que no se vea el 100% anterior 🧼
+                appState.resetCampaignProgress();
+
+                // 2. Arrancar campaña en el proceso Main
                 const res = await window.api.startCampaign({
                     mensaje,
                     useAI,
@@ -148,7 +151,8 @@ export const MensajeTab = {
                 if (res.success) {
                     btnIniciar.style.display = 'none';
                     btnDetener.style.display = 'flex';
-                    alert('Campaña iniciada. Sigue el progreso en la consola superior.');
+                    // Feedback visual en consola en lugar de un alert bloqueante 📟
+                    console.log('[MensajeTab] 🚀 Campaña lanzada con éxito.');
                 } else {
                     alert('Error: ' + res.error);
                 }
