@@ -12,13 +12,14 @@ export const AIOperativa = {
         const kbOperativa = document.getElementById('ai-kb-operativa');
         const btnSave = document.getElementById('btn-save-operativa');
         const btnGenerate = document.getElementById('btn-generate-operativa');
-        const contextArea = document.getElementById('ai-business-context');
+        const contextArea = document.getElementById('ai-context-operativa');
 
         if (!kbOperativa || !btnSave) return;
 
         // --- Carga de Datos ---
         const settings = await window.api.getAllSettings();
         kbOperativa.value = settings.ai_kb_operativa || '';
+        if (contextArea) contextArea.value = settings.ai_context_operativa || '';
 
         // --- Handlers ---
         
@@ -27,7 +28,7 @@ export const AIOperativa = {
             btnGenerate.onclick = async () => {
                 const context = contextArea ? contextArea.value.trim() : '';
                 if (!context) {
-                    alert('⚠️ Por favor, escribe primero un breve resumen de tu negocio en el cuadro superior.');
+                    window.ui.showToast('⚠️ Escribe primero la operativa de tu negocio.', 'info');
                     return;
                 }
 
@@ -39,8 +40,9 @@ export const AIOperativa = {
                 
                 if (response.success) {
                     kbOperativa.value = response.content;
+                    window.ui.showToast('📅 Datos operativos generados.');
                 } else {
-                    alert('❌ Error generando operativa: ' + response.error);
+                    window.ui.showToast('❌ Error: ' + response.error, 'error');
                 }
 
                 btnGenerate.disabled = false;
@@ -50,13 +52,14 @@ export const AIOperativa = {
 
         // Guardado Manual
         btnSave.onclick = async () => {
-            // AISLAMIENTO: Solo guardamos la operativa
+            // AISLAMIENTO: Solo guardamos la operativa y su contexto local
             await window.api.saveSetting('ai_kb_operativa', kbOperativa.value);
+            if (contextArea) await window.api.saveSetting('ai_context_operativa', contextArea.value);
             
             // Sincronizar todos los ajustes con el motor principal
             await syncAISettings();
             
-            alert('📅 Datos operativos actualizados.');
+            window.ui.showToast('📅 Datos operativos actualizados.');
         };
     }
 };

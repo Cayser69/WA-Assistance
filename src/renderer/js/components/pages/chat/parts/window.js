@@ -1,6 +1,8 @@
+import { Toast } from '../../../shared/toast.js';
+
 /**
- * Subcomponente: ChatWindow 🖼️🎤📜
- * Responsabilidad: Renderizado de mensajes, multimedia y pantalla de bienvenida.
+ * Sub-componente: ChatWindow 🖼️🎤📜
+ * Responsabilidad: Renderizado de mensajes, multimedia y gestión de estados (Checks).
  */
 export const ChatWindow = {
     activeChat: null,
@@ -27,13 +29,11 @@ export const ChatWindow = {
 
         if (!input || !btnSend || !btnAI) return;
 
-        // 1. Auto-ajuste de altura del textarea
         input.addEventListener('input', () => {
             input.style.height = 'auto';
             input.style.height = (input.scrollHeight) + 'px';
         });
 
-        // 2. Enviar con Enter (sin Shift)
         input.addEventListener('keydown', (e) => {
             if (e.key === 'Enter' && !e.shiftKey) {
                 e.preventDefault();
@@ -41,10 +41,7 @@ export const ChatWindow = {
             }
         });
 
-        // 3. Click en Enviar
         btnSend.addEventListener('click', () => ChatWindow.handleSendMessage());
-
-        // 4. Click en Asistente IA ✨
         btnAI.addEventListener('click', () => ChatWindow.handleAISuggestion());
     },
 
@@ -59,16 +56,14 @@ export const ChatWindow = {
         if (!message || !phone) return;
 
         try {
-            // Deshabilitar temporalmente para evitar doble envío
             input.disabled = true;
             const result = await window.api.sendMessage(phone, message);
             
             if (result.success) {
                 input.value = '';
                 input.style.height = 'auto';
-                // El mensaje se pintará automáticamente vía IPC (onMessageReceived)
             } else {
-                alert('Error al enviar: ' + result.error);
+                Toast.error('Error al enviar: ' + result.error);
             }
         } catch (err) {
             console.error('[ChatWindow] Fallo en envío:', err);
@@ -79,7 +74,7 @@ export const ChatWindow = {
     },
 
     /**
-     * Solicita una sugerencia a la IA basada en el contexto actual ✨
+     * Solicita una sugerencia a la IA ✨
      */
     handleAISuggestion: async () => {
         const phone = ChatWindow.activeChat;
@@ -120,14 +115,7 @@ export const ChatWindow = {
 
         if (welcomeScreen) welcomeScreen.style.display = 'none';
         if (contentView) contentView.style.display = 'flex';
-        if (activeName) activeName.innerText = nombre || telefono;
-
-        // Limpiar input al cambiar de chat 🧼
-        const input = document.getElementById('chat-input-text');
-        if (input) {
-            input.value = '';
-            input.style.height = 'auto';
-        }
+        if (activeName && nombre) activeName.innerText = nombre;
 
         try {
             const messages = await window.api.getChatMessages(telefono);
@@ -137,6 +125,9 @@ export const ChatWindow = {
         }
     },
 
+    /**
+     * Renderiza la cola de mensajes en el viewport 📜🛰️
+     */
     renderMessages: (messages) => {
         const viewport = document.getElementById('chat-messages-viewport');
         if (!viewport) return;
@@ -150,31 +141,52 @@ export const ChatWindow = {
             const isSent = msg.tipo === 'enviado';
             const date = msg.fecha ? new Date(msg.fecha).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '';
 
-            // --- Lógica Multimedia 🛰️ ---
+            // Lógica de Checks (Ack) 🛰️
+            let ackHtml = '';
+            if (isSent) {
+                const ackClass = msg.ack === 3 ? 'ack-read' : (msg.ack >= 1 ? 'ack-delivered' : 'ack-error');
+                const ackIcon = msg.ack >= 2 ? 'done_all' : (msg.ack === 1 ? 'done' : 'error_outline');
+                ackHtml = `<span class="message-ack ${ackClass} material-icons-outlined" data-msg-id="${msg.msg_id}">${ackIcon}</span>`;
+            }
+
             let mediaHtml = '';
             if (msg.media_path) {
                 const mediaUrl = `app-media://${msg.media_path.replace(/\\/g, '/')}`;
                 if (msg.mimetype?.startsWith('image/')) {
                     mediaHtml = `<div class="media-container"><img src="${mediaUrl}" class="chat-media-img" onclick="window.open('${mediaUrl}')"></div>`;
                 } else if (msg.mimetype?.startsWith('audio/')) {
-                    mediaHtml = `
-                        <div class="media-container audio">
-                            <audio controls class="chat-media-audio"><source src="${mediaUrl}" type="${msg.mimetype}"></audio>
-                        </div>`;
+                    mediaHtml = `<div class="media-container audio"><audio controls class="chat-media-audio"><source src="${mediaUrl}" type="${msg.mimetype}"></audio></div>`;
                 }
             }
 
             return `
                 <div class="chat-bubble-wrapper ${isSent ? 'sent' : 'received'}">
-                    <div class="chat-bubble">
+                    <div class="chat-bubble" id="msg-${msg.msg_id}">
                         ${mediaHtml}
                         ${msg.mensaje ? `<div class="msg-text">${msg.mensaje}</div>` : ''}
-                        <span class="chat-time">${date}</span>
+                        <div class="msg-meta">
+                            <span class="chat-time">${date}</span>
+                            ${ackHtml}
+                        </div>
                     </div>
                 </div>
             `;
         }).join('');
 
         viewport.scrollTop = viewport.scrollHeight;
+    },
+
+    /**
+     * Actualiza el estado de un mensaje en tiempo real (Optimización vía DOM) 🛰️⚡
+     */
+    handleMessageAck: (msgId, ack) => {
+        const checkEl = document.querySelector(`.message-ack[data-msg-id="${msgId}"]`);
+        if (!checkEl) return;
+
+        const ackClass = ack === 3 ? 'ack-read' : (ack >= 1 ? 'ack-delivered' : 'ack-error');
+        const ackIcon = ack >= 2 ? 'done_all' : (ack === 1 ? 'done' : 'error_outline');
+
+        checkEl.className = `message-ack ${ackClass} material-icons-outlined`;
+        checkEl.innerText = ackIcon;
     }
 };

@@ -1,4 +1,5 @@
 import { TemplateLoader } from '../../../core/loader.js';
+import { Toast } from '../../shared/toast.js';
 
 /**
  * Componente: Conexiones - Gestión de QR y Sesión de WhatsApp 📡✨
@@ -75,7 +76,7 @@ export const Conexiones = {
                 btnSync.onclick = async () => {
                     const status = await window.api.invoke('wa:get-status');
                     if (status !== 'connect') {
-                        return alert('WhatsApp debe estar conectado para sincronizar la agenda.');
+                        return Toast.warn ? Toast.warn('WhatsApp debe estar conectado para sincronizar la agenda.') : Toast.info('WhatsApp debe estar conectado para sincronizar la agenda.');
                     }
 
                     btnSync.disabled = true;
@@ -95,7 +96,7 @@ export const Conexiones = {
                             `;
                             appState.pushLog({ text: `Sincronización completa: ${result.imported} nuevos leads añadidos.`, type: 'success' });
                         } else {
-                            alert('Error: ' + result.error);
+                            Toast.error('Error: ' + result.error);
                         }
                     } catch (e) {
                         console.error('Error al sincronizar:', e);

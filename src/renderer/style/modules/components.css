@@ -172,8 +172,17 @@ textarea:focus {
 }
 
 .authenticated, .badge.authenticated, .status-badge.authenticated {
-    background: rgba(245, 158, 11, 0.1);
-    color: #f59e0b;
+    background: rgba(96, 165, 250, 0.1);
+    color: var(--ai-blue);
+    box-shadow: var(--neon-ai-blue);
+    border: 1px solid rgba(96, 165, 250, 0.2);
+}
+
+.active-process, .badge.active-process, .status-badge.active-process {
+    background: rgba(34, 197, 94, 0.1);
+    color: var(--ai-green);
+    box-shadow: var(--neon-ai-green);
+    border: 1px solid rgba(34, 197, 94, 0.2);
 }
 
 .error, .status-badge.error, .disconnect, .status-badge.disconnect {

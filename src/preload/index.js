@@ -37,6 +37,9 @@ contextBridge.exposeInMainWorld('api', {
     // ✅ Evento: mensaje entrante recibido en tiempo real
     onMessageReceived: (callback) => ipcRenderer.on('wa:message-received', (event, data) => callback(data)),
 
+    // ✅ Evento: actualización de estado de entrega (Ack) 🛰️
+    onMessageAck: (callback) => ipcRenderer.on('wa:message-ack', (event, data) => callback(data)),
+
     // Scanner
     startScanner: (data, startIndex) => ipcRenderer.invoke('wa:startScanner', data, startIndex),
     stopScanner: () => ipcRenderer.invoke('wa:stopScanner'),
@@ -57,8 +60,9 @@ contextBridge.exposeInMainWorld('api', {
     // WhatsApp Direct
     sendMessage: (phone, message) => ipcRenderer.invoke('wa:send-message', { phone, message }),
 
-    // Configuración Persistente (SQLite)
+        // Configuración Persistente (SQLite)
     saveSetting: (key, value) => ipcRenderer.invoke('db:saveSetting', { key, value }),
+    saveSettings: (settings) => ipcRenderer.invoke('db:saveSettings', settings),
     getSetting: (key) => ipcRenderer.invoke('db:getSetting', key),
     getAllSettings: () => ipcRenderer.invoke('db:getAllSettings'),
 

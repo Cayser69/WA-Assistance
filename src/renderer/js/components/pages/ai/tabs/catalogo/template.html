@@ -11,9 +11,19 @@
         </div>
 
         <div class="form-group-col">
+            <!-- MINI-MAGO MODULAR: CATÁLOGO -->
+            <div style="margin-bottom: 20px; padding: 15px; background: rgba(34, 197, 94, 0.03); border-radius: 8px; border: 1px dashed rgba(34, 197, 94, 0.2);">
+                <label style="display: flex; align-items: center; gap: 6px; font-size: 0.8rem; font-weight: 600; margin-bottom: 8px; color: var(--primary);">
+                    <span class="material-icons-outlined" style="font-size: 1rem;">auto_awesome</span> 
+                    ¿Qué vendes? (Instrucciones para generar catálogo)
+                </label>
+                <textarea id="ai-context-catalogo" class="prompt-area" style="min-height: 60px; font-size: 0.85rem;" 
+                    placeholder="Ej: Vendemos zapatillas deportivas de marca, precios entre 50 y 150 euros. Tenemos modelos para running y casual."></textarea>
+            </div>
+
             <div class="input-field">
-                <textarea id="ai-kb-catalogo" class="prompt-area" style="min-height: 400px;" placeholder="Ejemplo:
-- Producto X: Beneficio Y, Precio $Z.
+                <textarea id="ai-kb-catalogo" class="prompt-area" style="min-height: 300px;" placeholder="Ejemplo:
+- Producto A: $10.00
 - Servicio A: Incluye B, C y D."></textarea>
             </div>
 

@@ -46,6 +46,20 @@
     cursor: pointer;
 }
 
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.header-left span {
+    font-size: 18px !important;
+    margin-right: 8px;
+    display: inline-flex;
+    align-items: center;
+    vertical-align: middle;
+}
+
 .console-content {
     flex: 1;
     padding: 15px 20px;

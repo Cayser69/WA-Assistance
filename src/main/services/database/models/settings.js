@@ -8,6 +8,19 @@ export async function saveSetting(key, value) {
 }
 
 /**
+ * Guarda múltiples configuraciones de forma masiva (Bulk Save).
+ */
+export async function saveSettings(settingsObject) {
+    const keys = Object.keys(settingsObject);
+    if (keys.length === 0) return;
+
+    // Usamos una ráfaga de inserciones secuenciales para asegurar integridad 🗄️
+    for (const key of keys) {
+        await run('INSERT OR REPLACE INTO settings (key, value) VALUES (?, ?)', [key, settingsObject[key]]);
+    }
+}
+
+/**
  * Obtiene el valor de una configuración por su clave.
  */
 export async function getSetting(key) {

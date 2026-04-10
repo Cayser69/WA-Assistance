@@ -33,16 +33,22 @@ window.addEventListener('DOMContentLoaded', async () => {
             hubRoot.innerHTML = Hub.render();
             await Hub.init();
             
-            // Sincronización inicial de persistencia y servicios 🛰️
-            setTimeout(async () => {
-                // 1. Escáner
-                const saved = await window.api.checkPersistence('scanner_active');
-                if (saved) window.Hub.updateScanner(true, true);
-
-                // 2. Inteligencia Artificial
+            // Sincronización proactiva de servicios (Se apoya en el aviso del Main) 🛰️
+            const syncInitialState = async () => {
+                console.log('[Renderer-Boot] 🔄 Ejecutando syncInitialState (PULL)...');
                 const aiStatus = await window.api.invoke('ai:get-status');
-                if (aiStatus) AppState.updateAIStatusUI(aiStatus.enabled);
-            }, 1000);
+                console.log('[Renderer-Boot] 📥 Resultado de ai:get-status:', aiStatus);
+                if (aiStatus) {
+                    console.log('[Renderer-Boot] 🛰️ Actualizando estado AI vía AppState...');
+                    AppState.updateAIStatusUI(aiStatus);
+                }
+                
+                const savedScanner = await window.api.checkPersistence('scanner_active');
+                if (savedScanner) window.Hub.updateScanner(true, true);
+            };
+
+            // Un solo intento rápido de refuerzo (Aumentado a 500ms para mayor seguridad)
+            setTimeout(syncInitialState, 500);
         }
 
         // 4. Cargar Consola 📟

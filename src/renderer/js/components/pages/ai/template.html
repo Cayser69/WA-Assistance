@@ -2,26 +2,6 @@
     <h2 id="ai-view-title">Configuración IA</h2>
 </header>
 
-<div class="ai-grid" style="margin-bottom: 20px;">
-    <!-- MAGO DE CONFIGURACIÓN (PERSISTENTE) -->
-    <div class="card glass-card animate-fade-in" style="border-left: 4px solid var(--primary); background: rgba(34, 197, 94, 0.03); padding: 20px;">
-        <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 12px;">
-            <label style="display: flex; align-items: center; gap: 8px; font-weight: 600;">
-                <span class="material-icons-outlined" style="color: var(--primary)">auto_awesome</span>
-                Mago de Configuración: Resumen de tu Negocio
-            </label>
-            <button id="btn-save-context" class="btn btn-primary" style="padding: 4px 12px; font-size: 0.75rem;">
-                GUARDAR CONTEXTO
-            </button>
-        </div>
-        <textarea id="ai-business-context" class="prompt-area" style="min-height: 70px; font-size: 0.9rem;" 
-            placeholder="Ej: Somos una tienda de mascotas en Lima, vendemos comida premium y accesorios. Hacemos envíos gratis por compras mayores a 100 soles."></textarea>
-        <p style="font-size: 0.75rem; color: var(--text-muted); margin-top: 8px;">
-            Este resumen servirá de base para que la IA auto-complete tu Identidad, Catálogo, FAQs y Operativa.
-        </p>
-    </div>
-</div>
-
 <!-- Contenedor dinámico donde se inyectarán las sub-pestañas -->
 <div id="ai-tab-container" class="ai-grid animate-fade-in">
     <div class="loader-container" style="display: flex; justify-content: center; padding: 50px; opacity: 0.5;">

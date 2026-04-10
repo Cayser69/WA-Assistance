@@ -1,9 +1,11 @@
 import { TemplateLoader } from '../../../core/loader.js';
 
 /**
- * Componente: Hub - Lógica Encapsulada 🧠✨🛰️
+ * Componente: Hub - Lógica Encapsulada (Senior Build) 🧠✨🛰️
  */
 export const Hub = {
+    lastStatus: null, // Memoria local para evitar pérdidas en condiciones de carrera
+
     /**
      * Punto de anclaje inicial.
      */
@@ -17,11 +19,32 @@ export const Hub = {
      * Carga asíncrona de recursos.
      */
     init: async () => {
+        console.log('[Hub] 🛰️ Iniciando inyección de Hub...');
         const html = await TemplateLoader.loadHTML('hub');
         await TemplateLoader.loadCSS('hub');
 
         const mount = document.getElementById('global-hub-mount');
-        if (mount) mount.outerHTML = html;
+        if (mount) {
+            mount.outerHTML = html;
+            console.log('[Hub] ✅ DOM inyectado.');
+            
+            // Sincronización Proactiva Inmediata (Senior Pattern: No esperar a nadie) 🛰️
+            try {
+                const aiStatus = await window.api.invoke('ai:get-status');
+                if (aiStatus) {
+                    console.log('[Hub] 📥 Sincronización proactiva forzada con éxito.');
+                    Hub.updateAI(aiStatus);
+                }
+            } catch (err) {
+                console.error('[Hub] ❌ Error en sincronización inicial forzada:', err);
+            }
+
+            // Aplicar estado previo de AppState si existiera y fuera más reciente
+            const { AppState } = await import('../../../core/state.js');
+            if (AppState.lastAIStatus) {
+                Hub.updateAI(AppState.lastAIStatus);
+            }
+        }
     },
 
     /**
@@ -70,14 +93,35 @@ export const Hub = {
     },
 
     /**
-     * Actualiza el estado de la IA.
+     * Actualiza el estado de la IA en el Hub Global (Nav superior).
      */
-    updateAI: (enabled) => {
+    updateAI: (aiStatus) => {
+        // Almacenar siempre el último estado por si el DOM aún no está listo
+        Hub.lastStatus = aiStatus;
+        
         const hubItem = document.getElementById('hub-ai-status');
         const hubText = document.getElementById('hub-ai-text');
-        if (hubItem && hubText) {
-            hubItem.className = 'hub-item ai-item ' + (enabled ? 'connect' : 'disconnect');
-            hubText.textContent = enabled ? 'Activa' : 'Desconectada';
+        
+        if (!hubItem || !hubText) {
+            // El DOM aún no existe (index.html no ha terminado o Hub.init no ha corrido)
+            return;
         }
+
+        const isConnected = typeof aiStatus === 'object' ? aiStatus.connected : aiStatus;
+        const isActive = typeof aiStatus === 'object' ? aiStatus.active : aiStatus;
+
+        let statusClass = 'disconnect';
+        let statusText = 'Desconectada';
+
+        if (isActive) {
+            statusClass = 'active-process'; // Azul/Cyan Neon (según CSS actual)
+            statusText = 'Activa';
+        } else if (isConnected) {
+            statusClass = 'authenticated'; // Amarillo/Naranja Sincro
+            statusText = 'Conectada';
+        }
+
+        hubItem.className = `hub-item ai-item ${statusClass}`;
+        hubText.textContent = statusText;
     }
 };

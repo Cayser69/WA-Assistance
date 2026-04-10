@@ -36,22 +36,33 @@ export const BootManager = {
     loadServices: async (dirname) => {
         console.log('[Boot] 🤖 Cargando servicios nucleares...');
         
-        // 1. Base de Datos
-        const dbMod = await import('../services/database/index.js');
-        await dbMod.initDB();
+        try {
+            // 1. Base de Datos
+            const dbMod = await import('../services/database/index.js');
+            await dbMod.initDB();
 
-        // 2. WhatsApp Core & Services
-        const waMod = await import('../providers/whatsapp/core/client.js');
-        const campMod = await import('../providers/whatsapp/services/campaign.js');
-        const scanMod = await import('../providers/whatsapp/services/scanner.js');
-        const ipcMod = await import('../ipc/handlers.js');
+            // 2. WhatsApp Core & Services
+            const waMod = await import('../providers/whatsapp/core/client.js');
+            const campMod = await import('../providers/whatsapp/services/campaign.js');
+            const scanMod = await import('../providers/whatsapp/services/scanner.js');
+            const ipcMod = await import('../ipc/handlers.js');
+            
+            // 3. IA Services
+            const aiMod = await import('../services/ai/client.js');
 
-        return {
-            waClient: waMod.waClient,
-            waCampaign: campMod.waCampaign,
-            waScanner: scanMod.waScanner,
-            registerIPCHandlers: ipcMod.registerIPCHandlers
-        };
+            console.log('[Boot] ✅ Todos los servicios importados.');
+
+            return {
+                waClient: waMod.waClient,
+                waCampaign: campMod.waCampaign,
+                waScanner: scanMod.waScanner,
+                aiClient: aiMod.aiClient,
+                registerIPCHandlers: ipcMod.registerIPCHandlers
+            };
+        } catch (err) {
+            console.error('[Boot] ❌ Error cargando servicios:', err);
+            throw err;
+        }
     },
 
     /**
@@ -59,7 +70,7 @@ export const BootManager = {
      */
     safeShutdown: async (services) => {
         const { waClient, waCampaign, waScanner } = services;
-        console.log('[Boot] 🧼 Iniciando apagado seguro...');
+        console.log('[Boot] 🧼 RECIBIDA ORDEN DE APAGADO. Iniciando limpieza...');
         
         try {
             if (waCampaign) waCampaign.stop();

@@ -7,6 +7,7 @@
 @import './modules/layout.css';
 @import './modules/components.css';
 @import './modules/animations.css';
+@import './modules/toasts.css';
 
 /* Estilos de Utilidad de Propósito General (Small resets) */
 img {

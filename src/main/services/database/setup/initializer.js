@@ -19,15 +19,22 @@ export async function initDB() {
             try {
                 await run(sql);
             } catch (e) {
-                // Silenciamos errores de columnas ya existentes
+                // Solo silenciar si es error de columna duplicada 🤫
+                const msg = e.message.toLowerCase();
+                if (!msg.includes('duplicate column name') && !msg.includes('already exists')) {
+                    console.warn(`[Database/Migrator] ⚠️ Error en paso: ${sql.substring(0, 50)}... -> ${e.message}`);
+                }
             }
         }
 
         // 3. Crear Índices de Rendimiento
+        console.log('[Database/Setup] ⚡ Generando índices de alto rendimiento...');
         for (const sql of INDEXES) {
             try {
                 await run(sql);
-            } catch (e) { }
+            } catch (e) { 
+                // Silenciar si el índice ya existe
+            }
         }
 
         console.log('[Database/Setup] ✅ Esquema inicializado correctamente.');

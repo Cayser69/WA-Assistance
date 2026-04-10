@@ -12,13 +12,14 @@ export const AICatalogo = {
         const kbCatalogo = document.getElementById('ai-kb-catalogo');
         const btnSave = document.getElementById('btn-save-catalogo');
         const btnGenerate = document.getElementById('btn-generate-catalogo');
-        const contextArea = document.getElementById('ai-business-context');
+        const contextArea = document.getElementById('ai-context-catalogo');
 
         if (!kbCatalogo || !btnSave) return;
 
         // --- Carga de Datos ---
         const settings = await window.api.getAllSettings();
         kbCatalogo.value = settings.ai_kb_catalogo || '';
+        if (contextArea) contextArea.value = settings.ai_context_catalogo || '';
 
         // --- Handlers ---
         
@@ -27,7 +28,7 @@ export const AICatalogo = {
             btnGenerate.onclick = async () => {
                 const context = contextArea ? contextArea.value.trim() : '';
                 if (!context) {
-                    alert('⚠️ Por favor, escribe primero un breve resumen de tu negocio en el cuadro superior.');
+                    window.ui.showToast('⚠️ Escribe primero qué productos o servicios vendes.', 'info');
                     return;
                 }
 
@@ -39,8 +40,9 @@ export const AICatalogo = {
                 
                 if (response.success) {
                     kbCatalogo.value = response.content;
+                    window.ui.showToast('📦 Catálogo generado con éxito.');
                 } else {
-                    alert('❌ Error generando catálogo: ' + response.error);
+                    window.ui.showToast('❌ Error: ' + response.error, 'error');
                 }
 
                 btnGenerate.disabled = false;
@@ -50,13 +52,14 @@ export const AICatalogo = {
 
         // Guardado Manual
         btnSave.onclick = async () => {
-            // AISLAMIENTO: Solo guardamos el catálogo
+            // AISLAMIENTO: Solo guardamos el catálogo y su contexto local
             await window.api.saveSetting('ai_kb_catalogo', kbCatalogo.value);
+            if (contextArea) await window.api.saveSetting('ai_context_catalogo', contextArea.value);
             
             // Sincronizar todos los ajustes con el motor principal
             await syncAISettings();
             
-            alert('📦 Catálogo actualizado correctamente.');
+            window.ui.showToast('📦 Catálogo de productos actualizado.');
         };
     }
 };

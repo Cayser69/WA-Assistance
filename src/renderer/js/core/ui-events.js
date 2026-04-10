@@ -3,6 +3,7 @@
  */
 import { AppState } from './state.js';
 import { Router } from './router.js';
+import { Toast } from '../components/shared/toast.js';
 
 export const UIEvents = {
     /**
@@ -18,6 +19,15 @@ export const UIEvents = {
                     group.classList.toggle('expanded');
                     if (header) header.classList.toggle('expanded-header');
                 }
+            },
+
+            /**
+             * Muestra una notificación Toast premium.
+             * @param {string} msg - Mensaje a mostrar.
+             * @param {string} type - Tipo: 'success', 'error', 'info'.
+             */
+            showToast: (msg, type = 'success') => {
+                Toast.show(msg, type);
             }
         };
 
@@ -61,8 +71,8 @@ export const UIEvents = {
         });
 
         window.api.onAIStatus((status) => {
-            // Actualización global (Hub)
-            AppState.updateAIStatusUI(status.enabled);
+            // Actualización global (Hub) 🛰️
+            AppState.updateAIStatusUI(status);
         });
 
         window.api.onCampaignStatus((status) => {

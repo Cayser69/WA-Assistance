@@ -49,4 +49,13 @@ export class MessagingManager {
             mainWindow: this.mainWindow
         });
     }
+
+    /**
+     * Gestiona las confirmaciones de lectura/entrega. 🛰️
+     */
+    async handleMessageAck(msg, ack) {
+        await handler.handleMessageAck(msg, ack, {
+            mainWindow: this.mainWindow
+        });
+    }
 }

@@ -13,7 +13,7 @@ export async function handleMessage(msg, context) {
     const remoteJid = isFromMe ? msg.to : msg.from;
     const phone = remoteJid.includes('@') ? remoteJid.split('@')[0] : remoteJid;
 
-    // 2. Descarga de Multimedia (Imágenes, Audios, etc) para ambos sentidos
+    // 2. Descarga de Multimedia
     let mediaPath = null;
     let mimetype = null;
 
@@ -30,9 +30,18 @@ export async function handleMessage(msg, context) {
         }
     }
 
-    // 3. Guardar en Base de Datos (Persistencia Universal)
+    // 3. Guardar en Base de Datos (Persistencia Universal) 🛰️
     const { saveMessageLog } = await import('../../../../services/database/index.js');
-    await saveMessageLog(phone, msg.body, type, null, mediaPath, mimetype);
+    await saveMessageLog(
+        phone, 
+        msg.body, 
+        type, 
+        null, 
+        mediaPath, 
+        mimetype, 
+        msg.id.id, // ID Único de WhatsApp 🔑
+        msg.ack || 1 // Estado inicial
+    );
 
     // 4. Notificar al Renderer para actualización en tiempo real
     if (mainWindow && !mainWindow.isDestroyed()) {
@@ -41,27 +50,19 @@ export async function handleMessage(msg, context) {
             msg: msg.body,
             media_path: mediaPath,
             mimetype: mimetype,
-            tipo: type
+            tipo: type,
+            msg_id: msg.id.id,
+            ack: msg.ack || 1
         });
     }
     
     // 5. Procesamiento con IA (Sólo para mensajes RECIBIDOS)
     if (!isFromMe) {
-        // Importación dinámica para evitar ciclos de dependencia
         const { aiClient } = await import('../../../../services/ai/client.js');
-        
         if (aiClient.isActive && mainWindow && !mainWindow.isDestroyed()) {
-            mainWindow.webContents.send('wa:log', { 
-                text: `IA: Procesando mensaje de ${phone} con memoria...`, 
-                type: 'info' 
-            });
-            
             try {
-                // 5.1 Recuperar Historial Reciente (Últimos 10 mensajes) para dar contexto 📜
                 const { getChatMessages } = await import('../../../../services/database/index.js');
                 const rawHistory = await getChatMessages(phone);
-                
-                // Formatear para OpenAI: mapear 'recibido' -> 'user' y 'enviado' -> 'assistant'
                 const history = rawHistory.slice(-10).map(m => ({
                     role: m.tipo === 'recibido' ? 'user' : 'assistant',
                     content: m.mensaje
@@ -70,14 +71,30 @@ export async function handleMessage(msg, context) {
                 const reply = await aiClient.getReply(msg.body, history);
                 if (reply) {
                     await msg.reply(reply);
-                    mainWindow.webContents.send('wa:log', { 
-                        text: `IA responde: ${reply}`, 
-                        type: 'success' 
-                    });
                 }
             } catch (err) {
                 console.error('[MessagingManager/IA] Error en respuesta IA:', err.message);
             }
         }
+    }
+}
+
+/**
+ * Gestiona las confirmaciones de lectura/entrega (Ack). 🛰️
+ */
+export async function handleMessageAck(msg, ack, context) {
+    const { mainWindow } = context;
+    const msgId = msg.id.id;
+
+    try {
+        const { updateMessageAck } = await import('../../../../services/database/index.js');
+        await updateMessageAck(msgId, ack);
+
+        // Notificar a la UI
+        if (mainWindow && !mainWindow.isDestroyed()) {
+            mainWindow.webContents.send('wa:message-ack', { msgId, ack });
+        }
+    } catch (err) {
+        console.error('[MessagingManager/Handler] Error en actualización Ack:', err.message);
     }
 }

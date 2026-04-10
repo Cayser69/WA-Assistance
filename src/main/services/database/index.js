@@ -16,7 +16,7 @@ export { initDB, getDB };
 // --- Re-exportación de todos los métodos de modelos ---
 export const { savePersistence, getPersistence, clearPersistence } = persistence;
 export const { saveTemplate, deleteTemplate, getTemplates } = templates;
-export const { saveSetting, getSetting, getAllSettings } = settings;
+export const { saveSetting, saveSettings, getSetting, getAllSettings } = settings;
 
 // Modelo de Leads (Agenda)
 export const {
@@ -36,4 +36,9 @@ export const {
 } = leads;
 
 // Modelo de Logs (Mensajería)
-export { saveMessageLog, getUniqueChats, getChatMessages } from './models/logs.js';
+export const { 
+    saveMessageLog, 
+    updateMessageAck, 
+    getUniqueChats, 
+    getChatMessages 
+} = logs;

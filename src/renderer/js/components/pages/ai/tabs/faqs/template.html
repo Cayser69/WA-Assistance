@@ -11,8 +11,18 @@
         </div>
 
         <div class="form-group-col">
+            <!-- MINI-MAGO MODULAR: FAQs -->
+            <div style="margin-bottom: 20px; padding: 15px; background: rgba(34, 197, 94, 0.03); border-radius: 8px; border: 1px dashed rgba(34, 197, 94, 0.2);">
+                <label style="display: flex; align-items: center; gap: 6px; font-size: 0.8rem; font-weight: 600; margin-bottom: 8px; color: var(--primary);">
+                    <span class="material-icons-outlined" style="font-size: 1rem;">auto_awesome</span> 
+                    ¿Qué dudas suelen tener? (Instrucciones para generar FAQs)
+                </label>
+                <textarea id="ai-context-faqs" class="prompt-area" style="min-height: 60px; font-size: 0.85rem;" 
+                    placeholder="Ej: Somos una clínica dental, preguntan mucho por el precio de los implantes, si aceptamos seguros y el horario de urgencias fines de semana."></textarea>
+            </div>
+
             <div class="input-field">
-                <textarea id="ai-kb-faqs" class="prompt-area" style="min-height: 400px;" placeholder="Ejemplo:
+                <textarea id="ai-kb-faqs" class="prompt-area" style="min-height: 300px;" placeholder="Ejemplo:
 P: ¿Tienen tienda física?
 R: Sí, estamos en Calle Principal 123.
 

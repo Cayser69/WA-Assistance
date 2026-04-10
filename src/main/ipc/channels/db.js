@@ -36,6 +36,11 @@ export function registerDBHandlers() {
         return true;
     });
 
+    ipcMain.handle('db:saveSettings', async (event, settings) => {
+        await db.saveSettings(settings);
+        return true;
+    });
+
     ipcMain.handle('db:getSetting', async (event, key) => {
         return await db.getSetting(key);
     });

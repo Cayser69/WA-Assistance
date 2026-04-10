@@ -1,31 +1,82 @@
 <div id="section-ai-conexion" class="ai-card animate-fade-in">
     <div class="card glass-card">
         <label style="display: flex; align-items: center; gap: 8px; margin-bottom: 20px;">
-            <span class="material-icons-outlined" style="color: var(--primary)">vpn_key</span>
-            Credenciales y Conexión
+            <span class="material-icons-outlined" style="color: var(--primary)">hub</span>
+            Proveedor de Inteligencia Artificial
         </label>
-        
-        <div class="form-group-col">
-            <div class="input-field">
-                <label>OpenAI API Key</label>
-                <div class="api-key-container">
-                    <input type="password" id="openai-key" placeholder="sk-..." style="flex: 1">
+
+        <div class="status-row" style="background: rgba(255, 255, 255, 0.03); border-color: var(--glass-border);">
+            <div style="flex: 1;">
+                <label style="font-size: 0.8rem; font-weight: 600; color: var(--text-muted); margin-bottom: 8px; display: block;">ELIGE TU CEREBRO</label>
+                <select id="ai-provider-selector" class="model-selector" style="margin-top: 0; padding: 10px; width: 100%;">
+                    <option value="openai">OpenAI (GPT-4o, GPT-4o-mini) - Pago</option>
+                    <option value="groq">Groq Cloud (Llama 3, Mixtral) - Gratis & Súper Rápido</option>
+                    <option value="gemini">Google Gemini (1.5 Flash, 1.5 Pro) - Gratis & Inteligente</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- CONFIGURACIÓN DINÁMICA SEGÚN PROVEEDOR -->
+        <div id="provider-config-container" style="margin-top: 25px;">
+            
+            <!-- Bloque OpenAI -->
+            <div id="config-openai" class="provider-config-pane">
+                <div class="form-group" style="margin-bottom: 15px;">
+                    <label style="display: block; margin-bottom: 8px;">API Key de OpenAI</label>
+                    <div class="api-key-container">
+                        <input type="password" id="openai-key" class="model-selector" placeholder="sk-..." style="width: 100%;">
+                    </div>
+                    <p style="font-size: 0.75rem; color: var(--text-muted); margin-top: 5px;">Requiere saldo en tu cuenta de OpenAI Platform.</p>
                 </div>
             </div>
 
-            <div class="input-field" style="margin-top: 15px;">
-                <label>Modelo del Cerebro</label>
-                <select id="openai-model" class="model-selector">
-                    <option value="gpt-4o-mini">GPT-4o Mini (Velocidad y Ahorro)</option>
-                    <option value="gpt-4o">GPT-4o (Máxima Inteligencia)</option>
+            <!-- Bloque Groq -->
+            <div id="config-groq" class="provider-config-pane" style="display: none;">
+                <div class="form-group" style="margin-bottom: 15px;">
+                    <label style="display: block; margin-bottom: 8px;">API Key de Groq</label>
+                    <div class="api-key-container">
+                        <input type="password" id="groq-key" class="model-selector" placeholder="gsk_..." style="width: 100%;">
+                    </div>
+                    <div class="status-row" style="margin-top: 15px; padding: 12px; background: rgba(34, 197, 94, 0.05); border: 1px dashed var(--primary); border-radius: 8px;">
+                        <span class="material-icons-outlined" style="color: var(--primary); font-size: 1.1rem;">auto_awesome</span>
+                        <span style="font-size: 0.8rem;">
+                            <strong>Gratis e Instantáneo:</strong> Llama 3 en Groq es la mejor opción gratuita. 
+                            <a href="https://console.groq.com/keys" target="_blank" style="color: var(--primary); text-decoration: underline; font-weight: 600;">Obtén tu llave gratis aquí</a>.
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bloque Gemini -->
+            <div id="config-gemini" class="provider-config-pane" style="display: none;">
+                <div class="form-group" style="margin-bottom: 15px;">
+                    <label style="display: block; margin-bottom: 8px;">API Key de Gemini (Google)</label>
+                    <div class="api-key-container">
+                        <input type="password" id="gemini-key" class="model-selector" placeholder="AIzaSy..." style="width: 100%;">
+                    </div>
+                    <div class="status-row" style="margin-top: 15px; padding: 12px; background: rgba(34, 197, 94, 0.05); border: 1px dashed var(--primary); border-radius: 8px;">
+                        <span class="material-icons-outlined" style="color: var(--primary); font-size: 1.1rem;">info</span>
+                        <span style="font-size: 0.8rem;">
+                            <strong>Google Gemini:</strong> Muy potente para organizar conocimientos. 
+                            <a href="https://aistudio.google.com/app/apikey" target="_blank" style="color: var(--primary); text-decoration: underline; font-weight: 600;">Consigue tu API Key en Google AI Studio</a>.
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group" style="margin-top: 20px;">
+                <label style="display: block; margin-bottom: 8px;">Modelo Inteligente</label>
+                <select id="ai-model-selector" class="model-selector" style="width: 100%; padding: 10px;">
+                    <!-- Se rellena dinámicamente -->
                 </select>
+                <p style="font-size: 0.75rem; color: var(--text-muted); margin-top: 5px;">Selecciona el modelo que mejor se adapte a tu necesidad.</p>
             </div>
-            
-            <div style="display: flex; justify-content: center; margin-top: 25px; padding-top: 20px; border-top: 1px solid rgba(255, 255, 255, 0.05);">
-                <button id="btn-save-key" class="btn btn-primary" style="padding: 12px 40px; min-width: 250px;">
-                    <span class="material-icons-outlined">save</span> VALIDAR Y GUARDAR CREDENCIALES
-                </button>
-            </div>
+        </div>
+
+        <div style="display: flex; justify-content: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid var(--glass-border);">
+            <button id="btn-save-api" class="btn btn-primary" style="padding: 12px 60px; min-width: 250px;">
+                <span class="material-icons-outlined">save</span> GUARDAR TODAS LAS LLAVES
+            </button>
         </div>
     </div>
 </div>

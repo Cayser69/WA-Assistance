@@ -28,7 +28,7 @@ export const AIAutomatizacion = {
             // Sincronizar todos los ajustes con el motor principal
             await syncAISettings();
             
-            alert('⚡ Ajustes de automatización aplicados.');
+            window.ui.showToast('⚡ Ajustes de automatización aplicados.');
         };
     }
 };

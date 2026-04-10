@@ -3,10 +3,24 @@ const { app } = electron;
 import path from 'path';
 import { fileURLToPath } from 'url';
 
+// 📡 SENSORES DE ERROR GLOBALES (Diagnóstico)
+process.on('uncaughtException', (err) => {
+    console.error('\n\n[FATAL ERROR] Excepción no capturada en el Proceso Principal:');
+    console.error('Mensaje:', err.message);
+    console.error('Stack:', err.stack);
+    console.error('----------------------------------------------------------\n\n');
+    // No cerrar inmediatamente para permitir lectura del error
+});
+
+process.on('unhandledRejection', (reason, promise) => {
+    console.error('\n\n[FATAL ERROR] Promesa no capturada:');
+    console.error('Razón:', reason);
+    console.error('----------------------------------------------------------\n\n');
+});
+
 // Submódulos Core 📂
 import { BootManager } from './core/boot.js';
 import { createWindow } from './core/window.js';
-import { watchRenderer } from './core/watcher.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -47,7 +61,6 @@ app.whenReady().then(async () => {
         mainWindow = createWindow({
             __dirname,
             isPackaged: app.isPackaged,
-            watchRenderer,
             ...services // Pasa waClient, waScanner, waCampaign, registerIPCHandlers
         });
 

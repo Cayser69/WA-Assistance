@@ -38,6 +38,11 @@ export class EventDispatcher {
         this.client.on('message_create', async (msg) => {
             if (messagingManager) await messagingManager.handleMessage(msg);
         });
+
+        // 4. Evento de Confirmación de Entrega/Lectura (Ack) 🛰️
+        this.client.on('message_ack', async (msg, ack) => {
+            if (messagingManager) await messagingManager.handleMessageAck(msg, ack);
+        });
     }
 
     /**

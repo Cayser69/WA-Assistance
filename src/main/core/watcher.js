@@ -8,7 +8,7 @@ let lastReload = 0;
 
 export function watchRenderer(window, rendererPath) {
     const bootTime = Date.now();
-    const validExtensions = ['.js', '.html', '.css', '.png', '.jpg', '.svg'];
+    const validExtensions = ['.js', '.png', '.jpg', '.svg'];
 
     if (!fs.existsSync(rendererPath)) {
         console.warn(`[Watcher] ⚠️ No se puede vigilar: ${rendererPath} no existe.`);
@@ -18,11 +18,14 @@ export function watchRenderer(window, rendererPath) {
     fs.watch(rendererPath, { recursive: true }, (eventType, filename) => {
         if (!filename) return;
 
-        const now = Date.now();
-        // Debounce: Evitar ráfagas y esperar estabilidad tras arranque
-        if (now - bootTime < 10000 || now - lastReload < 2500) return;
+        // Ignorar archivos temporales o de sistema comunes en Windows
+        if (filename.includes('~') || filename.includes('.tmp') || filename.startsWith('.')) return;
 
-        // Filtrar por extensión
+        const now = Date.now();
+        // Debounce: Aumentar espera tras arranque y entre recargas (30s de gracia)
+        if (now - bootTime < 30000 || now - lastReload < 5000) return;
+
+        // Filtrar estrictamente por extensión
         const hasValidExt = validExtensions.some(ext => filename.endsWith(ext));
         if (!hasValidExt) return;
 
@@ -33,14 +36,15 @@ export function watchRenderer(window, rendererPath) {
             const stats = fs.statSync(filePath);
             const mtime = stats.mtimeMs;
 
-            // Solo recargar si el archivo fue modificado recientemente (REAL change)
-            if (now - mtime < 2000) {
+            // Diferencia mínima para considerar un cambio como "Manual/Real"
+            if (now - mtime < 1500) {
                 lastReload = now;
-                console.log(`[Dev-Watcher] 🔄 Cambio REAL detectado en: ${filename}. Recargando...`);
+                console.log(`[Watcher] ⚡ Cambio verificado: ${filename}. Sincronizando ventana...`);
+                window.webContents.send('app:reload-status', { file: filename });
                 window.reload();
             }
         } catch (err) {
-            // Ignorar errores de archivos temporales
+            // Silenciar fallos de acceso a archivos bloqueados por el sistema
         }
     });
 }

@@ -12,13 +12,14 @@ export const AIFAQs = {
         const kbFAQs = document.getElementById('ai-kb-faqs');
         const btnSave = document.getElementById('btn-save-faqs');
         const btnGenerate = document.getElementById('btn-generate-faqs');
-        const contextArea = document.getElementById('ai-business-context');
+        const contextArea = document.getElementById('ai-context-faqs');
 
         if (!kbFAQs || !btnSave) return;
 
         // --- Carga de Datos ---
         const settings = await window.api.getAllSettings();
         kbFAQs.value = settings.ai_kb_faqs || '';
+        if (contextArea) contextArea.value = settings.ai_context_faqs || '';
 
         // --- Handlers ---
         
@@ -27,7 +28,7 @@ export const AIFAQs = {
             btnGenerate.onclick = async () => {
                 const context = contextArea ? contextArea.value.trim() : '';
                 if (!context) {
-                    alert('⚠️ Por favor, escribe primero un breve resumen de tu negocio en el cuadro superior.');
+                    window.ui.showToast('⚠️ Escribe primero las dudas habituales de tus clientes.', 'info');
                     return;
                 }
 
@@ -39,8 +40,9 @@ export const AIFAQs = {
                 
                 if (response.success) {
                     kbFAQs.value = response.content;
+                    window.ui.showToast('❓ FAQs generadas correctamente.');
                 } else {
-                    alert('❌ Error generando FAQs: ' + response.error);
+                    window.ui.showToast('❌ Error: ' + response.error, 'error');
                 }
 
                 btnGenerate.disabled = false;
@@ -50,13 +52,14 @@ export const AIFAQs = {
 
         // Guardado Manual
         btnSave.onclick = async () => {
-            // AISLAMIENTO: Solo guardamos las FAQs
+            // AISLAMIENTO: Solo guardamos las FAQs y su contexto local
             await window.api.saveSetting('ai_kb_faqs', kbFAQs.value);
+            if (contextArea) await window.api.saveSetting('ai_context_faqs', contextArea.value);
             
             // Sincronizar todos los ajustes con el motor principal
             await syncAISettings();
             
-            alert('❓ Preguntas frecuentes guardadas.');
+            window.ui.showToast('❓ Preguntas frecuentes guardadas.');
         };
     }
 };

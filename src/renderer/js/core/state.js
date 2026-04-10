@@ -10,6 +10,7 @@ export const AppState = {
     logs: [],
     selectedLeads: [],
     campaignProgress: { percent: 0, current: 0, total: 0, phone: '' },
+    lastAIStatus: null, // Memoria para sincronización asíncrona del Hub 🛰️
 
     /**
      * Añade un log al sistema y actualiza el DOM de la consola si existe.
@@ -172,10 +173,14 @@ export const AppState = {
     },
 
     /**
-     * Actualiza el estado de la IA en el Hub Global.
+     * Actualiza el estado de la IA en el Hub Global (Nav superior) 🛰️🤖
      */
-    updateAIStatusUI: (enabled) => {
-        // Delegar al componente Hub
-        if (window.Hub) window.Hub.updateAI(enabled);
+    updateAIStatusUI: (aiState) => {
+        console.log('[AppState] 🛰️ updateAIStatusUI invocado con:', aiState);
+        AppState.lastAIStatus = aiState; // Guardar en memoria para componentes lentos
+        
+        if (window.Hub) {
+            window.Hub.updateAI(aiState);
+        }
     }
 };

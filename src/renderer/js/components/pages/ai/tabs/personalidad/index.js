@@ -12,13 +12,14 @@ export const AIPersonalidad = {
         const promptArea = document.getElementById('ai-system-prompt');
         const btnSavePrompt = document.getElementById('btn-save-prompt');
         const btnGeneratePrompt = document.getElementById('btn-generate-prompt');
-        const contextArea = document.getElementById('ai-business-context');
+        const contextArea = document.getElementById('ai-context-personalidad');
 
         if (!promptArea || !btnSavePrompt) return;
 
         // --- Carga de Datos ---
         const s = await window.api.getAllSettings();
         promptArea.value = s.openai_prompt || 'Eres un asistente experto.';
+        if (contextArea) contextArea.value = s.ai_context_personalidad || '';
 
         // --- Handlers ---
         
@@ -27,7 +28,7 @@ export const AIPersonalidad = {
             btnGeneratePrompt.onclick = async () => {
                 const context = contextArea ? contextArea.value.trim() : '';
                 if (!context) {
-                    alert('⚠️ Por favor, escribe primero un breve resumen de tu negocio en el cuadro superior.');
+                    window.ui.showToast('⚠️ Escribe primero el tipo de identidad que buscas.', 'info');
                     return;
                 }
 
@@ -39,8 +40,9 @@ export const AIPersonalidad = {
                 
                 if (response.success) {
                     promptArea.value = response.content;
+                    window.ui.showToast('🧠 Identidad generada con éxito.');
                 } else {
-                    alert('❌ Error generando identidad: ' + response.error);
+                    window.ui.showToast('❌ Error: ' + response.error, 'error');
                 }
 
                 btnGeneratePrompt.disabled = false;
@@ -50,13 +52,14 @@ export const AIPersonalidad = {
 
         // Guardado Manual
         btnSavePrompt.onclick = async () => {
-            // AISLAMIENTO: Solo guardamos el prompt maestro
+            // AISLAMIENTO: Solo guardamos el prompt maestro y su contexto de generación
             await window.api.saveSetting('openai_prompt', promptArea.value);
+            if (contextArea) await window.api.saveSetting('ai_context_personalidad', contextArea.value);
 
             // Sincronizar todos los ajustes con el motor principal
             await syncAISettings();
             
-            alert('🧠 Identidad de la IA actualizada correctamente.');
+            window.ui.showToast('🧠 Identidad de la IA actualizada.');
         };
     }
 };

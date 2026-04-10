@@ -6,7 +6,7 @@ import path from 'path';
  * Gestor de Ventanas 🖥️
  */
 export function createWindow(config) {
-    const { __dirname, registerIPCHandlers, waClient, waScanner, waCampaign, watchRenderer, isPackaged } = config;
+    const { __dirname, registerIPCHandlers, waClient, waScanner, waCampaign, aiClient, isPackaged } = config;
 
     console.log('[Main/Window] 🖥️ Inicializando ventana principal...');
     
@@ -26,23 +26,32 @@ export function createWindow(config) {
     // Registrar manejadores IPC vinculados a esta ventana
     if (registerIPCHandlers) registerIPCHandlers(mainWindow);
 
-    const indexPath = path.resolve(__dirname, '..', 'renderer', 'index.html');
+    const indexPath = path.join(__dirname, '..', 'renderer', 'index.html');
     mainWindow.loadFile(indexPath);
     mainWindow.setMenuBarVisibility(false);
 
-    mainWindow.on('ready-to-show', () => {
+    mainWindow.on('ready-to-show', async () => {
         mainWindow.show();
         
         console.log('[Main/Window] 🤖 Activando servicios de fondo...');
         if (waClient) waClient.init(mainWindow);
         if (waScanner) waScanner.init(mainWindow);
         if (waCampaign) waCampaign.init(mainWindow);
-        
-        // Activar Hot-Reload en desarrollo
-        if (!isPackaged && watchRenderer) {
-            const rendererPath = path.join(__dirname, '..', 'renderer');
-            watchRenderer(mainWindow, rendererPath);
+
+        // Notificar estado de IA inmediatamente 🛰️
+        if (aiClient) {
+            const status = await aiClient.getStatus();
+            mainWindow.webContents.send('wa:ai-status', status);
+            console.log('[Main/Window] 🛰️ Estado de IA enviado proactivamente al Hub.');
         }
+    });
+
+    // 💀 SENSOR DE MUERTE NATIVA (Diagnóstico)
+    mainWindow.webContents.on('render-process-gone', (event, details) => {
+        console.error('\n\n[FATAL ERROR] Proceso de renderizado (Ventana) perdido:');
+        console.error('Motivo:', details.reason);
+        console.error('Código de salida:', details.exitCode);
+        console.error('----------------------------------------------------------\n\n');
     });
 
     return mainWindow;

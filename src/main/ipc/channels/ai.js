@@ -6,14 +6,33 @@ const { ipcMain } = electron;
  */
 export function registerAIHandlers() {
     ipcMain.handle('ai:config', async (event, config) => {
-        const { aiClient } = await import('../../../main/services/ai/client.js');
-        aiClient.config(config);
-        return { success: true };
+        try {
+            console.log('[Main/IPC] 🛰️ Recibida configuración de IA:', { provider: config.provider, model: config.model });
+            const { aiClient } = await import('../../../main/services/ai/client.js');
+            aiClient.config(config);
+            
+            // Notificar cambio de estado a la UI (Hub reactivo) 🛰️
+            const status = await aiClient.getStatus();
+            event.sender.send('wa:ai-status', status);
+
+            console.log('[Main/IPC] ✅ Configuración aplicada al motor.');
+            return { success: true };
+        } catch (err) {
+            console.error('[Main/IPC] ❌ Error aplicando configuración de IA:', err.message);
+            throw err;
+        }
     });
 
     ipcMain.handle('ai:get-status', async () => {
-        const { aiClient } = await import('../../../main/services/ai/client.js');
-        return aiClient.getStatus();
+        try {
+            const { aiClient } = await import('../../../main/services/ai/client.js');
+            const status = await aiClient.getStatus();
+            console.log('[Main/IPC] 🛰️ Status consultado vía ai:get-status:', status);
+            return status;
+        } catch (err) {
+            console.error('[Main/IPC] ❌ Error al obtener status de IA:', err);
+            return { connected: false, active: false };
+        }
     });
 
     ipcMain.handle('ai:get-suggestion', async (event, { phone }) => {
@@ -27,7 +46,7 @@ export function registerAIHandlers() {
                 content: m.mensaje
             }));
 
-            const suggestion = await aiClient.getReply('Genera una respuesta sugerida perfecta para este chat.', history);
+            const suggestion = await aiClient.getReply('Genera una respuesta sugerida perfecta para este chat.', history, true);
             return { success: true, suggestion };
         } catch (error) {
             console.error('Error en IPC ai:get-suggestion:', error);
@@ -47,7 +66,7 @@ export function registerAIHandlers() {
             };
 
             const systemPrompt = prompts[type] || prompts['personalidad'];
-            const content = await aiClient.getReply(systemPrompt);
+            const content = await aiClient.getReply(systemPrompt, [], true);
 
             return { success: true, content };
         } catch (error) {

@@ -22,7 +22,10 @@ export const SCHEMAS = {
             mensaje TEXT,
             tipo TEXT CHECK(tipo IN ('enviado', 'recibido')),
             fecha DATETIME DEFAULT CURRENT_TIMESTAMP,
-            UNIQUE(telefono, mensaje, tipo, fecha)
+            media_path TEXT,
+            mimetype TEXT,
+            msg_id TEXT UNIQUE,
+            ack INTEGER DEFAULT 0
         )
     `,
     SETTINGS: `
@@ -58,7 +61,9 @@ export const MIGRATIONS = [
     "ALTER TABLE leads ADD COLUMN meta_id TEXT",
     "ALTER TABLE leads ADD COLUMN reparado INTEGER DEFAULT 0",
     "ALTER TABLE logs ADD COLUMN media_path TEXT",
-    "ALTER TABLE logs ADD COLUMN mimetype TEXT"
+    "ALTER TABLE logs ADD COLUMN mimetype TEXT",
+    "ALTER TABLE logs ADD COLUMN msg_id TEXT",
+    "ALTER TABLE logs ADD COLUMN ack INTEGER DEFAULT 0"
 ];
 
 /**
@@ -68,5 +73,5 @@ export const INDEXES = [
     'CREATE INDEX IF NOT EXISTS idx_leads_nombre ON leads(nombre)',
     'CREATE INDEX IF NOT EXISTS idx_leads_estado ON leads(estado)',
     'CREATE INDEX IF NOT EXISTS idx_leads_tipo ON leads(tipo)',
-    'CREATE UNIQUE INDEX IF NOT EXISTS idx_logs_unique ON logs(telefono, mensaje, tipo, fecha)'
+    'CREATE INDEX IF NOT EXISTS idx_logs_msg_id ON logs(msg_id)'
 ];

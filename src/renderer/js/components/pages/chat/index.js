@@ -65,6 +65,13 @@ export const Chat = {
             }
         });
 
+        // Al recibir actualización de entrega/leído (Ack) 🛰️
+        window.api.onMessageAck(async (data) => {
+            if (ChatSidebar.activeChat) {
+                ChatWindow.handleMessageAck(data.msgId, data.ack);
+            }
+        });
+
         // Sincronización masiva de chats
         window.api.onChatsSynced(async () => {
             await ChatSidebar.loadChats();

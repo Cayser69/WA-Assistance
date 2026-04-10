@@ -1,5 +1,6 @@
 import { TemplateLoader } from '../../../../../core/loader.js';
 import { WhatsAppBubble } from '../../../../layout/wa-bubble/index.js';
+import { Toast } from '../../../../shared/toast.js';
 
 /**
  * Sub-componente Modular: Redacción de Mensaje y Lanzamiento 🚀✨📱
@@ -118,7 +119,7 @@ export const MensajeTab = {
             btnIniciar.onclick = async () => {
                 const mensaje = textareaMessage.value.trim();
                 if (!mensaje) {
-                    alert('Por favor, selecciona una plantilla primero.');
+                    Toast.info('Por favor, selecciona una plantilla primero.');
                     return;
                 }
 
@@ -154,7 +155,7 @@ export const MensajeTab = {
                     // Feedback visual en consola en lugar de un alert bloqueante 📟
                     console.log('[MensajeTab] 🚀 Campaña lanzada con éxito.');
                 } else {
-                    alert('Error: ' + res.error);
+                    Toast.error('Error: ' + res.error);
                 }
             };
         }

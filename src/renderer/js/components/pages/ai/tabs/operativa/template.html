@@ -11,8 +11,18 @@
         </div>
 
         <div class="form-group-col">
+            <!-- MINI-MAGO MODULAR: OPERATIVA -->
+            <div style="margin-bottom: 20px; padding: 15px; background: rgba(34, 197, 94, 0.03); border-radius: 8px; border: 1px dashed rgba(34, 197, 94, 0.2);">
+                <label style="display: flex; align-items: center; gap: 6px; font-size: 0.8rem; font-weight: 600; margin-bottom: 8px; color: var(--primary);">
+                    <span class="material-icons-outlined" style="font-size: 1rem;">auto_awesome</span> 
+                    ¿Cómo funcionas? (Instrucciones para generar operativa)
+                </label>
+                <textarea id="ai-context-operativa" class="prompt-area" style="min-height: 60px; font-size: 0.85rem;" 
+                    placeholder="Ej: Abrimos de lunes a viernes de 9 a 18h. Aceptamos efectivo y bizum. Envíos gratis en 24h dentro de la ciudad."></textarea>
+            </div>
+
             <div class="input-field">
-                <textarea id="ai-kb-operativa" class="prompt-area" style="min-height: 400px;" placeholder="Ejemplo:
+                <textarea id="ai-kb-operativa" class="prompt-area" style="min-height: 300px;" placeholder="Ejemplo:
 - Horario: Lunes a Viernes de 9am a 6pm.
 - Envíos: Todo el país vía Courier, entrega en 24h.
 - Pagos: Transferencia, Tarjeta y Efectivo."></textarea>

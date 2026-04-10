@@ -1,5 +1,6 @@
 import { TemplateLoader } from '../../../../../core/loader.js';
 import { WhatsAppBubble } from '../../../../layout/wa-bubble/index.js';
+import { Toast } from '../../../../shared/toast.js';
 
 /**
  * Sub-componente Modular: Biblioteca y Editor de Plantillas
@@ -134,7 +135,7 @@ export const PlantillasTab = {
                     await refreshGallery();
                     updatePreview();
                 } else {
-                    alert('Error al importar la imagen.');
+                    Toast.error('Error al importar la imagen.');
                 }
             }
         };
@@ -146,7 +147,7 @@ export const PlantillasTab = {
                 contenido: contentInput.value.trim(),
                 imagePath: imagePathInput.value
             };
-            if (!data.nombre || !data.contenido) return alert('Nombre y contenido obligatorios.');
+            if (!data.nombre || !data.contenido) return Toast.info('Nombre y contenido obligatorios.');
 
             try {
                 await window.api.saveTemplate(data);

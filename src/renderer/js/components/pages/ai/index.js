@@ -24,28 +24,18 @@ export const AI = {
      */
     init: async (appState, params = {}) => {
         const activeTab = params.tab || 'conexion';
-        console.log(`[AI] Orquestando vista: ${activeTab}`);
+        console.log(`[AI-Orquestador] 🟢 Iniciando INIT para tab: ${activeTab}`);
 
         try {
-            // 1. Cargar Contenedor Principal (Bypass cache)
-            const mainHtml = await TemplateLoader.loadHTML('ai', 'template.html', true);
-            await TemplateLoader.loadCSS('ai');
             const root = document.getElementById('ai-content-root');
             if (!root) return;
-            root.innerHTML = mainHtml;
 
-            // --- Lógica del Mago de Configuración (Persistente) ---
-            const contextArea = document.getElementById('ai-business-context');
-            const btnSaveContext = document.getElementById('btn-save-context');
-            
-            if (contextArea && btnSaveContext) {
-                const settings = await window.api.getAllSettings();
-                contextArea.value = settings.ai_business_context || '';
-                
-                btnSaveContext.onclick = async () => {
-                    await window.api.saveSetting('ai_business_context', contextArea.value);
-                    alert('✨ Contexto de negocio guardado. Ahora puedes usar la IA para auto-completar las secciones.');
-                };
+            // 1. Cargar Contenedor Principal (Solo si no existe ya)
+            if (!document.getElementById('ai-tab-container')) {
+                const mainHtml = await TemplateLoader.loadHTML('ai', 'template.html', true);
+                console.log('[AI-Orquestador] 📥 Plantilla base cargada de cero.');
+                await TemplateLoader.loadCSS('ai');
+                root.innerHTML = mainHtml;
             }
 
             // 2. Títulos Dinámicos (Sincronizados con el Sidebar)
