@@ -1,5 +1,6 @@
 import { run } from './connection.js';
 import { SCHEMAS, MIGRATIONS, INDEXES } from './schema.js';
+import { cleanLogsJIDs } from '../models/logs.js';
 
 /**
  * Orquestador de Inicialización y Migraciones de Base de Datos 🛠️
@@ -38,6 +39,9 @@ export async function initDB() {
         }
 
         console.log('[Database/Setup] ✅ Esquema inicializado correctamente.');
+        
+        // 4. Mantenimiento y Limpieza Proactiva 🧼
+        await cleanLogsJIDs();
     } catch (error) {
         console.error('[Database/Setup] ❌ Error crítico durante la configuración:', error);
         throw error;

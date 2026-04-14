@@ -1,4 +1,7 @@
 import { AppOverlay } from '../../../../layout/loading-overlay/index.js';
+import { AppModal } from '../../../../shared/modal/index.js';
+import { LeadImportModal } from './import-modal/index.js';
+import { TemplateLoader } from '../../../../../core/loader.js';
 
 /**
  * Sub-manejador: Acciones de Audiencia 👥⚡
@@ -55,6 +58,27 @@ export const AudienciaActions = {
                 } finally {
                     AppOverlay.hide();
                     appState.updateWAStatusUI(appState.waStatus);
+                }
+            };
+        }
+
+        // --- Importar CSV de Leads 📊 ---
+        const btnImport = document.getElementById('btn-import-csv');
+        if (btnImport) {
+            btnImport.onclick = async () => {
+                try {
+                    const html = await TemplateLoader.loadHTML('campanas/tabs/audiencia/import-modal');
+                    AppModal.show({
+                        title: 'Importar Leads desde CSV 📊',
+                        contentHTML: html,
+                        onInit: (container, modal) => {
+                            LeadImportModal.init(container, modal, async () => {
+                                await refresh();
+                            });
+                        }
+                    });
+                } catch (err) {
+                    console.error('[Audiencia] Error al abrir modal de importación:', err);
                 }
             };
         }

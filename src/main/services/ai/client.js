@@ -125,26 +125,41 @@ class UniversalAIClient {
     }
 
     /**
-     * Generación de respuestas sugeridas.
+     * Generación de respuestas sugeridas. 🛰️
+     * Optimizada para diferenciar entre Reglas de Negocio e Instrucciones de Tarea.
      */
-    async getReply(userMessage, history = [], force = false) {
+    async getReply(userMessage, history = [], force = false, systemInstructions = null) {
         if (!force && (!this.isActive || !this.apiKey)) return null;
         
         try {
             if (this.provider === 'gemini') {
-                return await this.getGeminiReply(userMessage, history);
+                return await this.getGeminiReply(userMessage, history, systemInstructions);
             }
 
+            // Construir un mensaje de sistema robusto que combine el ADN del negocio y la tarea actual
+            const systemContent = [
+                this.prompt,
+                this.knowledgeBase ? `BASE DE CONOCIMIENTO:\n${this.knowledgeBase}` : '',
+                systemInstructions ? `INSTRUCCIONES DE TAREA:\n${systemInstructions}` : ''
+            ].filter(Boolean).join('\n\n--- \n\n');
+
             const messages = [
-                { role: 'system', content: `${this.prompt}\n\nBase de conocimiento:\n${this.knowledgeBase}` },
-                ...history,
-                { role: 'user', content: userMessage }
+                { role: 'system', content: systemContent },
+                ...history
             ];
+
+            // Si hay un mensaje de usuario específico (fuera de las instrucciones), lo añadimos
+            if (userMessage && !systemInstructions) {
+                messages.push({ role: 'user', content: userMessage });
+            } else if (userMessage && systemInstructions) {
+                // Si hay instrucciones, el 'userMessage' suele ser parte del contexto o el último disparador
+                messages.push({ role: 'user', content: `Contexto Adicional: ${userMessage}` });
+            }
 
             const response = await this.client.chat.completions.create({
                 model: this.model,
                 messages,
-                temperature: 0.7,
+                temperature: 0.6, // Bajamos la temperatura para mayor consistencia
                 max_tokens: 500
             });
 
@@ -158,7 +173,7 @@ class UniversalAIClient {
     /**
      * Manejo específico para Google Gemini (REST API).
      */
-    async getGeminiReply(userMessage, history = []) {
+    async getGeminiReply(userMessage, history = [], systemInstructions = null) {
         try {
             const url = `https://generativelanguage.googleapis.com/v1beta/models/${this.model}:generateContent?key=${this.apiKey}`;
             const contents = history.map(h => ({

@@ -58,4 +58,14 @@ export class MessagingManager {
             mainWindow: this.mainWindow
         });
     }
+
+    /**
+     * Sincroniza el historial reciente de un chat específico. 🔄
+     */
+    async syncChatHistory(phone) {
+        return await handler.syncChatMessages(phone, {
+            client: this.client,
+            mainWindow: this.mainWindow
+        });
+    }
 }

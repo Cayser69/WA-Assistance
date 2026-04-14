@@ -53,4 +53,21 @@ export function registerAppHandlers(mainWindow) {
         });
         return result.filePaths[0] || null;
     });
+
+    /**
+     * Lector genérico de archivos de texto. 📂
+     * Utilizado principalmente para la importación de CSVs.
+     */
+    ipcMain.handle('file:readText', async (event, filePath) => {
+        try {
+            if (!fs.existsSync(filePath)) {
+                console.error(`[File-Read] ❌ Archivo no encontrado: ${filePath}`);
+                return null;
+            }
+            return fs.readFileSync(filePath, 'utf8');
+        } catch (err) {
+            console.error(`[File-Read] ❌ Error leyendo archivo: ${filePath}`, err.message);
+            return null;
+        }
+    });
 }

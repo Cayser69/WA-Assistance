@@ -32,7 +32,9 @@ export const {
     markLeadAsContacted,
     repairMetaData,
     deleteLeads,
-    truncateLeads
+    truncateLeads,
+    insertLeadsBatch,
+    getLeadByPhone
 } = leads;
 
 // Modelo de Logs (Mensajería)
@@ -40,5 +42,6 @@ export const {
     saveMessageLog, 
     updateMessageAck, 
     getUniqueChats, 
-    getChatMessages 
+    getChatMessages,
+    cleanLogsJIDs
 } = logs;

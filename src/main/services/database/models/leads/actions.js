@@ -79,3 +79,46 @@ export async function deleteLeads(ids) {
     const result = await run(`DELETE FROM leads WHERE id IN (${placeholders})`, ids);
     return { deleted: result.changes };
 }
+
+/**
+ * Inserta múltiples leads en una sola transacción para alto rendimiento. 🚀⚡
+ * Sigue la regla: Si el número ya existe, se ignora por completo (No modifica).
+ */
+export async function insertLeadsBatch(leads) {
+    if (!leads || !Array.isArray(leads)) return { imported: 0, skipped: 0 };
+    
+    await run('BEGIN TRANSACTION');
+    let imported = 0;
+    let skipped = 0;
+
+    try {
+        for (const lead of leads) {
+            const { telefono, nombre } = lead;
+            const cleanTel = normalizePhone(telefono);
+
+            if (!cleanTel || isInternalID(cleanTel)) {
+                skipped++;
+                continue;
+            }
+
+            // Según requerimiento: Si ya existe, NO se guarda/modifica.
+            const exists = await isLeadExists(cleanTel);
+            if (exists) {
+                skipped++;
+                continue;
+            }
+
+            await run(
+                'INSERT INTO leads (telefono, nombre, tipo, reparado) VALUES (?, ?, ?, 1)', 
+                [cleanTel, nombre || null, 'manual']
+            );
+            imported++;
+        }
+        await run('COMMIT');
+        return { success: true, imported, skipped };
+    } catch (err) {
+        await run('ROLLBACK');
+        console.error('[Database-Leads] Error en inserción masiva:', err);
+        throw err;
+    }
+}

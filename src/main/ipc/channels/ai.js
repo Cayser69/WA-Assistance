@@ -38,15 +38,50 @@ export function registerAIHandlers() {
     ipcMain.handle('ai:get-suggestion', async (event, { phone }) => {
         try {
             const { aiClient } = await import('../../../main/services/ai/client.js');
-            const { getChatMessages } = await import('../../../main/services/database/index.js');
+            const { getChatMessages, getLeadByPhone } = await import('../../../main/services/database/index.js');
+            const { waClient } = await import('../../../main/providers/whatsapp/core/client.js');
+ 
+            // 1. Sincronización Inteligente (On-Demand) 🔄
+            let rawHistory = await getChatMessages(phone);
+            
+            // Si el historial es pobre, intentamos sincronizar desde WhatsApp
+            if (rawHistory.length < 5 && waClient.getStatus() === 'ready') {
+                await waClient.messaging?.syncChatHistory(phone);
+                rawHistory = await getChatMessages(phone); // Recargar
+            }
 
-            const rawHistory = await getChatMessages(phone);
-            const history = rawHistory.slice(-10).map(m => ({
+            const lead = await getLeadByPhone(phone);
+            const history = rawHistory.slice(-30).map(m => ({
                 role: m.tipo === 'recibido' ? 'user' : 'assistant',
                 content: m.mensaje
             }));
 
-            const suggestion = await aiClient.getReply('Genera una respuesta sugerida perfecta para este chat.', history, true);
+            // 2. Metadatos de personalización 🛰️
+            const customerName = lead?.nombre || 'Cliente';
+            const now = new Date().toLocaleString('es-ES', { 
+                weekday: 'long', 
+                day: 'numeric', 
+                month: 'long', 
+                hour: '2-digit', 
+                minute: '2-digit' 
+            });
+
+            const systemInstructions = `
+                CLIENTE: ${customerName}
+                FECHA/HORA ACTUAL: ${now}
+                
+                Lógica de Respuesta:
+                1. Analiza el historial: Si el asesor está haciendo pruebas (mensajes como "prueba", "test", "hola??"), responde de forma breve confirmando el funcionamiento.
+                2. Si no hay mensajes del cliente y el asesor está iniciando la charla, genera un saludo profesional y persuasivo usando la BASE DE CONOCIMIENTO.
+                3. Si ya hay una conversación fluida, céntrate en resolver la última duda del cliente.
+                
+                Misión Crítica:
+                - Genera ÚNICAMENTE el texto final de la respuesta sugerida.
+                - SIEMPRE consulta la BASE DE CONOCIMIENTO para datos técnicos (precios, servicios).
+                - PROHIBIDO incluir introducciones, explicaciones o meta-comentarios.
+            `.trim();
+
+            const suggestion = await aiClient.getReply('', history, true, systemInstructions);
             return { success: true, suggestion };
         } catch (error) {
             console.error('Error en IPC ai:get-suggestion:', error);

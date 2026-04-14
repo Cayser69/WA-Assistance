@@ -1,0 +1,113 @@
+<div id="import-leads-container" class="import-modal-content">
+    
+    <!-- Estado 1: Selección de Archivo -->
+    <div id="step-select" class="import-step">
+        <div class="drop-zone" id="drop-zone">
+            <span class="material-icons-outlined" style="font-size: 3rem; color: var(--primary); margin-bottom: 15px;">cloud_upload</span>
+            <p>Haz clic para seleccionar o arrastra tu archivo <b>CSV</b> aquí</p>
+            <span class="text-muted" style="font-size: 0.8rem;">Soportamos delimitadores por coma (,) y punto y coma (;)</span>
+            <input type="file" id="csv-file-input" accept=".csv" style="display: none;">
+        </div>
+        <div class="modal-info-box">
+            <span class="material-icons-outlined" style="font-size: 1rem; vertical-align: middle; margin-right: 5px;">info</span>
+            <b>Importante:</b> Los números duplicados que ya existan en tu agenda serán omitidos automáticamente.
+        </div>
+    </div>
+
+    <!-- Estado 2: Mapeo de Columnas (Oculto inicialmente) -->
+    <div id="step-mapping" class="import-step" style="display: none;">
+        <p class="text-muted" style="margin-bottom: 15px;">Hemos detectado los siguientes datos. Selecciona las columnas correspondientes:</p>
+        
+        <div class="mapping-selectors" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px;">
+            <div class="input-group">
+                <label>Columna de Teléfono</label>
+                <select id="select-phone-col" class="template-select" style="width: 100%;"></select>
+            </div>
+            <div class="input-group">
+                <label>Columna de Nombre (Opcional)</label>
+                <select id="select-name-col" class="template-select" style="width: 100%;"></select>
+            </div>
+        </div>
+
+        <div class="preview-table-container">
+            <table id="import-preview-table" class="preview-table">
+                <thead><tr id="preview-header"></tr></thead>
+                <tbody id="preview-body"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Estado 3: Procesando (Oculto inicialmente) -->
+    <div id="step-processing" class="import-step" style="display: none; text-align: center; padding: 30px 0;">
+        <div class="animate-spin" style="margin-bottom: 20px;">
+            <span class="material-icons-outlined" style="font-size: 3rem; color: var(--primary);">sync</span>
+        </div>
+        <h3>Procesando Leads...</h3>
+        <p class="text-muted">Esto puede tardar unos segundos dependiendo del tamaño del archivo.</p>
+    </div>
+
+    <!-- Estado 4: Resultados (Oculto inicialmente) -->
+    <div id="step-results" class="import-step" style="display: none; text-align: center;">
+        <span class="material-icons-outlined" style="font-size: 4rem; color: var(--primary); margin-bottom: 15px;">check_circle</span>
+        <h2 style="margin-bottom: 10px;">¡Importación Finalizada!</h2>
+        <p id="import-summary-text" style="font-size: 1.1rem; margin-bottom: 20px;"></p>
+        <button id="btn-import-close" class="btn btn-primary" style="width: 100%;">ENTENDIDO</button>
+    </div>
+</div>
+
+<style>
+.import-modal-content {
+    color: var(--text);
+}
+
+.drop-zone {
+    border: 2px dashed rgba(255, 255, 255, 0.1);
+    border-radius: 15px;
+    padding: 40px 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s;
+    background: rgba(255, 255, 255, 0.02);
+    margin-bottom: 20px;
+}
+
+.drop-zone:hover, .drop-zone.drag-over {
+    border-color: var(--primary);
+    background: rgba(34, 197, 94, 0.05);
+}
+
+.preview-table-container {
+    max-height: 250px;
+    overflow-y: auto;
+    border-radius: 8px;
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.preview-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.8rem;
+}
+
+.preview-table th {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 10px;
+    text-align: left;
+    position: sticky;
+    top: 0;
+}
+
+.preview-table td {
+    padding: 8px 10px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+    color: var(--text-muted);
+}
+
+.mapping-selectors label {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin-bottom: 5px;
+    display: block;
+}
+</style>

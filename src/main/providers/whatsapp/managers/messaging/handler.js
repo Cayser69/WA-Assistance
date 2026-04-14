@@ -98,3 +98,90 @@ export async function handleMessageAck(msg, ack, context) {
         console.error('[MessagingManager/Handler] Error en actualización Ack:', err.message);
     }
 }
+
+/**
+ * Sincroniza el historial reciente de un chat específico desde WhatsApp. 🔄
+ */
+export async function syncChatMessages(phone, context) {
+    const { client } = context;
+    if (!client) return { success: false, error: 'Cliente no listo' };
+
+    try {
+        let chat = null;
+        const cleanPhone = phone.split('@')[0];
+        
+        // Intentar con formatos comunes (@c.us, @lid)
+        const trials = [`${cleanPhone}@c.us`, `${cleanPhone}@lid` ];
+        
+        for (const chatId of trials) {
+            try {
+                chat = await client.getChatById(chatId);
+                if (chat) break;
+            } catch (e) { }
+        }
+        
+        if (!chat) {
+            console.warn(`[MessagingManager/Sync] ⚠️ No se encontró chat para ${phone} tras probar varios formatos.`);
+            return { success: false, error: 'Chat no encontrado' };
+        }
+
+        console.log(`[MessagingManager/Sync] 🔄 Sincronizando historial (${chat.id._serialized})...`);
+        
+        const messages = await chat.fetchMessages({ limit: 30 });
+        const { saveMessageLog } = await import('../../../../services/database/index.js');
+
+        let syncedCount = 0;
+        for (const msg of messages) {
+            const type = msg.type || 'chat';
+            if (['e2e_notification', 'protocol', 'gp2', 'ciphertext'].includes(type)) continue;
+
+            let texto = (msg.body || '').trim();
+            if (!texto) {
+                texto = getLabelFromType(type);
+                if (!texto) continue;
+            }
+
+            const tipo = msg.fromMe ? 'enviado' : 'recibido';
+            const fecha = msg.timestamp ? new Date(msg.timestamp * 1000).toISOString() : null;
+
+            try {
+                // saveMessageLog usa INSERT OR IGNORE, por lo que no duplicará si el ID existe
+                await saveMessageLog(
+                    phone, 
+                    texto, 
+                    tipo, 
+                    fecha, 
+                    null, 
+                    msg.mimetype, 
+                    msg.id.id, 
+                    msg.ack || 1
+                );
+                syncedCount++;
+            } catch (e) { }
+        }
+
+        console.log(`[MessagingManager/Sync] ✅ Sincronizados ${syncedCount} mensajes para ${phone}.`);
+        return { success: true, count: syncedCount };
+
+    } catch (err) {
+        console.error('[MessagingManager/Sync] ❌ Error:', err.message);
+        return { success: false, error: err.message };
+    }
+}
+
+/**
+ * Utilidad: Convierte tipo multimedia a etiqueta legible.
+ */
+function getLabelFromType(type) {
+    const labels = {
+        image: '📷 Imagen',
+        audio: '🎵 Audio',
+        ptt: '🎤 Nota de voz',
+        video: '🎥 Vídeo',
+        document: '📄 Documento',
+        sticker: '🩹 Sticker',
+        location: '📍 Ubicación',
+        vcard: '👤 Contacto',
+    };
+    return labels[type] || null;
+}

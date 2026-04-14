@@ -9,6 +9,7 @@ contextBridge.exposeInMainWorld('api', {
     getLeads: (filter, limit, offset, search) => ipcRenderer.invoke('db:getLeads', filter, limit, offset, search),
     getLeadsCount: (filter, search) => ipcRenderer.invoke('db:getLeadsCount', filter, search),
     insertLead: (telefono, nombre) => ipcRenderer.invoke('db:insertLead', telefono, nombre),
+    insertLeadsBatch: (leads) => ipcRenderer.invoke('db:insertLeadsBatch', leads),
     deleteLeads: (ids) => ipcRenderer.invoke('db:deleteLeads', ids),
     markAsContacted: (id) => ipcRenderer.invoke('db:markAsContacted', id),
     saveLog: (data) => ipcRenderer.invoke('db:saveLog', data),
@@ -87,6 +88,9 @@ contextBridge.exposeInMainWorld('api', {
 
     // Cargador de Plantillas (IPC)
     readTemplate: (relativePath) => ipcRenderer.invoke('app:read-template', relativePath),
+
+    // Lector de archivos para importación/multimedia 📂
+    readFile: (path) => ipcRenderer.invoke('file:readText', path),
 
     // Puente Genérico (Para compatibilidad con módulos existentes) 🛠️
     invoke: (channel, ...args) => ipcRenderer.invoke(channel, ...args),

@@ -96,3 +96,17 @@ export async function getPendingLeads() {
 export async function getLeadsWithoutName() {
     return await all("SELECT * FROM leads WHERE nombre IS NULL OR nombre = ''");
 }
+/**
+ * Obtiene un lead específico por su número de teléfono. 🎯
+ */
+export async function getLeadByPhone(phone) {
+    const cleanTel = normalizePhone(phone);
+    const sql = `
+        SELECT * FROM leads 
+        WHERE telefono = ? 
+        OR REPLACE(REPLACE(meta_id, '@c.us', ''), '@lid', '') = ?
+        LIMIT 1
+    `;
+    const rows = await all(sql, [cleanTel, cleanTel]);
+    return rows.length > 0 ? rows[0] : null;
+}

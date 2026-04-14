@@ -35,6 +35,15 @@ export const ChatSidebar = {
             c.telefono.includes(filter) || (c.nombre || '').toLowerCase().includes(filter)
         );
 
+        const formatPhone = (tel) => {
+            if (!tel) return '';
+            const clean = tel.split('@')[0];
+            if (clean.startsWith('34') && clean.length === 11) {
+                return `+34 ${clean.substring(2, 5)} ${clean.substring(5, 8)} ${clean.substring(8)}`;
+            }
+            return clean;
+        };
+
         if (filtered.length === 0) {
             list.innerHTML = `<div class="text-center p-20" style="opacity: 0.5;">No hay chats aún.</div>`;
             return;
@@ -42,10 +51,14 @@ export const ChatSidebar = {
 
         list.innerHTML = filtered.map(chat => `
             <div class="contact-item ${ChatSidebar.activeChat === chat.telefono ? 'active' : ''}" data-tel="${chat.telefono}">
-                <div class="avatar"><span class="material-icons-outlined">account_circle</span></div>
+                <div class="avatar">
+                    <span class="material-icons-outlined" style="color: ${chat.nombre ? 'var(--primary)' : 'inherit'}">
+                        ${chat.nombre ? 'person' : 'account_circle'}
+                    </span>
+                </div>
                 <div class="info">
                     <div class="header-row" style="display: flex; justify-content: space-between;">
-                        <span class="name">${chat.nombre || chat.telefono}</span>
+                        <span class="name">${chat.nombre || formatPhone(chat.telefono)}</span>
                         <span class="time" style="font-size: 0.6rem; opacity: 0.5;">
                             ${chat.last_msg_date ? new Date(chat.last_msg_date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : ''}
                         </span>

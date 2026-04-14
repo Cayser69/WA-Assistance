@@ -19,6 +19,7 @@ export function registerDBHandlers() {
     
     ipcMain.handle('db:insertLead', async (event, tel, nombre) => await db.insertLead(tel, nombre));
     ipcMain.handle('db:deleteLeads', async (event, ids) => await db.deleteLeads(ids));
+    ipcMain.handle('db:insertLeadsBatch', async (event, leads) => await db.insertLeadsBatch(leads));
     ipcMain.handle('db:markAsContacted', async (event, id) => await db.markLeadAsContacted(id));
     ipcMain.handle('db:truncate-leads', async () => await db.truncateLeads());
     
