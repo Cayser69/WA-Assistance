@@ -10,7 +10,14 @@ class UniversalAIClient {
         this.provider = 'openai'; 
         this.model = 'gpt-4o-mini';
         this.apiKey = '';
-        this.prompt = 'Actúa como un experto en cierres de ventas por WhatsApp. Tu misión es ser amable, profesional y altamente persuasivo. Reglas: 1. No des respuestas largas, usa un tono conversacional. 2. Enfócate en resolver dudas y guiar al cliente hacia la compra o reserva. 3. Si el cliente tiene dudas técnicas, usa la base de conocimiento adjunta. 4. Evita sonar como un robot, usa emojis de forma moderada pero efectiva.';
+        this.prompt = `
+            Eres un Asesor Senior de Multimarkt (Venta Directa y Cualificación).
+            Tu misión es ayudar al cliente a ahorrar en fibra y electricidad de forma natural.
+            NIVEL DE ACCIÓN: Debes ser capaz de CERRAR la venta si el cliente muestra interés claro. 
+            Si el cliente está listo, solicita la factura o los datos necesarios para tramitar el alta AHORA mismo.
+            Menciona que la gestión será validada finalmente por un "especialista", pero avanza tú en el cierre técnico tanto como sea posible.
+            Sé amable, profesional, directo y ambicioso en la conversión.
+        `.trim();
         this.knowledgeBase = '';
         this.isActive = false;
         this.initPromise = null;
@@ -126,7 +133,6 @@ class UniversalAIClient {
 
     /**
      * Generación de respuestas sugeridas. 🛰️
-     * Optimizada para diferenciar entre Reglas de Negocio e Instrucciones de Tarea.
      */
     async getReply(userMessage, history = [], force = false, systemInstructions = null) {
         if (!force && (!this.isActive || !this.apiKey)) return null;
@@ -135,31 +141,36 @@ class UniversalAIClient {
             if (this.provider === 'gemini') {
                 return await this.getGeminiReply(userMessage, history, systemInstructions);
             }
+ 
+            const systemContent = `
+### ROL: ASESOR SENIOR MULTIMARKT (HUMANO)
+${this.prompt}
 
-            // Construir un mensaje de sistema robusto que combine el ADN del negocio y la tarea actual
-            const systemContent = [
-                this.prompt,
-                this.knowledgeBase ? `BASE DE CONOCIMIENTO:\n${this.knowledgeBase}` : '',
-                systemInstructions ? `INSTRUCCIONES DE TAREA:\n${systemInstructions}` : ''
-            ].filter(Boolean).join('\n\n--- \n\n');
+### INSTRUCCIÓN OPERATIVA
+Responde de forma profesional, fluida y amable. 
+Si el cliente dice algo corto o sin sentido (ej: "Po", "Hu"), intenta reconectar la charla preguntando amablemente qué necesita. 
+SOLO pide la factura si el cliente muestra interés real en ahorrar.
+Brevedad: Máximo 2 líneas.
+
+### BASE DE CONOCIMIENTO
+${this.knowledgeBase || 'Empresa Multimarkt. Servicios: Fibra y Electricidad.'}
+            `.trim();
 
             const messages = [
                 { role: 'system', content: systemContent },
                 ...history
             ];
 
-            // Si hay un mensaje de usuario específico (fuera de las instrucciones), lo añadimos
-            if (userMessage && !systemInstructions) {
+            if (userMessage) {
                 messages.push({ role: 'user', content: userMessage });
-            } else if (userMessage && systemInstructions) {
-                // Si hay instrucciones, el 'userMessage' suele ser parte del contexto o el último disparador
-                messages.push({ role: 'user', content: `Contexto Adicional: ${userMessage}` });
             }
+
+            // --- DISPARADOR FORZADO ELIMINADO PARA ROMPER EL BUCLE ---
 
             const response = await this.client.chat.completions.create({
                 model: this.model,
                 messages,
-                temperature: 0.6, // Bajamos la temperatura para mayor consistencia
+                temperature: 0.7, // Subimos temperatura para mayor naturalidad
                 max_tokens: 500
             });
 

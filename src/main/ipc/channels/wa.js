@@ -36,7 +36,8 @@ export function registerWAHandlers() {
     // --- Envío Manual de Mensajes 💬 ---
     ipcMain.handle('wa:send-message', async (event, { phone, message }) => {
         try {
-            return await waClient.sendMessage(phone, message);
+            const result = await waClient.sendMessage(phone, message);
+            return { success: true, message: result };
         } catch (error) {
             console.error('Error en IPC wa:send-message:', error);
             return { success: false, error: error.message };

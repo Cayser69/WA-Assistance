@@ -19,13 +19,13 @@ Este documento contiene la lista de tareas (checklists) estricta para el desarro
 
 ## 🏗️ Fase 4: Reestructuración Arquitectónica UI (Omnicanalidad)
 
-- [ ] **Limpieza de Código Legado:**
-  - [ ] Eliminar y purgar todo el código del módulo "Historial" (borrar componente `/pages/historial` y su rastro en el router), por ser inútil para la estrategia de *Cold Outreach*.
-- [ ] **Nuevo Panel Lateral (Sidebar):**
-  - [ ] Reescribir el CSS y HTML base de `src/renderer/index.html` para agrupar el Sidebar en desplegables.
-  - [ ] Menú 1: **WHATSAPP** (Conexión, Campañas, Scanner)
+- [x] **Limpieza de Código Legado:**
+  - [x] Eliminar y purgar todo el código del módulo "Historial" (borrar componente `/pages/historial` y su rastro en el router), por ser inútil para la estrategia de *Cold Outreach*.
+- [/] **Nuevo Panel Lateral (Sidebar):**
+  - [x] Reescribir el CSS y HTML base de `src/renderer/index.html` para agrupar el Sidebar en desplegables.
+  - [x] Menú 1: **WHATSAPP** (Conexión, Campañas, Scanner)
   - [ ] Menú 2: **INSTAGRAM** (Conexión IG, Campañas IG, Scanner IG)
-  - [ ] Menú 3: **INTELIGENCIA ARTIFICIAL** (Configuración, Bandeja Autónoma Unificada)
+  - [/] Menú 3: **INTELIGENCIA ARTIFICIAL** (Configuración, Bandeja Autónoma Unificada)
 - [ ] **Precauciones Técnicas ("Para que no reviente"):**
   - [ ] Separar `AppState.waStatus` y `AppState.igStatus` para evitar colapsos.
   - [ ] Separar listeners del `preload/index.js` en canales diferenciados (`wa:status` vs `ig:status`).

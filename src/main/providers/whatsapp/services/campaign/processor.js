@@ -46,7 +46,10 @@ export class CampaignProcessor {
             });
             
             // Prompt enriquecido para que la variante guarde relación con el negocio 🧠
-            const aiPrompt = `Reescribe este mensaje de forma profesional pero vendedora, asegurándote de mantener la coherencia con la base de conocimiento del negocio. MENSAJE A REESCRIBIR: "${message}"`;
+            const aiPrompt = `Reescribe este mensaje de oferta de forma profesional y muy vendedora. 
+            El objetivo es cerrar el interés o conseguir la factura del cliente de inmediato. 
+            Menciona que tú puedes iniciar el proceso ahora y un especialista validará los detalles finales.
+            MENSAJE A REESCRIBIR: "${message}"`;
             const variant = await aiClient.getReply(aiPrompt);
             return variant || message;
         }

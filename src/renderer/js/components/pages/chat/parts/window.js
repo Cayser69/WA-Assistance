@@ -59,14 +59,18 @@ export const ChatWindow = {
             input.disabled = true;
             const result = await window.api.sendMessage(phone, message);
             
-            if (result.success) {
+            if (result && result.success) {
+                // Éxito: Limpiamos inmediatamente 🧹
                 input.value = '';
                 input.style.height = 'auto';
             } else {
-                Toast.error('Error al enviar: ' + result.error);
+                // Fallo: Mostramos error detallado ❌
+                const errorMsg = result?.error || 'Error desconocido';
+                Toast.error('Error al enviar: ' + errorMsg);
             }
         } catch (err) {
-            console.error('[ChatWindow] Fallo en envío:', err);
+            console.error('[ChatWindow] Fallo crítico en envío:', err);
+            Toast.error('Error crítico al conectar con el servicio de mensajería.');
         } finally {
             input.disabled = false;
             input.focus();
